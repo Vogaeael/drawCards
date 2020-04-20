@@ -1,9 +1,3 @@
-// Run dotenv
-//import { Deck } from "src/deck";
-//require('src/deck');
-//import { suits } from "./src/suits";
-//import { ranks } from "./src/ranks";
-
 const ranks = {
     ace: 1,
     2: 2,
