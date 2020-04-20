@@ -96,10 +96,17 @@ client.on('message', msg => {
             if (undefined === card) {
                 msg.reply('out of cards');
             } else {
-                msg.reply('got a ' + card.getRank() + ' ' + card.getSuit());
+                msg.reply('got a :' + card.getSuit() + ':(' + capitalize(card.getSuit()) + ') ' + capitalize(card.getRank()));
             }
             break;
     }
 });
+
+function capitalize(string) {
+    let nString = string.toString().charAt(0).toUpperCase();
+    nString += string.slice(1).toLowerCase();
+
+    return nString;
+}
 
 client.login(process.env.DISCORD_TOKEN);
