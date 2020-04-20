@@ -3,17 +3,23 @@
   "version": "1.0.0",
   "description": "discord bot for drawing cards from a shuffled deck.",
   "main": "src/index.js",
-  "scripts": {
-    "start": "node src/index.js",
-    "watch": "tsc -p tsconfig.json -w",
-    "compile": "tsc -p tsconfig.json",
-    "test": "mocha -r ts-node/register \"tests/**/*.spec.ts\""
-  },
   "author": {
     "name": "Michael Vogel",
     "email": "Michael-B-G-Vogel@gmx.de"
   },
+  "keywords": [
+    "discord",
+    "typescript"
+  ],
+  "homepage": "https://github.com/Vogaeael/drawCards#readme",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vogaeael/drawCards.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vogaeael/drawCards/issues"
+  },
   "dependencies": {
     "@types/node": "^13.13.0",
     "discord.js": "^12.2.0",
@@ -30,12 +36,10 @@
     "ts-mockito": "^2.5.0",
     "ts-node": "^8.8.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Vogaeael/drawCards.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Vogaeael/drawCards/issues"
-  },
-  "homepage": "https://github.com/Vogaeael/drawCards#readme"
+  "scripts": {
+    "start": "node src/index.js",
+    "watch": "tsc -p tsconfig.json -w",
+    "compile": "tsc -p tsconfig.json",
+    "test": "mocha -r ts-node/register \"tests/**/*.spec.ts\""
+  }
 }
