@@ -79,6 +79,7 @@ require('dotenv').config();
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const prefix = '!';
 let deck = new Deck();
 
 client.on('ready', () => {
@@ -87,11 +88,11 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     switch (msg.content) {
-        case 'shuffle':
+        case prefix + 'shuffle':
             deck = new Deck();
             msg.reply('shuffled Deck');
             break;
-        case 'draw':
+        case prefix + 'draw':
             let card = deck.draw();
             if (undefined === card) {
                 msg.reply('out of cards');
