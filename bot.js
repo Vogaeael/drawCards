@@ -78,18 +78,23 @@ class DrawCardsBot {
     constructor(client, prefix = '!') {
         this.client = client;
         this.prefix = prefix;
-        this.initDeck();
+        this.initDecks();
         this.initListeners();
     }
 
     initListeners() {
-        this.client.on('message', msg => {
+        this.initMessageListener()
+    }
+
+    initMessageListener() {
+        this.client.on('message', (msg) => {
+            const guildID = msg.guild.id;
             switch (msg.content) {
                 case this.prefix + 'shuffle':
-                    msg.reply(this.shuffle());
+                    msg.reply(this.shuffle(guildID));
                     break;
                 case this.prefix + 'draw':
-                    msg.reply(this.draw());
+                    msg.reply(this.draw(guildID));
                     break;
                 case this.prefix + 'help':
                     msg.reply(this.help());
@@ -98,13 +103,18 @@ class DrawCardsBot {
         });
     }
 
-    shuffle() {
-        this.initDeck()
+    shuffle(guildID) {
+        this.initDeck(guildID)
         return 'shuffled Deck';
     }
 
-    draw() {
-        let card = this.deck.draw();
+    draw(guildID) {
+        const deck = this.decks[guildID];
+        if (undefined === deck) {
+            return 'out of cards';
+        }
+
+        const card = deck.draw();
         if (undefined === card) {
             return 'out of cards';
         }
@@ -112,9 +122,14 @@ class DrawCardsBot {
         return 'got a :' + card.getSuit() + ':(' + capitalize(card.getSuit()) + ') ' + capitalize(card.getRank());
     }
 
-    initDeck() {
-        this.deck = new Deck();
+    initDeck(guildID) {
+        this.decks[guildID] = new Deck();
     }
+
+    initDecks() {
+        this.decks = [];
+    }
+
 
     help() {
         return '\n> # Draw Cards\n' +
