@@ -74,34 +74,54 @@ class Deck {
     }
 }
 
+class DrawCardsBot {
+    constructor(client, prefix = '!') {
+        this.client = client;
+        this.prefix = prefix;
+        this.initDeck();
+        this.initListeners();
+    }
+
+    initListeners() {
+        this.client.on('message', msg => {
+            switch (msg.content) {
+                case this.prefix + 'shuffle':
+                    msg.reply(this.shuffle());
+                    break;
+                case this.prefix + 'draw':
+                    msg.reply(this.draw());
+                    break;
+            }
+        });
+    }
+
+    shuffle() {
+        this.initDeck()
+        return 'shuffled Deck';
+    }
+
+    draw() {
+        let card = this.deck.draw();
+        if (undefined === card) {
+            return 'out of cards';
+        }
+
+        return 'got a :' + card.getSuit() + ':(' + capitalize(card.getSuit()) + ') ' + capitalize(card.getRank());
+    }
+
+    initDeck() {
+        this.deck = new Deck();
+    }
+}
+
 
 require('dotenv').config();
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const prefix = '!';
-let deck = new Deck();
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-});
-
-client.on('message', msg => {
-    switch (msg.content) {
-        case prefix + 'shuffle':
-            deck = new Deck();
-            msg.reply('shuffled Deck');
-            break;
-        case prefix + 'draw':
-            let card = deck.draw();
-            if (undefined === card) {
-                msg.reply('out of cards');
-            } else {
-                msg.reply('got a :' + card.getSuit() + ':(' + capitalize(card.getSuit()) + ') ' + capitalize(card.getRank()));
-            }
-            break;
-    }
-});
+const bot = new DrawCardsBot(client, prefix);
 
 function capitalize(string) {
     let nString = string.toString().charAt(0).toUpperCase();
