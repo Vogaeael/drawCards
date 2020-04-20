@@ -91,6 +91,9 @@ class DrawCardsBot {
                 case this.prefix + 'draw':
                     msg.reply(this.draw());
                     break;
+                case this.prefix + 'help':
+                    msg.reply(this.help());
+                    break;
             }
         });
     }
@@ -111,6 +114,23 @@ class DrawCardsBot {
 
     initDeck() {
         this.deck = new Deck();
+    }
+
+    help() {
+        return '\n> # Draw Cards\n' +
+            '> a bot for drawing random cards\n' +
+            '> **Available commands:**\n' +
+            '> *!shuffle*\n' +
+            '> shuffle the hole deck new\n' +
+            '> \n' +
+            '> *!draw*\n' +
+            '> draw a card of the deck\n' +
+            '> \n' +
+            '> *!help*\n' +
+            '> get this help information\n' +
+            '> \n' +
+            '> ## more Infos\n' +
+            '> Github: https://github.com/Vogaeael/drawCards'
     }
 }
 
