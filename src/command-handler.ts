@@ -59,8 +59,17 @@ export class CommandHandler {
     /** @var command string */
     for (let command of this.commands.keys()) {
       if (this.curMsg.startsWith(command)) {
-        this.curMsg = this.curMsg.replace(command + ' ', '');
+        this.curMsg = this.curMsg.replace(command, '');
+
+        if (this.curMsg.length > 0) {
+          if (!this.curMsg.startsWith(' ')) {
+            return false;
+          }
+
+          this.curMsg = this.curMsg.replace(' ', '');
+        }
         this.command = this.commands.get(command);
+
         return true;
       }
     }

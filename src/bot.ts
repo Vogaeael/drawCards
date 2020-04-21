@@ -48,7 +48,7 @@ export class Bot {
     return this.guilds.get(id);
   }
 
-  private initGuilds() {
+  private initGuilds(): void {
     this.guilds = new Map<Snowflake, Guild>();
   }
 }
