@@ -31,6 +31,9 @@ export class Bot {
 
   public listen(): Promise<string> {
     this.client.on('message', (msg: Message) => {
+      if (msg.author.bot) {
+        return;
+      }
       const guild = this.getGuild(msg.guild.id);
       guild.handleMessage(msg);
     })
