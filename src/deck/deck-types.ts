@@ -3,32 +3,24 @@ export enum DeckTypes {
   standardDeck,
 }
 
-export const StrippedDeck = {
-  ace: 1,
-  7: 7,
-  8: 8,
-  9: 9,
-  10: 10,
-  jack: 11,
-  queen: 12,
-  king: 13,
-}
+export const StrippedDeck = [
+  'ace',
+  '7',
+  '8',
+  '9',
+  '10',
+  'jack',
+  'queen',
+  'king'
+];
 
-export const StandardDeck = {
-  ace: 1,
-  2: 2,
-  3: 3,
-  4: 4,
-  5: 5,
-  6: 6,
-  7: 7,
-  8: 8,
-  9: 9,
-  10: 10,
-  jack: 11,
-  queen: 12,
-  king: 13
-}
+export const StandardDeck = StrippedDeck.concat([
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+]);
 
 export const Joker = {
   14: 14,

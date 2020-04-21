@@ -1,6 +1,6 @@
-export const Suits = {
-    clubs: "clubs",
-    diamonds: "diamonds",
-    hearts: "hearts",
-    spades: "spades"
-}
+export const Suits = [
+  "clubs",
+  "diamonds",
+  "hearts",
+  "spades"
+];

@@ -1,21 +1,22 @@
 import { Suits } from './suits';
-import { Joker, StandardDeck } from './deck-types';
+import { DeckTypes, Joker, StandardDeck, StrippedDeck } from './deck-types';
 import { Card } from './card';
 
 export class Deck {
   private cards: Card[];
 
   public constructor() {
-    this.shuffle();
+    this.shuffle(DeckTypes.standardDeck);
   }
 
   /**
    * Refill the deck and shuffle the cards
    *
+   * @param deckType: DeckTypes, which deck-type it will use
    * @param joker: boolean, if it should shuffle joker to the other cards
    */
-  public shuffle(joker: boolean = false): void {
-    this._fill(joker);
+  public shuffle(deckType: DeckTypes, joker: boolean = false): void {
+    this._fill(deckType, joker);
     this._shuffle();
   }
 
@@ -28,22 +29,36 @@ export class Deck {
   }
 
   /**
+   * @param deckType: DeckTypes, the deck-type
    * @param joker: boolean, if there should be joker in the deck
    */
-  private _fill(joker: boolean = false): void {
+  private _fill(deckType: DeckTypes, joker: boolean = false): void {
     this.cards = [];
 
-    this.addCards();
+    this.addCards(deckType);
     if (joker) {
       this.addJoker();
     }
   }
 
-  private addCards(): void {
-    Object.entries(Suits).forEach((suit: [string, string]) => {
-      Object.entries(StandardDeck).forEach((rank: [string, number]) => {
-        this.cards.push(new Card(suit[0], rank[0]));
-      })
+  /**
+   * @param deckType: DeckTypes, the deck-type to use
+   */
+  private addCards(deckType: DeckTypes): void {
+    let deck: string[] = [];
+    switch (deckType) {
+      case DeckTypes.strippedDeck:
+        deck = StrippedDeck;
+        break;
+      case DeckTypes.standardDeck:
+        deck = StandardDeck;
+        break;
+    }
+
+    Suits.forEach((suit: string) => {
+      deck.forEach((rank: string) => {
+        this.cards.push(new Card(suit, rank));
+      });
     });
   }
 
