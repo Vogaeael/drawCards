@@ -1,5 +1,5 @@
-import { suits } from './suits';
-import { ranks } from './ranks';
+import { Suits } from './suits';
+import { Ranks_52 } from './ranks';
 import { Card } from './card';
 
 export class Deck {
@@ -17,8 +17,8 @@ export class Deck {
   private _fill(): void {
     this.cards = [];
 
-    Object.entries(suits).forEach((suit: [string, string]) => {
-      Object.entries(ranks).forEach((rank: [string, number]) => {
+    Object.entries(Suits).forEach((suit: [string, string]) => {
+      Object.entries(Ranks_52).forEach((rank: [string, number]) => {
         this.cards.push(new Card(suit[0], rank[0]));
       })
     });

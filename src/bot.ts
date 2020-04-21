@@ -1,23 +1,20 @@
 import {
   Client,
-  Message
+  Message, Snowflake
 } from "discord.js";
 import {
   inject,
   injectable
 } from "inversify";
 import { TYPES } from './types';
-import { Deck } from './deck/deck';
-import { Card } from './deck/card';
-import { MesssageResponder } from ".services/message-responder";
+import { Guild } from './guild/guild';
 
 @injectable()
 export class Bot {
   private client: Client;
   private config;
-  private readonly prefix = '!';
   private readonly token: string;
-  private decks: Deck[];
+  private guilds: Map<Snowflake, Guild>;
 
   constructor(
     @inject(TYPES.Client) client: Client,
@@ -25,23 +22,13 @@ export class Bot {
   ) {
     this.client = client;
     this.token = token;
-    this.initDecks();
+    this.initGuilds();
   }
 
   public listen(): Promise<string> {
     this.client.on('message', (msg: Message) => {
-      const guildID = msg.guild.id;
-      switch(msg.content) {
-        case this.prefix + 'shuffle':
-          msg.reply(this.shuffle(guildID));
-          break;
-        case this.prefix + 'draw':
-          msg.reply(this.draw(guildID));
-          break;
-        case this.prefix + 'help':
-          msg.reply(this.help());
-          break;
-      }
+      const guild = this.getGuild(msg.guild.id);
+      guild.handleMessage(msg);
     })
 
     return this.client.login(
@@ -49,62 +36,15 @@ export class Bot {
     );
   }
 
-  private shuffle(guildID): string {
-    this.initDeck(guildID)
-
-    return 'shuffled Deck';
-  }
-
-  private draw(guildID): string {
-    const deck: Deck = this.decks[guildID];
-    if (undefined === deck) {
-      return 'out of cards';
+  private getGuild(id: Snowflake): Guild {
+    if (!this.guilds.has(id)) {
+      this.guilds.set(id, new Guild(id));
     }
 
-    const card: Card = deck.draw();
-    if (undefined === card) {
-      return 'out of cards';
-    }
-
-    return 'got a :' + card.getSuit() + ':(' + capitalize(card.getSuit()) + ') ' + capitalize(card.getRank());
+    return this.guilds.get(id);
   }
 
-  private initDeck(guildID) {
-    this.decks[guildID] = new Deck();
+  private initGuilds() {
+    this.guilds = new Map<Snowflake, Guild>();
   }
-
-  private initDecks() {
-    this.decks = [];
-  }
-
-  help() {
-    return '\n> # Draw Cards\n' +
-      '> a bot for drawing random cards\n' +
-      '> **Available commands:**\n' +
-      '> *!shuffle*\n' +
-      '> shuffle the hole deck new\n' +
-      '> \n' +
-      '> *!draw*\n' +
-      '> draw a card of the deck\n' +
-      '> \n' +
-      '> *!help*\n' +
-      '> get this help information\n' +
-      '> \n' +
-      '> ## more Infos\n' +
-      '> Github: https://github.com/Vogaeael/drawCards'
-  }
-
-
-
-// private static loadConfig(): void {
-  //   this.config = YAML.load(path.resolve(__dirname, 'settings.yml'))
-  // }
-}
-
-function capitalize(word: string) {
-  if (!word) {
-    return word;
-  }
-
-  return word[0].toUpperCase() + word.substr(1).toLowerCase();
 }
