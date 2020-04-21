@@ -1,6 +1,6 @@
 export enum DeckTypes {
-  strippedDeck,
-  standardDeck,
+  strippedDeck = 'stripped deck',
+  standardDeck = 'standard deck',
 }
 
 export const StrippedDeck = [

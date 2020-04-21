@@ -51,7 +51,13 @@ export class Guild {
   private shuffle(): string {
     this.deck.shuffle(this.config.getDeckType(), this.config.getJoker());
 
-    return 'shuffled Deck';
+    let answer = 'shuffled ' + this.config.getDeckType();
+
+    if (this.config.getJoker()) {
+      answer += ' with joker';
+    }
+
+    return answer;
   }
 
   /**
