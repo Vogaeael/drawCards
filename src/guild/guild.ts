@@ -57,19 +57,34 @@ export class Guild {
   /**
    * Command !draw
    *
+   * @param numString: string, how much cards you want to draw. Default is 1.
+   *
    * @return string answer
    */
-  private draw(): string {
+  private draw(numString: string = ''): string {
     if (undefined === this.deck) {
       return 'out of cards';
     }
 
-    const card: Card = this.deck.draw();
-    if (undefined === card) {
-      return 'out of cards';
+    const num = Guild.transformToNum(numString);
+    let first = true;
+    let answer: string = '';
+    for (let i = num; i > 0; --i) {
+      const card: Card = this.deck.draw();
+      if (undefined === card) {
+        if (!first) {
+          answer += '\n  ';
+        }
+        return answer + 'out of cards';
+      }
+      if (first) {
+        answer += 'got the card(s):';
+        first = !first;
+      }
+      answer += '\n  :'+ card.getSuit() + ':(' + capitalize(card.getSuit()) + ') ' + capitalize(card.getRank());
     }
 
-    return 'got a :' + card.getSuit() + ':(' + capitalize(card.getSuit()) + ') ' + capitalize(card.getRank());
+    return answer;
   }
 
   /**
@@ -144,8 +159,8 @@ export class Guild {
       '> *!shuffle*\n' +
       '> shuffle the hole deck new\n' +
       '> \n' +
-      '> *!draw*\n' +
-      '> draw a card of the deck\n' +
+      '> *!draw [?num]*\n' +
+      '> draw [num] cards of the deck. If nothing is set or the value is not valid it uses 1.\n' +
       '> \n' +
       '> *!useStandardDeck*\n' +
       '> use standard (52 cards) deck (active from next shuffle on)\n' +
@@ -173,9 +188,11 @@ export class Guild {
    * Init the commands:
    * - shuffle
    * - draw
-   * - setPrefix
+   * - useStandardDeck
+   * - useStrippedDeck
    * - useJoker
    * - dontUseJoker
+   * - setPrefix
    * - help
    */
   private initCommands(): void {
@@ -183,8 +200,8 @@ export class Guild {
     this.commands.set('shuffle', (_: string) => {
       return this.shuffle();
     });
-    this.commands.set('draw', (_: string) => {
-      return this.draw();
+    this.commands.set('draw', (num: string) => {
+      return this.draw(num);
     });
     this.commands.set('useStandardDeck', (_: string) => {
       return this.useStandardDeck();
@@ -192,14 +209,14 @@ export class Guild {
     this.commands.set('useStrippedDeck', (_: string) => {
       return this.useStrippedDeck();
     });
-    this.commands.set('setPrefix', (newPrefix: string) => {
-      return this.setPrefix(newPrefix);
-    });
     this.commands.set('useJoker', (_: string) => {
       return this.useJoker();
     });
     this.commands.set('dontUseJoker', (_: string) => {
       return this.dontUseJoker();
+    });
+    this.commands.set('setPrefix', (newPrefix: string) => {
+      return this.setPrefix(newPrefix);
     });
     this.commands.set('help', (_: string) => {
       return Guild.help();
@@ -208,5 +225,14 @@ export class Guild {
 
   private initDeck(): void {
     this.deck = new Deck();
+  }
+
+  private static transformToNum(numString: string): number {
+    let num: number = +numString;
+    if (!num || num <= 0) {
+      num = 1;
+    }
+
+    return num;
   }
 }
