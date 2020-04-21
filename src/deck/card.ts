@@ -1,8 +1,11 @@
-export class Card {
-  private readonly suit;
-  private readonly rank;
+import { injectable } from 'inversify';
 
-  public constructor(suit: string, rank: string) {
+@injectable()
+export class Card {
+  private suit;
+  private rank;
+
+  public init(suit: string, rank: string) {
     this.suit = suit;
     this.rank = rank;
   }

@@ -1,3 +1,6 @@
+import { injectable } from 'inversify';
+
+@injectable()
 export class CommandHandler {
   private commands: Map<string, (string) => string>;
   private curMsg: string;

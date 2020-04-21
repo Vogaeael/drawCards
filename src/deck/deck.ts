@@ -1,11 +1,18 @@
 import { Suits } from './suits';
 import { DeckTypes, Joker, StandardDeck, StrippedDeck } from './deck-types';
 import { Card } from './card';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../types';
 
+@injectable()
 export class Deck {
   private cards: Card[];
+  private cardFactory: () => Card;
 
-  public constructor() {
+  public constructor(
+    @inject(TYPES.CardFactory) cardFactory: () => Card//interfaces.Factory(Card) {
+  ) {
+    this.cardFactory = cardFactory;
     this.shuffle(DeckTypes.standardDeck);
   }
 
@@ -57,14 +64,18 @@ export class Deck {
 
     Suits.forEach((suit: string) => {
       deck.forEach((rank: string) => {
-        this.cards.push(new Card(suit, rank));
+        const card = this.cardFactory();
+        card.init(suit, rank);
+        this.cards.push(card);
       });
     });
   }
 
   private addJoker(): void {
     Object.entries(Joker).forEach(() => {
-      this.cards.push(new Card('black_joker', ''));
+      const card = this.cardFactory();
+      card.init('black_joker', '');
+      this.cards.push(card);
     });
   }
 

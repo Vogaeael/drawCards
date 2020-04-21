@@ -1,29 +1,29 @@
 import { Deck } from '../deck/deck';
 import { GuildConfig } from './guild-config';
-import { Message, Snowflake } from "discord.js";
+import { Message } from "discord.js";
 import { Card } from '../deck/card';
 import { capitalize } from '../functions';
 import { CommandHandler } from '../command-handler';
 import { DeckTypes } from '../deck/deck-types';
+import { inject, injectable, interfaces } from 'inversify';
+import { TYPES } from '../types';
 
-// @injectable()
+@injectable()
 export class Guild {
   private cmdHandler: CommandHandler;
-  private id: Snowflake;
-  private deck: Deck;
+  private readonly deck: Deck;
   private config: GuildConfig;
   private commands: Map<string, (string) => string>;
 
   public constructor(
-    // @inject(TYPES.CommandHandler)
-    cmdHandler: CommandHandler,
-    id: Snowflake
+    @inject(TYPES.CommandHandler) cmdHandler: CommandHandler,
+    @inject(TYPES.GuildConfigFactory) guildConfigFactory: () => GuildConfig,//interfaces.Factory<GuildConfig>,
+    @inject(TYPES.DeckFactory) deckFactory: () => Deck//interfaces.Factory<Deck>
   ) {
     this.cmdHandler = cmdHandler;
-    this.id = id;
-    this.config = new GuildConfig();
+    this.config = guildConfigFactory();
+    this.deck = deckFactory();
     this.initCommands();
-    this.initDeck();
   }
 
   /**
@@ -227,10 +227,6 @@ export class Guild {
     this.commands.set('help', (_: string) => {
       return Guild.help();
     });
-  }
-
-  private initDeck(): void {
-    this.deck = new Deck();
   }
 
   private static transformToNum(numString: string): number {

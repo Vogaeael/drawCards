@@ -1,5 +1,7 @@
 import { DeckTypes } from '../deck/deck-types';
+import { injectable } from 'inversify';
 
+@injectable()
 export class GuildConfig {
   private prefix: string = '!';
   private joker: boolean = false;
