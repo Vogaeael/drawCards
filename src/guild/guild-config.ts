@@ -1,9 +1,9 @@
-import { RanksNumber } from '../deck/ranks';
+import { DeckTypes } from '../deck/deck-types';
 
 export class GuildConfig {
   private prefix: string = '!';
   private joker: boolean = false;
-  private ranksNumber: RanksNumber = RanksNumber.ranks_52;
+  private deckType: DeckTypes = DeckTypes.standardDeck;
 
   public setPrefix(newPref: string): void {
     this.prefix = newPref;
@@ -21,8 +21,8 @@ export class GuildConfig {
     this.setJoker(false);
   }
 
-  public setRanksNumber(ranksNum: RanksNumber): void {
-    this.ranksNumber = ranksNum;
+  public setDeckType(ranksNum: DeckTypes): void {
+    this.deckType = ranksNum;
   }
 
   public getPrefix(): string {
@@ -33,7 +33,7 @@ export class GuildConfig {
     return this.joker;
   }
 
-  public getRanksNumber(): RanksNumber {
-    return this.ranksNumber;
+  public getDeckType(): DeckTypes {
+    return this.deckType;
   }
 }

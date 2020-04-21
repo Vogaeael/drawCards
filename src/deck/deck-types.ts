@@ -1,9 +1,9 @@
-export enum RanksNumber {
-  ranks_32,
-  ranks_52,
+export enum DeckTypes {
+  strippedDeck,
+  standardDeck,
 }
 
-export const Ranks_32 = {
+export const StrippedDeck = {
   ace: 1,
   7: 7,
   8: 8,
@@ -14,7 +14,7 @@ export const Ranks_32 = {
   king: 13,
 }
 
-export const Ranks_52 = {
+export const StandardDeck = {
   ace: 1,
   2: 2,
   3: 3,
@@ -28,4 +28,9 @@ export const Ranks_52 = {
   jack: 11,
   queen: 12,
   king: 13
+}
+
+export const Joker = {
+  14: 14,
+  15: 15
 }
