@@ -3,39 +3,56 @@ import { GuildConfig } from './guild-config';
 import { Message, Snowflake } from "discord.js";
 import { Card } from '../deck/card';
 import { capitalize } from '../functions';
+import { inject, injectable } from 'inversify';
+import { CommandHandler } from '../command-handler';
+import { TYPES } from '../types';
 
+// @injectable()
 export class Guild {
+  private cmdHandler: CommandHandler;
   private id: Snowflake;
   private deck: Deck;
   private config: GuildConfig;
+  private commands: Map<string, (string) => string>;
 
-  public constructor(id: Snowflake) {
+  public constructor(
+    // @inject(TYPES.CommandHandler)
+    cmdHandler: CommandHandler,
+    id: Snowflake
+  ) {
+    this.cmdHandler = cmdHandler;
     this.id = id;
     this.config = new GuildConfig();
+    this.initCommands();
     this.initDeck();
   }
 
   public handleMessage(msg: Message): void {
-    let returnMsg = undefined;
-    switch(msg.content) {
-      case this.config.getPrefix() + 'shuffle':
-        returnMsg = this.shuffle();
-        break;
-      case this.config.getPrefix() + 'draw':
-        returnMsg = this.draw();
-        break;
-      case this.config.getPrefix() + 'help':
-        returnMsg = Guild.help();
-        break;
-    }
+    const answer: string = this.cmdHandler.handle(
+      this.commands,
+      msg.content,
+      this.config.getPrefix()
+    );
 
-    if (undefined !== returnMsg) {
-      msg.reply(returnMsg);
+    if (answer) {
+      msg.reply(answer);
     }
+  }
+
+  private initCommands(): void {
+    this.commands = new Map<string, (string) => string>();
+    this.commands.set('draw', (_: string) => {
+      return this.draw();
+    });
+    this.commands.set('shuffle', (_: string) => {
+      return this.shuffle();
+    });
+    this.commands.set('help', (_: string) => {
+      return Guild.help();
+    });
+    // this.commands.set('setPrefix', (newPrefix: string) => {
     //
-    // const func = this.deck.draw();
-    //
-    // msg.reply(() => { return func()});
+    // });
   }
 
   private shuffle(): string {

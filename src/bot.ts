@@ -8,6 +8,7 @@ import {
 } from "inversify";
 import { TYPES } from './types';
 import { Guild } from './guild/guild';
+import { CommandHandler } from './command-handler';
 
 @injectable()
 export class Bot {
@@ -15,13 +16,16 @@ export class Bot {
   private config;
   private readonly token: string;
   private guilds: Map<Snowflake, Guild>;
+  private readonly cmdHandler: CommandHandler;
 
   constructor(
     @inject(TYPES.Client) client: Client,
     @inject(TYPES.Token) token: string,
+    @inject(TYPES.CommandHandler) cmdHandler: CommandHandler
   ) {
     this.client = client;
     this.token = token;
+    this.cmdHandler = cmdHandler;
     this.initGuilds();
   }
 
@@ -38,7 +42,7 @@ export class Bot {
 
   private getGuild(id: Snowflake): Guild {
     if (!this.guilds.has(id)) {
-      this.guilds.set(id, new Guild(id));
+      this.guilds.set(id, new Guild(this.cmdHandler, id));
     }
 
     return this.guilds.get(id);
