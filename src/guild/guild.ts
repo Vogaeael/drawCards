@@ -50,15 +50,24 @@ export class Guild {
     this.commands.set('help', (_: string) => {
       return Guild.help();
     });
-    // this.commands.set('setPrefix', (newPrefix: string) => {
-    //
-    // });
+    this.commands.set('setPrefix', (newPrefix: string) => {
+      return this.setPrefix(newPrefix);
+    });
   }
 
   private shuffle(): string {
     this.deck.shuffle();
 
     return 'shuffled Deck';
+  }
+
+  private setPrefix(newPrefix: string): string {
+    if ('' === newPrefix) {
+      newPrefix = '!';
+    }
+    this.config.setPrefix(newPrefix);
+
+    return 'prefix changed to \'' + newPrefix + '\'';
   }
 
   private draw(): string {
@@ -88,6 +97,8 @@ export class Guild {
       '> *!draw*\n' +
       '> draw a card of the deck\n' +
       '> \n' +
+      '> *!setPrefix [?newPrefix]\n' +
+      '> set the prefix from \'!\' to another. if no parameter is set, it changes back to \'!\'' +
       '> *!help*\n' +
       '> get this help information\n' +
       '> \n' +
