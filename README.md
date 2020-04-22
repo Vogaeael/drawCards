@@ -43,7 +43,7 @@ To draw one or multiple cards.
 ```shell script
 !draw       # for drawing one card
 !draw 12    # for drawing twelve cards
-!draw lll   # would draw one card because one is default
+!draw eee   # would draw one card because one is default
 ```
 
 ### Use standard deck
