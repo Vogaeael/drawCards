@@ -42,7 +42,7 @@ export class CommandHandler{
   private shuffle(): void {
     this.curGuild.getDeck().shuffle(this.curGuild.getConfig().getDeckType(), this.curGuild.getConfig().getJoker());
 
-    let description = 'Shuffled ' + this.curGuild.getConfig().getDeckType();
+    let description = this.getMentionOfAuthor() + ' shuffled ' + this.curGuild.getConfig().getDeckType();
     if (this.curGuild.getConfig().getJoker()) {
       description += ' with joker';
     }
@@ -72,12 +72,12 @@ export class CommandHandler{
       const card: Card = this.curGuild.getDeck().draw();
       if (undefined === card) {
         this.setDrawColor(hasRed, hasBlack);
-        this.answer.addField('Out of Cards', 'The deck is out of cards.');
+        this.answer.addField('Out of Cards', 'Sorry ' + this.getMentionOfAuthor() + ', the deck is out of cards.');
 
         return
       }
 
-      this.answer.setDescription('You got the cards:');
+      this.answer.setDescription(this.getMentionOfAuthor() + ' got the cards:');
       if (card.getSuit() === Suits.clubs || card.getSuit() === Suits.spades) {
         hasBlack = true;
       }
@@ -106,7 +106,7 @@ export class CommandHandler{
     this.curGuild.getConfig().setDeckType(DeckTypes.standardDeck);
 
     this.answer.setTitle('Use standard deck')
-      .setDescription('From next shuffle on a standard deck (52 cards) will be used.')
+      .setDescription(this.getMentionOfAuthor() + ' changed the next deck to a standard deck (52 cards).')
       .setColor(AnswerColor.reply_info);
   }
 
@@ -117,7 +117,7 @@ export class CommandHandler{
     this.curGuild.getConfig().setDeckType(DeckTypes.strippedDeck);
 
     this.answer.setTitle('Use stripped deck')
-      .setDescription('From next shuffle on a stripped deck (32 cards) will be used.')
+      .setDescription(this.getMentionOfAuthor() + ' changed the next deck to a stripped deck (32 cards).')
       .setColor(AnswerColor.reply_info);
   }
 
@@ -128,7 +128,7 @@ export class CommandHandler{
     this.curGuild.getConfig().useJoker();
 
     this.answer.setTitle('Use joker')
-      .setDescription('From now on there are joker in the decks')
+      .setDescription(this.getMentionOfAuthor() + ' add joker to the next deck.')
       .setColor(AnswerColor.reply_info);
   }
 
@@ -139,7 +139,7 @@ export class CommandHandler{
     this.curGuild.getConfig().dontUseJoker();
 
     this.answer.setTitle('Don\'t use joker')
-      .setDescription('From now on there aren\'t joker in the decks')
+      .setDescription(this.getMentionOfAuthor() + ' remove joker from the next deck.')
       .setColor(AnswerColor.reply_info);
   }
 
@@ -155,7 +155,7 @@ export class CommandHandler{
     this.curGuild.getConfig().setPrefix(newPrefix);
 
     this.answer.setTitle('Prefix changed')
-      .setDescription('Prefix changed to ' + newPrefix)
+      .setDescription(this.getMentionOfAuthor() + ' changed prefix to ' + newPrefix + '.')
       .setColor(AnswerColor.reply_info);
   }
 
@@ -238,7 +238,6 @@ export class CommandHandler{
    */
   private initAnswer(): void {
     this.answer = this.msgFactory();
-    // @TODO add other things like author
   }
 
   /**
@@ -264,5 +263,13 @@ export class CommandHandler{
     }
 
     this.answer.setColor(color);
+  }
+
+  /**
+   * Get the mention of the author
+   * For example <@12345678901234567>
+   */
+  private getMentionOfAuthor(): string {
+    return '<@' + this.curMessage.author.id + '>';
   }
 }
