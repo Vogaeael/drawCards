@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 
 @injectable()
-export class CommandHandler {
+export class CommandDeterminer {
   private commands: Map<string, (string) => string>;
   private curMsg: string;
   private guildPrefix: string;
@@ -12,7 +12,7 @@ export class CommandHandler {
     commands: Map<string, (string) => string>,
     msg: string,
     prefix: string
-  ): string {
+  ): [(string) => string, string] {
     this.setValues(commands, msg, prefix);
 
     if (!this.hasPrefix()) {
@@ -25,7 +25,7 @@ export class CommandHandler {
     }
     this.determineParams();
 
-    return this.command(this.params);
+    return [this.command, this.params];
   }
 
   private setValues(
