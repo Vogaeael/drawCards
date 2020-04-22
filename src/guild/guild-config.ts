@@ -5,7 +5,7 @@ import { injectable } from 'inversify';
 export class GuildConfig {
   private prefix: string = '!';
   private joker: boolean = false;
-  private minimized: boolean = false;
+  private minimized: boolean = true;
   private deckType: DeckTypes = DeckTypes.standardDeck;
 
   public setPrefix(newPref: string): void {
@@ -26,6 +26,14 @@ export class GuildConfig {
 
   public setDeckType(ranksNum: DeckTypes): void {
     this.deckType = ranksNum;
+  }
+
+  public printMinimized(): void {
+    this.minimized = true;
+  }
+
+  public printMaximized(): void {
+    this.minimized = false;
   }
 
   public getPrefix(): string {

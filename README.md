@@ -59,6 +59,14 @@ If you want that jokers are also in the deck:
 If you want that jokers aren't in the deck:
 `!dontUseJoker`
 
+### Print Minimized
+If you want your draw answers short and minimized:
+`!printMinimized`
+
+### Print Maximized
+If you want your draw answers large and maximized:
+`!printMaximized`
+
 ### Set prefix
 If you want to change the prefix from "!" to something else.
 ```shell script

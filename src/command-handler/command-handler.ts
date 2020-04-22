@@ -53,11 +53,7 @@ export class CommandHandler{
       description += ' with joker';
     }
 
-    this.initAnswer();
-    this.answer.setTitle('Shuffle')
-      .setDescription(description)
-      .setColor(AnswerColor.reply_info);
-    this.sendAnswer();
+    this.replyConfigChange('Shuffle', description);
   }
 
   /**
@@ -89,11 +85,7 @@ export class CommandHandler{
   private useStandardDeck(): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.standardDeck);
 
-    this.initAnswer();
-    this.answer.setTitle('Use standard deck')
-      .setDescription(this.getMentionOfAuthor() + ' changed the next deck to a standard deck (52 cards).')
-      .setColor(AnswerColor.reply_info);
-    this.sendAnswer();
+    this.replyConfigChange('Use standard deck', 'changed the next deck to a standard deck (52 cards).');
   }
 
   /**
@@ -102,11 +94,7 @@ export class CommandHandler{
   private useStrippedDeck(): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.strippedDeck);
 
-    this.initAnswer();
-    this.answer.setTitle('Use stripped deck')
-      .setDescription(this.getMentionOfAuthor() + ' changed the next deck to a stripped deck (32 cards).')
-      .setColor(AnswerColor.reply_info);
-    this.sendAnswer();
+    this.replyConfigChange('Use stripped deck', 'changed the next deck to a stripped deck (32 cards).');
   }
 
   /**
@@ -115,11 +103,7 @@ export class CommandHandler{
   private useJoker(): void {
     this.curGuild.getConfig().useJoker();
 
-    this.initAnswer();
-    this.answer.setTitle('Use joker')
-      .setDescription(this.getMentionOfAuthor() + ' add joker to the next deck.')
-      .setColor(AnswerColor.reply_info);
-    this.sendAnswer();
+    this.replyConfigChange('Use joker', 'added joker to the next deck.');
   }
 
   /**
@@ -128,11 +112,25 @@ export class CommandHandler{
   private dontUseJoker(): void {
     this.curGuild.getConfig().dontUseJoker();
 
-    this.initAnswer();
-    this.answer.setTitle('Don\'t use joker')
-      .setDescription(this.getMentionOfAuthor() + ' remove joker from the next deck.')
-      .setColor(AnswerColor.reply_info);
-    this.sendAnswer();
+    this.replyConfigChange('Don\'t use joker', 'removed joker from the next deck.')
+  }
+
+  /**
+   * Command !printMinimized
+   */
+  private printMinimized(): void {
+    this.curGuild.getConfig().printMinimized();
+
+    this.replyConfigChange('Minimize draw answers', 'minimized the draw answers.');
+  }
+
+  /**
+   * Command !printMaximized
+   */
+  private printMaximized(): void {
+    this.curGuild.getConfig().printMaximized();
+
+    this.replyConfigChange('Maximized draw answers', 'maximized the draw answers.');
   }
 
   /**
@@ -146,11 +144,7 @@ export class CommandHandler{
     }
     this.curGuild.getConfig().setPrefix(newPrefix);
 
-    this.initAnswer();
-    this.answer.setTitle('Prefix changed')
-      .setDescription(this.getMentionOfAuthor() + ' changed prefix to ' + newPrefix + '.')
-      .setColor(AnswerColor.reply_info);
-    this.sendAnswer();
+    this.replyConfigChange('Prefix changed', 'changed prefix to ' + newPrefix + '.');
   }
 
   /**
@@ -169,8 +163,10 @@ export class CommandHandler{
       .addField('!useStandardDeck', 'Use standard (52 cards) deck (active from next shuffle on).')
       .addField('!useStrippedDeck', 'Use stripped (32 cards) deck (active from next shuffle on).')
       .addField('!useJoker', 'Add joker to the decks (active from next shuffle on).')
-      .addField('!dontUseJoker', 'don\'t add joker to the decks (active from next shuffle on).')
-      .addField('!setPrefix [?newPrefix]', 'set the prefix from \'!\' to another. If no parameter is set, it changes back to \'!\'')
+      .addField('!dontUseJoker', 'Don\'t add joker to the decks (active from next shuffle on).')
+      .addField('!printMinimized', 'Print the answer from draw minimized.')
+      .addField('!printMaximized', 'Print the answer from draw maximized.')
+      .addField('!setPrefix [?newPrefix]', 'Set the prefix from \'!\' to another. If no parameter is set, it changes back to \'!\'')
       .addField('!help', 'Get this help information');
     this.sendAnswer();
   }
@@ -183,6 +179,8 @@ export class CommandHandler{
    * - useStrippedDeck
    * - useJoker
    * - dontUseJoker
+   * - printMinimized
+   * - printMaximized
    * - setPrefix
    * - help
    */
@@ -205,6 +203,12 @@ export class CommandHandler{
     });
     this.commands.set('dontUseJoker', (_: string) => {
       this.dontUseJoker();
+    });
+    this.commands.set('printMinimized', (_: string) => {
+      this.printMinimized();
+    });
+    this.commands.set('printMaximized', (_: string) => {
+      this.printMaximized();
     });
     this.commands.set('setPrefix', (newPrefix: string) => {
       this.setPrefix(newPrefix);
@@ -332,10 +336,20 @@ export class CommandHandler{
    * Answer that the deck it empty
    */
   private answerEmpty(): void {
+    this.replyConfigChange('Draw Card', 'sorry but the deck is empty');
+  }
+
+  /**
+   * Reply to the change of the config
+   *
+   * @param title: string
+   * @param description: string
+   */
+  private replyConfigChange(title: string, description: string): void {
     this.initAnswer();
-    this.answer.setTitle('Draw Card')
-      .setDescription(this.getMentionOfAuthor() + ', sorry but the deck is empty')
-      .setColor(AnswerColor.reply_info);
+    this.answer.setTitle(title)
+      .setDescription(this.getMentionOfAuthor() + ' ' + description)
+      .setColor(AnswerColor.config_reply);
     this.sendAnswer();
   }
 
