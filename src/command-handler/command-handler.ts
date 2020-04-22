@@ -172,6 +172,8 @@ export class CommandHandler{
     this.answer.setTitle('Draw Cards')
       .setDescription('Bot to shuffle a deck and draw cards from it.')
       .setURL('https://github.com/Vogaeael/drawCards')
+      .attachFiles(['./media/images/deck_icons.png'])
+      .setThumbnail('attachment://deck_icons.png')
       .setColor(AnswerColor.info)
       .addField('!shuffle', 'Shuffle the hole deck new.')
       .addField('!draw [?num]', 'Draw [num] cards of the deck. If nothing is set or the value is not valid it uses 1.')
