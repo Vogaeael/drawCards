@@ -3,6 +3,7 @@ export const TYPES = {
   Client: Symbol("Client"),
   Token: Symbol("Token"),
   CommandHandler: Symbol("CommandHandler"),
+  CommandDeterminer: Symbol("CommandDeterminer"),
   Guild: Symbol("Guild"),
   GuildFactory: Symbol("Factory<Guild>"),
   GuildConfig: Symbol("GuildConfig"),
@@ -10,5 +11,7 @@ export const TYPES = {
   Deck: Symbol("Deck"),
   DeckFactory: Symbol("DeckFactory"),
   Card: Symbol("Card"),
-  CardFactory: Symbol("Factory<Card>")
+  CardFactory: Symbol("Factory<Card>"),
+  Message: Symbol("Message"),
+  MessageFactory: Symbol("MessageFactory")
 };

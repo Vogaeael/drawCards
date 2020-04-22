@@ -62,6 +62,14 @@ If you want that jokers are also in the deck:
 If you want that jokers aren't in the deck:
 `!dontUseJoker`
 
+### Print Minimized
+If you want your draw answers short and minimized:
+`!printMinimized`
+
+### Print Maximized
+If you want your draw answers large and maximized:
+`!printMaximized`
+
 ### Set prefix
 If you want to change the prefix from "!" to something else.
 ```shell script
@@ -75,3 +83,6 @@ If you want to see the help:
 
 ## License
 See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
+
+## Resources
+* [Card Images](http://acbl.mybigcommerce.com/52-playing-cards/)

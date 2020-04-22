@@ -2,12 +2,13 @@ import "reflect-metadata";
 import { Container, interfaces } from "inversify";
 import { TYPES } from "./types";
 import { Bot } from "./bot";
-import { Client } from "discord.js";
-import { CommandHandler } from './command-handler';
+import { Client, MessageEmbed } from "discord.js";
+import { CommandDeterminer } from './command-handler/command-determiner';
 import { Guild } from './guild/guild';
 import { GuildConfig } from './guild/guild-config';
 import { Deck } from './deck/deck';
 import { Card } from './deck/card';
+import { CommandHandler } from './command-handler/command-handler';
 
 let container = new Container();
 
@@ -17,8 +18,11 @@ container.bind<Client>(TYPES.Client)
   .toConstantValue(new Client());
 container.bind<string>(TYPES.Token)
   .toConstantValue(process.env.TOKEN);
+
+container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
+  .toConstantValue(new CommandDeterminer());
 container.bind<CommandHandler>(TYPES.CommandHandler)
-  .toConstantValue(new CommandHandler());
+  .to(CommandHandler).inSingletonScope();
 
 container.bind<Guild>(TYPES.Guild)
   .to(Guild);
@@ -39,5 +43,12 @@ container.bind<Card>(TYPES.Card)
   .to(Card);
 container.bind<interfaces.Factory<Card>>(TYPES.CardFactory)
   .toAutoFactory<Card>(TYPES.Card);
+
+container.bind<MessageEmbed>(TYPES.Message)
+  .to(MessageEmbed);
+container.bind<interfaces.Factory<MessageEmbed>>(TYPES.MessageFactory)
+  .toFactory(() =>
+    () => new MessageEmbed()
+  );
 
 export default container;
