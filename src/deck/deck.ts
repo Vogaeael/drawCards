@@ -72,9 +72,9 @@ export class Deck {
   }
 
   private addJoker(): void {
-    Object.entries(Joker).forEach(() => {
+    Object.entries(Joker).forEach((value: [string, string]) => {
       const card = this.cardFactory();
-      card.init('black_joker', '');
+      card.init('', value[1]);
       this.cards.push(card);
     });
   }

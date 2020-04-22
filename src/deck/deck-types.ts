@@ -22,7 +22,7 @@ export const StandardDeck = StrippedDeck.concat([
   '6',
 ]);
 
-export const Joker = {
-  14: 14,
-  15: 15
+export enum Joker {
+  black_joker = 'black_joker',
+  black_joker2 = 'black_joker'
 }

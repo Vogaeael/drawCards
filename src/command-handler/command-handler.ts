@@ -5,7 +5,7 @@ import { CommandDeterminer } from './command-determiner';
 import { TYPES } from '../types';
 import { Card } from '../deck/card';
 import { capitalize, transformToNum } from '../functions';
-import { DeckTypes } from '../deck/deck-types';
+import { DeckTypes, Joker } from '../deck/deck-types';
 import { AnswerColor } from './answer-color';
 import { Suits } from '../deck/suits';
 
@@ -53,9 +53,11 @@ export class CommandHandler{
       description += ' with joker';
     }
 
+    this.initAnswer();
     this.answer.setTitle('Shuffle')
       .setDescription(description)
       .setColor(AnswerColor.reply_info);
+    this.sendAnswer();
   }
 
   /**
@@ -64,45 +66,21 @@ export class CommandHandler{
    * @param numString: string, how much cards you want to draw. Default is 1.
    */
   private draw(numString: string = ''): void {
-    this.answer.setTitle('Draw Card');
     if (undefined === this.curGuild.getDeck()) {
-      this.answer.setDescription('Out of cards.')
-        .setColor(AnswerColor.reply_info);
+      this.answerEmpty();
+
       return
     }
 
-    let hasRed = false;
-    let hasBlack = false;
     const num = transformToNum(numString);
-    for (let i = num; i > 0; --i) {
-      const card: Card = this.curGuild.getDeck().draw();
-      if (undefined === card) {
-        this.setDrawColor(hasRed, hasBlack);
-        this.answer.addField('Out of Cards', 'Sorry ' + this.getMentionOfAuthor() + ', the deck is out of cards.');
 
-        return
-      }
+    if (this.curGuild.getConfig().getMinimized()) {
+      this.drawMinimized(num);
 
-      this.answer.setDescription(this.getMentionOfAuthor() + ' got the cards:');
-      if (card.getSuit() === Suits.clubs || card.getSuit() === Suits.spades) {
-        hasBlack = true;
-      }
-      if (card.getSuit() === Suits.diamonds || card.getSuit() === Suits.hearts) {
-        hasRed = true;
-      }
-
-      this.answer.addField(
-        ':' +
-        card.getSuit() +
-        ': ' +
-        capitalize(card.getRank()),
-        capitalize(card.getSuit()) +
-        ' ' +
-        capitalize(card.getRank()),
-        true);
+      return
     }
 
-    this.setDrawColor(hasRed, hasBlack);
+    this.drawMaximized(num);
   }
 
   /**
@@ -111,9 +89,11 @@ export class CommandHandler{
   private useStandardDeck(): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.standardDeck);
 
+    this.initAnswer();
     this.answer.setTitle('Use standard deck')
       .setDescription(this.getMentionOfAuthor() + ' changed the next deck to a standard deck (52 cards).')
       .setColor(AnswerColor.reply_info);
+    this.sendAnswer();
   }
 
   /**
@@ -122,9 +102,11 @@ export class CommandHandler{
   private useStrippedDeck(): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.strippedDeck);
 
+    this.initAnswer();
     this.answer.setTitle('Use stripped deck')
       .setDescription(this.getMentionOfAuthor() + ' changed the next deck to a stripped deck (32 cards).')
       .setColor(AnswerColor.reply_info);
+    this.sendAnswer();
   }
 
   /**
@@ -133,9 +115,11 @@ export class CommandHandler{
   private useJoker(): void {
     this.curGuild.getConfig().useJoker();
 
+    this.initAnswer();
     this.answer.setTitle('Use joker')
       .setDescription(this.getMentionOfAuthor() + ' add joker to the next deck.')
       .setColor(AnswerColor.reply_info);
+    this.sendAnswer();
   }
 
   /**
@@ -144,9 +128,11 @@ export class CommandHandler{
   private dontUseJoker(): void {
     this.curGuild.getConfig().dontUseJoker();
 
+    this.initAnswer();
     this.answer.setTitle('Don\'t use joker')
       .setDescription(this.getMentionOfAuthor() + ' remove joker from the next deck.')
       .setColor(AnswerColor.reply_info);
+    this.sendAnswer();
   }
 
   /**
@@ -160,15 +146,18 @@ export class CommandHandler{
     }
     this.curGuild.getConfig().setPrefix(newPrefix);
 
+    this.initAnswer();
     this.answer.setTitle('Prefix changed')
       .setDescription(this.getMentionOfAuthor() + ' changed prefix to ' + newPrefix + '.')
       .setColor(AnswerColor.reply_info);
+    this.sendAnswer();
   }
 
   /**
    * Command !help
    */
   private help(): void {
+    this.initAnswer();
     this.answer.setTitle('Draw Cards')
       .setDescription('Bot to shuffle a deck and draw cards from it.')
       .setURL('https://github.com/Vogaeael/drawCards')
@@ -183,6 +172,7 @@ export class CommandHandler{
       .addField('!dontUseJoker', 'don\'t add joker to the decks (active from next shuffle on).')
       .addField('!setPrefix [?newPrefix]', 'set the prefix from \'!\' to another. If no parameter is set, it changes back to \'!\'')
       .addField('!help', 'Get this help information');
+    this.sendAnswer();
   }
 
   /**
@@ -228,8 +218,6 @@ export class CommandHandler{
    * Handle the message
    */
   private _handle(): void {
-    this.initAnswer();
-
     const commandAndParams = this.cmdDeterminer.handle(
       this.commands,
       this.curMessage.content,
@@ -239,15 +227,80 @@ export class CommandHandler{
       const command: (string) => void = commandAndParams[0];
       const params: string = commandAndParams[1];
       command(params);
-      this.curMessage.channel.send(this.answer);
     }
   }
 
   /**
-   * Initialize the answer
+   * Draw cards and answer one message for all
+   *
+   * @param num: number, the number of cards to draw
    */
-  private initAnswer(): void {
-    this.answer = this.msgFactory();
+  private drawMinimized(num: number): void {
+    this.initAnswer();
+    this.answer.setTitle('Draw Card');
+    this.answer.setDescription(this.getMentionOfAuthor() + ' got the cards:');
+
+    let fieldsToAdd = [];
+    let hasBlack = false;
+    let hasRed = false;
+    for (let i = num; i > 0; --i) {
+      const card: Card = this.curGuild.getDeck().draw();
+      if (undefined === card) {
+        this.setDrawColor(hasRed, hasBlack);
+        this.answer.addFields(fieldsToAdd);
+        this.answer.addField('Draw Card', 'Sorry but the deck is empty.');
+        this.sendAnswer();
+
+        return
+      }
+
+      if (card.getSuit() === Suits.clubs || card.getSuit() === Suits.spades) {
+        hasBlack = true;
+      }
+
+      if (card.getSuit() === Suits.diamonds || card.getSuit() === Suits.hearts) {
+        hasRed = true;
+      }
+
+      fieldsToAdd.push(
+        {
+          'name': ':' + card.getSuit() + ': ' + capitalize(card.getRank()),
+          'value': capitalize(card.getSuit()) + ' ' + capitalize(card.getRank())
+        });
+    }
+
+    this.setDrawColor(hasRed, hasBlack);
+    this.answer.addFields(fieldsToAdd);
+    this.sendAnswer();
+  }
+
+  /**
+   * Draw cards and answer everyone with its own image and message
+   *
+   * @param num: number, number of cards to draw
+   */
+  private drawMaximized(num: number): void {
+    for (let i = num; i > 0; --i) {
+      const card: Card = this.curGuild.getDeck().draw();
+      if (undefined === card) {
+        this.answerEmpty();
+
+        return
+      }
+
+      this.initAnswer();
+      this.answer.setTitle('Draw Card :' + card.getSuit() + ': ' + capitalize(card.getRank()))
+        .setDescription(
+          this.getMentionOfAuthor() +
+          ' draw card ' +
+          capitalize(card.getSuit()) +
+          ' ' +
+          capitalize(card.getRank()));
+
+      this.addCardImage(card);
+
+      this.sendAnswer();
+    }
   }
 
   /**
@@ -273,6 +326,48 @@ export class CommandHandler{
     }
 
     this.answer.setColor(color);
+  }
+
+  /**
+   * Answer that the deck it empty
+   */
+  private answerEmpty(): void {
+    this.initAnswer();
+    this.answer.setTitle('Draw Card')
+      .setDescription(this.getMentionOfAuthor() + ', sorry but the deck is empty')
+      .setColor(AnswerColor.reply_info);
+    this.sendAnswer();
+  }
+
+  /**
+   * Add an image for the card
+   *
+   * @param card: Card
+   */
+  private addCardImage(card: Card): void {
+    let fileName = 'deck_icons.png';
+    let path = './media/images/';
+    if (card.getRank() !== Joker.black_joker || card.getRank() !== Joker.black_joker2) {
+      fileName = card.getRank() + '_' + card.getSuit() + '.png';
+      path = './media/images/cards/';
+    }
+
+    this.answer.attachFiles([path + fileName]);
+    this.answer.setImage('attachment://' + fileName);
+  }
+
+  /**
+   * Send the current answer
+   */
+  private sendAnswer(): void {
+    this.curMessage.channel.send(this.answer);
+  }
+
+  /**
+   * Initialize the answer
+   */
+  private initAnswer(): void {
+    this.answer = this.msgFactory();
   }
 
   /**
