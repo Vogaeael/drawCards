@@ -71,4 +71,4 @@ If you want to see the help:
 `!help`
 
 ## License
-See the LICENSE file for license rights and limitations (MIT).
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
