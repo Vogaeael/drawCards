@@ -29,6 +29,12 @@ export class CommandHandler{
     this.initCommands();
   }
 
+  /**
+   * Handle the message
+   *
+   * @param msg
+   * @param curGuild
+   */
   public handle(msg: Message, curGuild: Guild): void {
     this.curGuild = curGuild;
     this.curMessage = msg;
@@ -216,6 +222,9 @@ export class CommandHandler{
     });
   }
 
+  /**
+   * Handle the message
+   */
   private _handle(): void {
     this.initAnswer();
 
@@ -224,10 +233,9 @@ export class CommandHandler{
       this.curMessage.content,
       this.curGuild.getConfig().getPrefix());
 
-    const command: (string) => void = commandAndParams[0];
-    const params: string = commandAndParams[1];
-
     if (commandAndParams) {
+      const command: (string) => void = commandAndParams[0];
+      const params: string = commandAndParams[1];
       command(params);
       this.curMessage.channel.send(this.answer);
     }
