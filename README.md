@@ -72,3 +72,6 @@ If you want to see the help:
 
 ## License
 See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
+
+## Resources
+* [Card Images](http://acbl.mybigcommerce.com/52-playing-cards/)
