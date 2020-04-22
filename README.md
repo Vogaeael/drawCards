@@ -11,6 +11,7 @@ To develop you need npm. Run `npm install` to install the dependencies.
 
 ### Create .env
 You need a `.env` file, as template you can use the `.env.dist`.
+To generate your own bot-token use this [Tutorial](https://www.writebots.com/discord-bot-token/).
 
 ## Compile to .js files
 ### One time
