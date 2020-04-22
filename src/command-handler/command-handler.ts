@@ -6,6 +6,10 @@ import { TYPES } from '../types';
 import { Card } from '../deck/card';
 import { capitalize, transformToNum } from '../functions';
 import { DeckTypes } from '../deck/deck-types';
+import { AnswerColor } from './answer-color';
+import { Suits } from '../deck/suits';
+
+export type Command = (string) => void;
 
 @injectable()
 export class CommandHandler{
@@ -14,7 +18,7 @@ export class CommandHandler{
   private curGuild: Guild;
   private curMessage: Message;
   private answer: MessageEmbed;
-  private commands: Map<string, (string) => string>;
+  private commands: Map<string, (string) => void>;
 
   constructor(
     @inject(TYPES.CommandDeterminer) cmdDeterminer: CommandDeterminer,
@@ -34,154 +38,143 @@ export class CommandHandler{
 
   /**
    * Command !shuffle
-   *
-   * @return string answer
    */
-  private shuffle(): string {
+  private shuffle(): void {
     this.curGuild.getDeck().shuffle(this.curGuild.getConfig().getDeckType(), this.curGuild.getConfig().getJoker());
 
-    let answer = 'shuffled ' + this.curGuild.getConfig().getDeckType();
-
+    let description = 'Shuffled ' + this.curGuild.getConfig().getDeckType();
     if (this.curGuild.getConfig().getJoker()) {
-      answer += ' with joker';
+      description += ' with joker';
     }
 
-    return answer;
+    this.answer.setTitle('Shuffle')
+      .setDescription(description)
+      .setColor(AnswerColor.reply_info);
   }
 
   /**
    * Command !draw
    *
    * @param numString: string, how much cards you want to draw. Default is 1.
-   *
-   * @return string answer
    */
-  private draw(numString: string = ''): string {
+  private draw(numString: string = ''): void {
+    this.answer.setTitle('Draw Card');
     if (undefined === this.curGuild.getDeck()) {
-      return 'out of cards';
+      this.answer.setDescription('Out of cards.')
+        .setColor(AnswerColor.reply_info);
+      return
     }
 
+    let hasRed = false;
+    let hasBlack = false;
     const num = transformToNum(numString);
-    let first = true;
-    let answer: string = '';
     for (let i = num; i > 0; --i) {
       const card: Card = this.curGuild.getDeck().draw();
       if (undefined === card) {
-        if (!first) {
-          answer += '\n  ';
-        }
-        return answer + 'out of cards';
+        this.setDrawColor(hasRed, hasBlack);
+        this.answer.addField('Out of Cards', 'The deck is out of cards.');
+
+        return
       }
-      if (first) {
-        answer += 'got the card(s):';
-        first = !first;
+
+      this.answer.setDescription('You got the cards:');
+      if (card.getSuit() === Suits.clubs || card.getSuit() === Suits.spades) {
+        hasBlack = true;
       }
-      answer += '\n  :' +
+      if (card.getSuit() === Suits.diamonds || card.getSuit() === Suits.hearts) {
+        hasRed = true;
+      }
+
+      this.answer.addField(
+        ':' +
         card.getSuit() +
-        ':(' +
+        ': ' +
+        capitalize(card.getRank()),
         capitalize(card.getSuit()) +
-        ') ' +
-        capitalize(card.getRank());
+        ' ' +
+        capitalize(card.getRank()),
+        true);
     }
 
-    return answer;
+    this.setDrawColor(hasRed, hasBlack);
   }
 
   /**
    * Command !useStandardDeck
-   *
-   * @return string answer
    */
-  private useStandardDeck(): string {
+  private useStandardDeck(): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.standardDeck);
 
-    return 'from next shuffle on a standard deck (52 cards) will be used';
+    this.answer.setTitle('Use standard deck')
+      .setDescription('From next shuffle on a standard deck (52 cards) will be used.')
+      .setColor(AnswerColor.reply_info);
   }
 
   /**
    * Command !useStrippedDeck
-   *
-   * @return string answer
    */
-  private useStrippedDeck(): string {
+  private useStrippedDeck(): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.strippedDeck);
 
-    return 'from next shuffle on a stripped deck (32 cards) will be used';
+    this.answer.setTitle('Use stripped deck')
+      .setDescription('From next shuffle on a stripped deck (32 cards) will be used.')
+      .setColor(AnswerColor.reply_info);
   }
 
   /**
    * Command !userJoker
-   *
-   * @return string answer
    */
-  private useJoker(): string {
+  private useJoker(): void {
     this.curGuild.getConfig().useJoker();
 
-    return 'from now on there are joker in the decks';
+    this.answer.setTitle('Use joker')
+      .setDescription('From now on there are joker in the decks')
+      .setColor(AnswerColor.reply_info);
   }
 
   /**
    * Command !dontUseJoker
-   *
-   * @return string answer
    */
-  private dontUseJoker(): string {
+  private dontUseJoker(): void {
     this.curGuild.getConfig().dontUseJoker();
 
-    return 'from now on there aren\'t joker in the decks';
+    this.answer.setTitle('Don\'t use joker')
+      .setDescription('From now on there aren\'t joker in the decks')
+      .setColor(AnswerColor.reply_info);
   }
 
   /**
    * Command !newPrefix
    *
    * @param newPrefix
-   *
-   * @return string answer
    */
-  private setPrefix(newPrefix: string): string {
+  private setPrefix(newPrefix: string): void {
     if ('' === newPrefix) {
       newPrefix = '!';
     }
     this.curGuild.getConfig().setPrefix(newPrefix);
 
-    return 'prefix changed to \'' + newPrefix + '\'';
+    this.answer.setTitle('Prefix changed')
+      .setDescription('Prefix changed to ' + newPrefix)
+      .setColor(AnswerColor.reply_info);
   }
 
   /**
-   * Command help
-   *
-   * @return string help info
+   * Command !help
    */
-  private static help() {
-    return '\n> # Draw Cards\n' +
-      '> a bot for drawing random cards\n' +
-      '> **Available commands:**\n' +
-      '> *!shuffle*\n' +
-      '> shuffle the hole deck new\n' +
-      '> \n' +
-      '> *!draw [?num]*\n' +
-      '> draw [num] cards of the deck. If nothing is set or the value is not valid it uses 1.\n' +
-      '> \n' +
-      '> *!useStandardDeck*\n' +
-      '> use standard (52 cards) deck (active from next shuffle on)\n' +
-      '> \n' +
-      '> *!useStrippedDeck*\n' +
-      '> use stripped (32 cards) deck (active from next shuffle on)\n' +
-      '> \n' +
-      '> *!useJoker*\n' +
-      '> add joker to the decks (active from next shuffle on)\n' +
-      '> \n' +
-      '> *!dontUseJoker*\n' +
-      '> don\'t add joker to the decks (active from next shuffle on)\n' +
-      '> \n' +
-      '> *!setPrefix [?newPrefix]*\n' +
-      '> set the prefix from \'!\' to another. if no parameter is set, it changes back to \'!\'\n' +
-      '> \n' +
-      '> *!help*\n' +
-      '> get this help information\n' +
-      '> \n' +
-      '> ## more Infos\n' +
-      '> Github: https://github.com/Vogaeael/drawCards'
+  private help(): void {
+    this.answer.setTitle('Draw Cards')
+      .setDescription('Bot to shuffle a deck and draw cards from it.')
+      .setURL('https://github.com/Vogaeael/drawCards')
+      .setColor(AnswerColor.info)
+      .addField('!shuffle', 'Shuffle the hole deck new.')
+      .addField('!draw [?num]', 'Draw [num] cards of the deck. If nothing is set or the value is not valid it uses 1.')
+      .addField('!useStandardDeck', 'Use standard (52 cards) deck (active from next shuffle on).')
+      .addField('!useStrippedDeck', 'Use stripped (32 cards) deck (active from next shuffle on).')
+      .addField('!useJoker', 'Add joker to the decks (active from next shuffle on).')
+      .addField('!dontUseJoker', 'don\'t add joker to the decks (active from next shuffle on).')
+      .addField('!setPrefix [?newPrefix]', 'set the prefix from \'!\' to another. If no parameter is set, it changes back to \'!\'')
+      .addField('!help', 'Get this help information');
   }
 
   /**
@@ -196,30 +189,30 @@ export class CommandHandler{
    * - help
    */
   private initCommands(): void {
-    this.commands = new Map<string, (string) => string>();
+    this.commands = new Map<string, (string) => void>();
     this.commands.set('shuffle', (_: string) => {
-      return this.shuffle();
+      this.shuffle();
     });
     this.commands.set('draw', (num: string) => {
-      return this.draw(num);
+      this.draw(num);
     });
     this.commands.set('useStandardDeck', (_: string) => {
-      return this.useStandardDeck();
+      this.useStandardDeck();
     });
     this.commands.set('useStrippedDeck', (_: string) => {
-      return this.useStrippedDeck();
+      this.useStrippedDeck();
     });
     this.commands.set('useJoker', (_: string) => {
-      return this.useJoker();
+      this.useJoker();
     });
     this.commands.set('dontUseJoker', (_: string) => {
-      return this.dontUseJoker();
+      this.dontUseJoker();
     });
     this.commands.set('setPrefix', (newPrefix: string) => {
-      return this.setPrefix(newPrefix);
+      this.setPrefix(newPrefix);
     });
     this.commands.set('help', (_: string) => {
-      return CommandHandler.help();
+      this.help();
     });
   }
 
@@ -231,13 +224,45 @@ export class CommandHandler{
       this.curMessage.content,
       this.curGuild.getConfig().getPrefix());
 
+    const command: (string) => void = commandAndParams[0];
+    const params: string = commandAndParams[1];
+
     if (commandAndParams) {
-      this.curMessage.reply(commandAndParams[0](commandAndParams[1]));
+      command(params);
+      this.curMessage.channel.send(this.answer);
     }
   }
 
+  /**
+   * Initialize the answer
+   */
   private initAnswer(): void {
     this.answer = this.msgFactory();
     // @TODO add other things like author
+  }
+
+  /**
+   * Set the answer color to one of AnswerColor
+   *
+   * | red | black |     color      |
+   * ----+-----+-----------------
+   * |  0  |   0   | red_black_card |
+   * |  0  |   1   |   black_card   |
+   * |  1  |   0   |    red_card    |
+   * |  1  |   1   | red_black_card |
+   *
+   * @param red
+   * @param black
+   */
+  private setDrawColor(red: boolean, black: boolean): void {
+    let color = AnswerColor.red_black_cards;
+    if (!red && black) {
+      color = AnswerColor.black_card;
+    }
+    if (red && !black) {
+      color = AnswerColor.red_card;
+    }
+
+    this.answer.setColor(color);
   }
 }

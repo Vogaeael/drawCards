@@ -2,8 +2,8 @@ import { injectable } from 'inversify';
 
 @injectable()
 export class Card {
-  private suit;
-  private rank;
+  private suit: string;
+  private rank: string;
 
   public init(suit: string, rank: string) {
     this.suit = suit;

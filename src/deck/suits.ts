@@ -1,6 +1,6 @@
-export const Suits = [
-  "clubs",
-  "diamonds",
-  "hearts",
-  "spades"
-];
+export enum Suits {
+  clubs = 'clubs',
+  diamonds = 'diamonds',
+  hearts = 'hearts',
+  spades = 'spades'
+}

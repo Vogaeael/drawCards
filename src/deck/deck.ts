@@ -7,7 +7,7 @@ import { TYPES } from '../types';
 @injectable()
 export class Deck {
   private cards: Card[];
-  private cardFactory: () => Card;
+  private readonly cardFactory: () => Card;
 
   public constructor(
     @inject(TYPES.CardFactory) cardFactory: () => Card//interfaces.Factory(Card) {
@@ -62,7 +62,7 @@ export class Deck {
         break;
     }
 
-    Suits.forEach((suit: string) => {
+    Object.keys(Suits).forEach((suit: string) => {
       deck.forEach((rank: string) => {
         const card = this.cardFactory();
         card.init(suit, rank);
