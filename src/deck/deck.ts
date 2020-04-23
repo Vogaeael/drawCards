@@ -1,36 +1,63 @@
 import { Suits } from './suits';
 import { DeckTypes, Joker, StandardDeck, StrippedDeck } from './deck-types';
-import { Card } from './card';
+import { ICard } from './card';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 
-@injectable()
-export class Deck {
-  private cards: Card[];
-  private readonly cardFactory: () => Card;
-
-  public constructor(
-    @inject(TYPES.CardFactory) cardFactory: () => Card//interfaces.Factory(Card) {
-  ) {
-    this.cardFactory = cardFactory;
-    this.shuffle(DeckTypes.standardDeck);
-  }
-
+export interface IDeck {
   /**
    * Refill the deck and shuffle the cards
    *
    * @param deckType: DeckTypes, which deck-type it will use
    * @param joker: boolean, if it should shuffle joker to the other cards
    */
+  shuffle(deckType: DeckTypes, joker: boolean): void,
+
+  /**
+   * Draw a card
+   *
+   * @return ICard
+   */
+  draw(): ICard,
+
+  /**
+   * Count the number of remaining cards
+   *
+   * @return number
+   */
+  count(): number,
+}
+
+@injectable()
+export class Deck implements IDeck {
+  private cards: ICard[];
+  private readonly cardFactory: () => ICard;
+
+  public constructor(
+    @inject(TYPES.CardFactory) cardFactory: () => ICard//interfaces.Factory(Card) {
+  ) {
+    this.cardFactory = cardFactory;
+    this.shuffle(DeckTypes.standardDeck);
+  }
+
+  /**
+   * @inheritDoc
+   */
   public shuffle(deckType: DeckTypes, joker: boolean = false): void {
     this._fill(deckType, joker);
     this._shuffle();
   }
 
-  public draw(): Card {
+  /**
+   * @inheritDoc
+   */
+  public draw(): ICard {
     return this.cards.pop();
   }
 
+  /**
+   * @inheritDoc
+   */
   public count(): number {
     return this.cards.length;
   }

@@ -1,14 +1,33 @@
 import { injectable } from 'inversify';
 import { Command } from './command-handler';
 
+export interface ICommandDeterminer {
+  /**
+   *
+   * @param commands: Map<string, Command>, the map of commands
+   * @param msg: string, the string to handle
+   * @param prefix: string, the prefix of commands
+   *
+   * @return [Command, string]
+   */
+  handle(
+    commands: Map<string, Command>,
+    msg: string,
+    prefix: string
+  ): [Command, string]
+}
+
 @injectable()
-export class CommandDeterminer {
+export class CommandDeterminer implements ICommandDeterminer {
   private commands: Map<string, Command>;
   private curMsg: string;
   private guildPrefix: string;
   private command: Command;
   private params: string;
 
+  /**
+   * @inheritDoc
+   */
   public handle(
     commands: Map<string, Command>,
     msg: string,

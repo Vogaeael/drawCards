@@ -1,18 +1,18 @@
 import "reflect-metadata";
 import { Container, interfaces } from "inversify";
 import { TYPES } from "./types";
-import { Bot } from "./bot";
+import { IBot, Bot } from "./bot";
 import { Client, MessageEmbed } from "discord.js";
 import { CommandDeterminer } from './command-handler/command-determiner';
-import { Guild } from './guild/guild';
-import { GuildConfig } from './guild/guild-config';
-import { Deck } from './deck/deck';
-import { Card } from './deck/card';
+import { IGuild, Guild } from './guild/guild';
+import { IGuildConfig, GuildConfig } from './guild/guild-config';
+import { IDeck, Deck } from './deck/deck';
+import { ICard, Card } from './deck/card';
 import { CommandHandler } from './command-handler/command-handler';
 
 let container = new Container();
 
-container.bind<Bot>(TYPES.Bot)
+container.bind<IBot>(TYPES.Bot)
   .to(Bot).inSingletonScope();
 container.bind<Client>(TYPES.Client)
   .toConstantValue(new Client());
@@ -24,25 +24,25 @@ container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
 container.bind<CommandHandler>(TYPES.CommandHandler)
   .to(CommandHandler).inSingletonScope();
 
-container.bind<Guild>(TYPES.Guild)
+container.bind<IGuild>(TYPES.Guild)
   .to(Guild);
-container.bind<interfaces.Factory<Guild>>(TYPES.GuildFactory)
-  .toAutoFactory<Guild>(TYPES.Guild);
+container.bind<interfaces.Factory<IGuild>>(TYPES.GuildFactory)
+  .toAutoFactory<IGuild>(TYPES.Guild);
 
-container.bind<GuildConfig>(TYPES.GuildConfig)
+container.bind<IGuildConfig>(TYPES.GuildConfig)
   .to(GuildConfig);
-container.bind<interfaces.Factory<GuildConfig>>(TYPES.GuildConfigFactory)
-  .toAutoFactory<GuildConfig>(TYPES.GuildConfig);
+container.bind<interfaces.Factory<IGuildConfig>>(TYPES.GuildConfigFactory)
+  .toAutoFactory<IGuildConfig>(TYPES.GuildConfig);
 
-container.bind<Deck>(TYPES.Deck)
+container.bind<IDeck>(TYPES.Deck)
   .to(Deck);
-container.bind<interfaces.Factory<Deck>>(TYPES.DeckFactory)
-  .toAutoFactory<Deck>(TYPES.Deck);
+container.bind<interfaces.Factory<IDeck>>(TYPES.DeckFactory)
+  .toAutoFactory<IDeck>(TYPES.Deck);
 
-container.bind<Card>(TYPES.Card)
+container.bind<ICard>(TYPES.Card)
   .to(Card);
-container.bind<interfaces.Factory<Card>>(TYPES.CardFactory)
-  .toAutoFactory<Card>(TYPES.Card);
+container.bind<interfaces.Factory<ICard>>(TYPES.CardFactory)
+  .toAutoFactory<ICard>(TYPES.Card);
 
 container.bind<MessageEmbed>(TYPES.Message)
   .to(MessageEmbed);

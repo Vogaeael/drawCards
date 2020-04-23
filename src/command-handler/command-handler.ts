@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { Guild } from '../guild/guild';
+import { IGuild } from '../guild/guild';
 import { Message, MessageEmbed } from 'discord.js';
-import { CommandDeterminer } from './command-determiner';
+import { ICommandDeterminer } from './command-determiner';
 import { TYPES } from '../types';
-import { Card } from '../deck/card';
+import { ICard } from '../deck/card';
 import { capitalize, transformToNum } from '../functions';
 import { DeckTypes, Joker } from '../deck/deck-types';
 import { AnswerColor } from './answer-color';
@@ -11,17 +11,30 @@ import { Suits } from '../deck/suits';
 
 export type Command = (string) => void;
 
+export interface ICommandHandler {
+  /**
+   * Handle the message
+   *
+   * @param msg
+   * @param curGuild
+   */
+  handle(
+    msg: Message,
+    curGuild: IGuild
+  ): void
+}
+
 @injectable()
-export class CommandHandler{
-  private cmdDeterminer: CommandDeterminer;
+export class CommandHandler implements ICommandHandler {
+  private cmdDeterminer: ICommandDeterminer;
   private readonly msgFactory: () => MessageEmbed;
-  private curGuild: Guild;
+  private curGuild: IGuild;
   private curMessage: Message;
   private answer: MessageEmbed;
   private commands: Map<string, (string) => void>;
 
   constructor(
-    @inject(TYPES.CommandDeterminer) cmdDeterminer: CommandDeterminer,
+    @inject(TYPES.CommandDeterminer) cmdDeterminer: ICommandDeterminer,
     @inject(TYPES.MessageFactory) msgFactory: () => MessageEmbed//interfaces.Factory<Answer>
   ) {
     this.cmdDeterminer = cmdDeterminer
@@ -30,12 +43,9 @@ export class CommandHandler{
   }
 
   /**
-   * Handle the message
-   *
-   * @param msg
-   * @param curGuild
+   * @inheritDoc
    */
-  public handle(msg: Message, curGuild: Guild): void {
+  public handle(msg: Message, curGuild: IGuild): void {
     this.curGuild = curGuild;
     this.curMessage = msg;
 
@@ -248,7 +258,7 @@ export class CommandHandler{
     let hasBlack = false;
     let hasRed = false;
     for (let i = num; i > 0; --i) {
-      const card: Card = this.curGuild.getDeck().draw();
+      const card: ICard = this.curGuild.getDeck().draw();
       if (undefined === card) {
         this.setDrawColor(hasRed, hasBlack);
         this.answer.addFields(fieldsToAdd);
@@ -285,7 +295,7 @@ export class CommandHandler{
    */
   private drawMaximized(num: number): void {
     for (let i = num; i > 0; --i) {
-      const card: Card = this.curGuild.getDeck().draw();
+      const card: ICard = this.curGuild.getDeck().draw();
       if (undefined === card) {
         this.answerEmpty();
 
@@ -358,7 +368,7 @@ export class CommandHandler{
    *
    * @param card: Card
    */
-  private addCardImage(card: Card): void {
+  private addCardImage(card: ICard): void {
     let fileName = 'deck_icons.png';
     let path = './media/images/';
     if (card.getRank() !== Joker.black_joker || card.getRank() !== Joker.black_joker2) {

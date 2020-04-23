@@ -1,36 +1,48 @@
-import { Deck } from '../deck/deck';
-import { GuildConfig } from './guild-config';
+import { IDeck } from '../deck/deck';
+import { IGuildConfig } from './guild-config';
 import { inject, injectable, interfaces } from 'inversify';
 import { TYPES } from '../types';
 
+export interface IGuild {
+  /**
+   * Get the current deck
+   *
+   * @return IDeck
+   */
+  getDeck(): IDeck,
+
+  /**
+   * Get the guild config
+   *
+   * @return IGuildConfig
+   */
+  getConfig(): IGuildConfig,
+}
+
 @injectable()
-export class Guild {
-  private readonly deck: Deck;
-  private readonly config: GuildConfig;
+export class Guild implements IGuild {
+  private readonly deck: IDeck;
+  private readonly config: IGuildConfig;
 
   public constructor(
-    @inject(TYPES.GuildConfigFactory) guildConfigFactory: () => GuildConfig,//interfaces.Factory<GuildConfig>,
-    @inject(TYPES.DeckFactory) deckFactory: () => Deck,//interfaces.Factory<Deck>,
+    @inject(TYPES.GuildConfigFactory) guildConfigFactory: () => IGuildConfig,//interfaces.Factory<IGuildConfig>,
+    @inject(TYPES.DeckFactory) deckFactory: () => IDeck,//interfaces.Factory<IDeck>,
   ) {
     this.config = guildConfigFactory();
     this.deck = deckFactory();
   }
 
   /**
-   * Get the current deck
-   *
-   * @return Deck
+   * @inheritDoc
    */
-  public getDeck(): Deck {
+  public getDeck(): IDeck {
     return this.deck;
   }
 
   /**
-   * Get the guild config
-   *
-   * @return GuildConfig
+   * @inheritDoc
    */
-  public getConfig(): GuildConfig {
+  public getConfig(): IGuildConfig {
     return this.config;
   }
 }

@@ -7,23 +7,32 @@ import {
   injectable, interfaces
 } from "inversify";
 import { TYPES } from './types';
-import { Guild } from './guild/guild';
-import { CommandHandler } from './command-handler/command-handler';
+import { IGuild } from './guild/guild';
+import { ICommandHandler } from './command-handler/command-handler';
+
+export interface IBot {
+  /**
+   * Listen to messages
+   *
+   * @return Promise<string>
+   */
+  listen(): Promise<string>
+}
 
 @injectable()
-export class Bot {
+export class Bot implements IBot {
   private client: Client;
   private config;
   private readonly token: string;
-  private readonly guildFactory: () => Guild; //interfaces.Factory<Guild>;
-  private cmdHandler: CommandHandler;
-  private guilds: Map<Snowflake, Guild>;
+  private readonly guildFactory: () => IGuild; //interfaces.Factory<IGuild>;
+  private cmdHandler: ICommandHandler;
+  private guilds: Map<Snowflake, IGuild>;
 
   constructor(
     @inject(TYPES.Client) client: Client,
     @inject(TYPES.Token) token: string,
-    @inject(TYPES.GuildFactory) guildFactory: () => Guild,//interfaces.Factory<Guild>,
-    @inject(TYPES.CommandHandler) cmdHandler: CommandHandler
+    @inject(TYPES.GuildFactory) guildFactory: () => IGuild,//interfaces.Factory<IGuild>,
+    @inject(TYPES.CommandHandler) cmdHandler: ICommandHandler
   ) {
     this.cmdHandler = cmdHandler;
     this.guildFactory = guildFactory;
@@ -32,6 +41,9 @@ export class Bot {
     this.initGuilds();
   }
 
+  /**
+   * @inheritDoc
+   */
   public listen(): Promise<string> {
     this.client.on('message', (msg: Message) => {
       if (msg.author.bot) {
@@ -52,7 +64,7 @@ export class Bot {
    *
    * @param id
    */
-  private getGuild(id: Snowflake): Guild {
+  private getGuild(id: Snowflake): IGuild {
     if (!this.guilds.has(id)) {
       this.guilds.set(id, this.guildFactory());
     }
@@ -60,7 +72,10 @@ export class Bot {
     return this.guilds.get(id);
   }
 
+  /**
+   * Initialize the guild-map
+   */
   private initGuilds(): void {
-    this.guilds = new Map<Snowflake, Guild>();
+    this.guilds = new Map<Snowflake, IGuild>();
   }
 }
