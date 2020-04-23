@@ -1,13 +1,16 @@
 # DrawCards
 A bot for drawing random cards out of a deck. Standard (52 Cards) or stripped (32 Cards) decks are possible. You can decide if
- it should shuffle joker in the deck or not. The command-prefix ("!") is changeable. You can draw one or multiple cards. For
+ it should shuffle joker in the deck or not. The command-prefix `!` is changeable. You can draw one or multiple cards. For
  more information visit Github: https://github.com/Vogaeael/drawCards.
 At the moment, the bot isn't published and there isn't a running server you can add to your discord server. To use this bot you
  have to host one yourself.
 
 ## Install
 ### Install dependencies
-To develop you need npm. Run `npm install` to install the dependencies.
+To develop you need npm. To install the dependencies:
+```shell script
+npm install
+```
 
 ### Create .env
 You need a `.env` file, as template you can use the [.env.dist](.env.dist). Here you need to set a bot-token.
@@ -18,19 +21,27 @@ To generate your own bot-token use this [Tutorial](https://www.writebots.com/dis
 ## Compile to .js files
 ### One time
 To compile the `.ts` files to `.js` files one time use:
-`yarn compile`
+```shell script
+yarn compile
+````
 
 ### Start compile watcher
 To start a watcher which compile by changes use:
-`yarn watch`
+```shell script
+yarn watch
+```
 
 ## Run tests
 For running tests (at the moment there aren't any):
-`yarn test`
+```shell script
+yarn test
+```
 
 ## Start bot
 To start the bot use:
-`npm start`
+```shell script
+npm start
+```
 
 ## Commands
 
@@ -71,7 +82,7 @@ If you want your draw answers large and maximized:
 `!printMaximized`
 
 ### Set prefix
-If you want to change the prefix from "!" to something else.
+If you want to change the prefix from `!` to something else.
 ```shell script
 !setPrefix bob  # change the prefix to bob => "bobdraw" would be the new "draw"
 !setPrefix      # without parameter it changes back to "!"

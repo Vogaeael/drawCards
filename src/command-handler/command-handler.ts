@@ -176,7 +176,7 @@ export class CommandHandler implements ICommandHandler {
       .addField('!dontUseJoker', 'Don\'t add joker to the decks (active from next shuffle on).')
       .addField('!printMinimized', 'Print the answer from draw minimized.')
       .addField('!printMaximized', 'Print the answer from draw maximized.')
-      .addField('!setPrefix [?newPrefix]', 'Set the prefix from \'!\' to another. If no parameter is set, it changes back to \'!\'')
+      .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another. If no parameter is set, it changes back to `!`')
       .addField('!help', 'Get this help information');
     this.sendAnswer();
   }
