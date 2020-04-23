@@ -58,7 +58,7 @@ export class CommandHandler implements ICommandHandler {
   private shuffle(): void {
     this.curGuild.getDeck().shuffle(this.curGuild.getConfig().getDeckType(), this.curGuild.getConfig().getJoker());
 
-    let description = this.getMentionOfAuthor() + ' shuffled ' + this.curGuild.getConfig().getDeckType();
+    let description = 'shuffled ' + this.curGuild.getConfig().getDeckType();
     if (this.curGuild.getConfig().getJoker()) {
       description += ' with joker';
     }
