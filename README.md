@@ -55,6 +55,7 @@ To draw one or multiple cards.
 !draw       # for drawing one card
 !draw 12    # for drawing twelve cards
 !draw eee   # would draw one card because one is default
+!draw all   # for drawing all remaining cards
 ```
 
 ### Use standard deck

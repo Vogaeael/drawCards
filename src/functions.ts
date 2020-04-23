@@ -17,7 +17,7 @@ export function capitalize(word: string): string {
  * @param numString
  */
 export function transformToNum(numString: string): number {
-  let num: number = +numString;
+  let num: number = +numString.trim();
   if (!num || num <= 0) {
     num = 1;
   }
