@@ -261,12 +261,28 @@ export class CommandHandler implements ICommandHandler {
     let fieldsToAdd = [];
     let hasBlack = false;
     let hasRed = false;
+    let countMessage = 1;
     for (let i = num; i > 0; --i) {
+      if (25 * countMessage <= num - i) {
+        ++countMessage;
+        this.setDrawColor(hasRed, hasBlack);
+        this.answer.addFields(fieldsToAdd);
+        this.sendAnswer();
+        hasRed = false;
+        hasBlack = false;
+        fieldsToAdd = [];
+        this.initAnswer();
+      }
       const card: ICard = this.curGuild.getDeck().draw();
       if (undefined === card) {
         this.setDrawColor(hasRed, hasBlack);
+        fieldsToAdd.push(
+          {
+            'name': 'Draw Card',
+            'value': 'Sorry but the deck is empty. ' + i + ' cards remaining'
+          }
+        );
         this.answer.addFields(fieldsToAdd);
-        this.answer.addField('Draw Card', 'Sorry but the deck is empty.');
         this.sendAnswer();
 
         return
@@ -301,7 +317,7 @@ export class CommandHandler implements ICommandHandler {
     for (let i = num; i > 0; --i) {
       const card: ICard = this.curGuild.getDeck().draw();
       if (undefined === card) {
-        this.answerEmpty();
+        this.answerEmpty(i);
 
         return
       }
@@ -348,9 +364,15 @@ export class CommandHandler implements ICommandHandler {
 
   /**
    * Answer that the deck it empty
+   *
+   * @param num: number, number of remaining cards
    */
-  private answerEmpty(): void {
-    this.replyConfigChange('Draw Card', 'sorry but the deck is empty');
+  private answerEmpty(num: number = null): void {
+    let description = 'sorry but the deck is empty.';
+    if (num) {
+      description += ' ' + num + ' cards remaining.';
+    }
+    this.replyConfigChange('Draw Card', description);
   }
 
   /**
