@@ -89,10 +89,10 @@ export class Deck implements IDeck {
         break;
     }
 
-    Object.keys(Suits).forEach((suit: string) => {
+    Object.keys(Suits).filter(suit => suit !== Suits.joker).forEach((suit: string) => {
       deck.forEach((rank: string) => {
         const card = this.cardFactory();
-        card.init(suit, rank);
+        card.init(Suits[suit], rank);
         this.cards.push(card);
       });
     });
@@ -101,7 +101,7 @@ export class Deck implements IDeck {
   private addJoker(): void {
     Object.entries(Joker).forEach((value: [string, string]) => {
       const card = this.cardFactory();
-      card.init('', value[1]);
+      card.init(Suits.joker, value[1]);
       this.cards.push(card);
     });
   }

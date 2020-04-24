@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import { Suits } from './suits';
 
 export interface ICard {
   /**
@@ -7,7 +8,7 @@ export interface ICard {
    * @param suit: string
    * @param rank: string
    */
-  init(suit: string, rank: string): void,
+  init(suit: Suits, rank: string): void,
 
   /**
    * Get the rank
@@ -21,18 +22,18 @@ export interface ICard {
    *
    * @return string
    */
-  getSuit(): string
+  getSuit(): Suits
 }
 
 @injectable()
 export class Card implements ICard {
-  private suit: string;
+  private suit: Suits;
   private rank: string;
 
   /**
    * @inheritDoc
    */
-  public init(suit: string, rank: string): void {
+  public init(suit: Suits, rank: string): void {
     this.suit = suit;
     this.rank = rank;
   }
@@ -47,7 +48,7 @@ export class Card implements ICard {
   /**
    * @inheritDoc
    */
-  public getSuit(): string {
+  public getSuit(): Suits {
     return this.suit;
   }
 }
