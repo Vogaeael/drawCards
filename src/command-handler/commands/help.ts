@@ -29,7 +29,8 @@ export class Help extends Command {
       .addField('!printMinimized', 'Print the answer from draw minimized.')
       .addField('!printMaximized', 'Print the answer from draw maximized.')
       .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another. If no parameter is set, it changes back to `!`')
-      .addField('!help', 'Get this help information');
+      .addField('!help', 'Get this help information')
+      .addField('Default', 'By default it uses a standard deck (52 cards) without joker and print it minimized. The default prefix is `!`');
     this.sendAnswer();
   }
 }
