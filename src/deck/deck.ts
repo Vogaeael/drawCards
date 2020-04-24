@@ -91,13 +91,15 @@ export class Deck implements IDeck {
         break;
     }
 
-    Object.keys(Suits).filter(suit => suit !== Suits.joker).forEach((suit: string) => {
-      deck.forEach((rank: string) => {
-        const card = this.cardFactory();
-        card.init(Suits[suit], rank);
-        this.cards.push(card);
+    Object.keys(Suits)
+      .filter((suit: string) => Suits[suit] !== Suits.joker)
+      .forEach((suit: string) => {
+        deck.forEach((rank: string) => {
+          const card = this.cardFactory();
+          card.init(Suits[suit], rank);
+          this.cards.push(card);
+        });
       });
-    });
   }
 
   /**
