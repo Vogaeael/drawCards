@@ -30,27 +30,6 @@ container.bind<Client>(TYPES.Client)
 container.bind<string>(TYPES.Token)
   .toConstantValue(process.env.TOKEN);
 
-container.bind<ICommand>(TYPES.Shuffle)
-  .to(Shuffle).inSingletonScope();
-container.bind<ICommand>(TYPES.Draw)
-  .to(Draw).inSingletonScope();
-container.bind<ICommand>(TYPES.UseStandardDeck)
-  .to(UseStandardDeck).inSingletonScope();
-container.bind<ICommand>(TYPES.UseStrippedDeck)
-  .to(UseStrippedDeck).inSingletonScope();
-container.bind<ICommand>(TYPES.UseJoker)
-  .to(UseJoker).inSingletonScope();
-container.bind<ICommand>(TYPES.DontUseJoker)
-  .to(DontUseJoker).inSingletonScope();
-container.bind<ICommand>(TYPES.PrintMinimized)
-  .to(PrintMinimized).inSingletonScope();
-container.bind<ICommand>(TYPES.PrintMaximized)
-  .to(PrintMaximized).inSingletonScope();
-container.bind<ICommand>(TYPES.SetPrefix)
-  .to(SetPrefix).inSingletonScope();
-container.bind<ICommand>(TYPES.Help)
-  .to(Help).inSingletonScope();
-
 container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
   .toConstantValue(new CommandDeterminer());
 container.bind<CommandHandler>(TYPES.CommandHandler)

@@ -105,7 +105,7 @@ If you want to see the help:
 `!help`
 
 ## Default Values
-By default it uses a standard deck (52 cards) without joker and print it minimized. The default prefix is `!`.
+By default, it uses a standard deck (52 cards) without a joker and print it minimized. The default prefix is `!`.
 
 ## License
 See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).

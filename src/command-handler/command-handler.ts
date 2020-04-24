@@ -3,7 +3,8 @@ import { IGuild } from '../guild/guild';
 import { Message, MessageEmbed } from 'discord.js';
 import { ICommandDeterminer } from './command-determiner';
 import { TYPES } from '../types';
-import { ICommand } from './commands/command';
+import { ICommand, ICommandClass } from './commands/command';
+import { lowerFirstChar } from '../functions';
 
 export interface ICommandHandler {
   /**
@@ -15,7 +16,14 @@ export interface ICommandHandler {
   handle(
     msg: Message,
     curGuild: IGuild
-  ): void
+  ): void,
+
+  /**
+   * Add commands to the command list
+   *
+   * @param classList
+   */
+  addCommands(classList): void,
 }
 
 @injectable()
@@ -29,32 +37,10 @@ export class CommandHandler implements ICommandHandler {
   constructor(
     @inject(TYPES.CommandDeterminer) cmdDeterminer: ICommandDeterminer,
     @inject(TYPES.MessageFactory) msgFactory: () => MessageEmbed,//interfaces.Factory<Answer>,
-    // inject Commands
-    @inject(TYPES.Shuffle) shuffle: ICommand,
-    @inject(TYPES.Draw) draw: ICommand,
-    @inject(TYPES.UseStandardDeck) useStandardDeck: ICommand,
-    @inject(TYPES.UseStandardDeck) useStrippedDeck: ICommand,
-    @inject(TYPES.UseJoker) useJoker: ICommand,
-    @inject(TYPES.DontUseJoker) dontUseJoker: ICommand,
-    @inject(TYPES.PrintMinimized) printMinimized: ICommand,
-    @inject(TYPES.PrintMaximized) printMaximized: ICommand,
-    @inject(TYPES.SetPrefix) setPrefix: ICommand,
-    @inject(TYPES.Help) help: ICommand
   ) {
     this.cmdDeterminer = cmdDeterminer
     this.msgFactory = msgFactory;
-    this.initCommands(
-      draw,
-      shuffle,
-      useStandardDeck,
-      useStrippedDeck,
-      useJoker,
-      dontUseJoker,
-      printMinimized,
-      printMaximized,
-      setPrefix,
-      help
-    );
+    this.initCommands();
   }
 
   /**
@@ -65,6 +51,24 @@ export class CommandHandler implements ICommandHandler {
     this.curMessage = msg;
 
     this._handle();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public addCommands(commands): void {
+    commands.forEach((className: ICommandClass) => {
+      this.addCommand(className);
+    })
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public addCommand(className: ICommandClass): void {
+    const command: ICommand = new className(this.msgFactory);
+    const commandName: string = lowerFirstChar(className.toString());
+    this.commands.set(commandName, command);
   }
 
   /**
@@ -79,41 +83,9 @@ export class CommandHandler implements ICommandHandler {
    * - printMaximized
    * - setPrefix
    * - help
-   *
-   * @param draw: ICommand
-   * @param shuffle: ICommand
-   * @param useStandardDeck: ICommand
-   * @param useStrippedDeck: ICommand
-   * @param useJoker: ICommand
-   * @param dontUseJoker: ICommand
-   * @param printMinimized: ICommand
-   * @param printMaximized: ICommand
-   * @param setPrefix: ICommand
-   * @param help: ICommand
    */
-  private initCommands(
-    draw: ICommand,
-    shuffle: ICommand,
-    useStandardDeck: ICommand,
-    useStrippedDeck: ICommand,
-    useJoker: ICommand,
-    dontUseJoker: ICommand,
-    printMinimized: ICommand,
-    printMaximized: ICommand,
-    setPrefix: ICommand,
-    help: ICommand
-  ): void {
+  private initCommands(): void {
     this.commands = new Map<string, ICommand>();
-    this.commands.set('draw', draw);
-    this.commands.set('shuffle', shuffle);
-    this.commands.set('useStandardDeck', useStandardDeck);
-    this.commands.set('useStrippedDeck', useStrippedDeck);
-    this.commands.set('useJoker', useJoker);
-    this.commands.set('dontUseJoker', dontUseJoker);
-    this.commands.set('printMinimized', printMinimized);
-    this.commands.set('printMaximized', printMaximized);
-    this.commands.set('setPrefix', setPrefix);
-    this.commands.set('help', help);
   }
 
   /**
