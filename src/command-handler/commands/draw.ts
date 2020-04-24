@@ -4,8 +4,26 @@ import { AnswerColor } from '../answer-color';
 import { ICard } from '../../deck/card';
 import { Joker } from '../../deck/deck-types';
 import { Suits } from '../../deck/suits';
+import { EmbedFieldData, Message } from 'discord.js';
+import { IGuild } from '../../guild/guild';
 
+/**
+ * Command !draw
+ * Draw a card of the deck
+ */
 export class Draw extends Command {
+  private static readonly max_fields_in_message: number = 25;
+  private fieldsToAdd: EmbedFieldData[];
+  private countAnswers: number;
+  private hasRed: boolean;
+  private hasBlack: boolean;
+
+  /**
+   * Command !draw
+   * Draw a card of the deck
+   *
+   * @inheritDoc
+   */
   public run(numString: string): void {
     if (undefined === this.curGuild.getDeck()) {
       this.answerEmpty();
@@ -28,6 +46,13 @@ export class Draw extends Command {
     this.drawMaximized(num);
   }
 
+  public init(guild: IGuild, msg: Message): void {
+    super.init(guild, msg);
+    this.initFieldsToAdd();
+    this.initColors();
+    this.countAnswers = 1;
+  }
+
   /**
    * Set the answer color to one of AnswerColor
    *
@@ -37,16 +62,13 @@ export class Draw extends Command {
    * |  0  |   1   |   black_card   |
    * |  1  |   0   |    red_card    |
    * |  1  |   1   | red_black_card |
-   *
-   * @param red
-   * @param black
    */
-  private setDrawColor(red: boolean, black: boolean): void {
+  private setDrawColor(): void {
     let color = AnswerColor.red_black_cards;
-    if (!red && black) {
+    if (!this.hasRed && this.hasBlack) {
       color = AnswerColor.black_card;
     }
-    if (red && !black) {
+    if (this.hasRed && !this.hasBlack) {
       color = AnswerColor.red_card;
     }
 
@@ -84,63 +106,39 @@ export class Draw extends Command {
   }
 
   /**
-  * Draw cards and answer one message for all
-  *
-  * @param num: number, the number of cards to draw
-  */
+   * Draw cards and answer one message for all
+   *
+   * @param num: number, the number of cards to draw
+   */
   private drawMinimized(num: number): void {
-    this.initAnswer();
     this.answer.setTitle('Draw Card');
     this.answer.setDescription(this.getMentionOfAuthor() + ' got the cards:');
 
-    let fieldsToAdd = [];
-    let hasBlack = false;
-    let hasRed = false;
-    let countMessage = 1;
     for (let i = num; i > 0; --i) {
-      if (25 * countMessage <= num - i) {
-        ++countMessage;
-        this.setDrawColor(hasRed, hasBlack);
-        this.answer.addFields(fieldsToAdd);
-        this.sendAnswer();
-        hasRed = false;
-        hasBlack = false;
-        fieldsToAdd = [];
-        this.initAnswer();
-      }
+      this.sendInBetweenAnswer(num - i);
       const card: ICard = this.curGuild.getDeck().draw();
       if (undefined === card) {
-        this.setDrawColor(hasRed, hasBlack);
-        fieldsToAdd.push(
+        this.fieldsToAdd.push(
           {
             'name': 'Draw Card',
             'value': 'Sorry but the deck is empty. ' + i + ' cards remaining'
           }
         );
-        this.answer.addFields(fieldsToAdd);
-        this.sendAnswer();
+        this.sendMinimizedAnswer();
 
         return
       }
 
-      if (card.getSuit() === Suits.clubs || card.getSuit() === Suits.spades) {
-        hasBlack = true;
-      }
+      this.updateColor(card.getSuit());
 
-      if (card.getSuit() === Suits.diamonds || card.getSuit() === Suits.hearts) {
-        hasRed = true;
-      }
-
-      fieldsToAdd.push(
+      this.fieldsToAdd.push(
         {
           'name': ':' + card.getSuit() + ': ' + capitalize(card.getRank()),
           'value': capitalize(card.getSuit()) + ' ' + capitalize(card.getRank())
         });
     }
 
-    this.setDrawColor(hasRed, hasBlack);
-    this.answer.addFields(fieldsToAdd);
-    this.sendAnswer();
+    this.sendMinimizedAnswer();
   }
 
   /**
@@ -170,5 +168,63 @@ export class Draw extends Command {
 
       this.sendAnswer();
     }
+  }
+
+  /**
+   * Send messages in between to not get over the max value of fields in a message
+   *
+   * @param numFields: number, the number of fields at the moment
+   */
+  private sendInBetweenAnswer(numFields: number): void {
+    if (Draw.max_fields_in_message * this.countAnswers <= numFields) {
+      ++this.countAnswers;
+      this.sendMinimizedAnswer();
+      this.initNextAnswer();
+    }
+  }
+
+  /**
+   * Update if the color should have red or black
+   *
+   * @param suit: string
+   */
+  private updateColor(suit: string): void {
+    if (suit === Suits.clubs || suit === Suits.spades) {
+      this.hasBlack = true;
+    }
+
+    if (suit === Suits.diamonds || suit === Suits.hearts) {
+      this.hasRed = true;
+    }
+  }
+
+  /**
+   * Initialize the next answer
+   */
+  private initNextAnswer(): void {
+    this.initFieldsToAdd();
+    this.initColors();
+    this.initAnswer();
+  }
+
+  /**
+   * Initialize fields to add
+   */
+  private initFieldsToAdd(): void {
+    this.fieldsToAdd = [];
+  }
+
+  /**
+   * Initialize the attributes hasRed and hasBlack
+   */
+  private initColors(): void {
+    this.hasBlack = false;
+    this.hasRed = false;
+  }
+
+  private sendMinimizedAnswer(): void {
+    this.setDrawColor();
+    this.answer.addFields(this.fieldsToAdd);
+    this.sendAnswer();
   }
 }
