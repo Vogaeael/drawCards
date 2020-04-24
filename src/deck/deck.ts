@@ -76,6 +76,8 @@ export class Deck implements IDeck {
   }
 
   /**
+   * Add cards of stripped or standard deck to our deck
+   *
    * @param deckType: DeckTypes, the deck-type to use
    */
   private addCards(deckType: DeckTypes): void {
@@ -98,6 +100,9 @@ export class Deck implements IDeck {
     });
   }
 
+  /**
+   * Add joker to the deck
+   */
   private addJoker(): void {
     Object.entries(Joker).forEach((value: [string, string]) => {
       const card = this.cardFactory();
@@ -106,6 +111,9 @@ export class Deck implements IDeck {
     });
   }
 
+  /**
+   * Shuffle the deck
+   */
   private _shuffle(): void {
     for (let i = this.cards.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
