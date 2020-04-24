@@ -1,8 +1,12 @@
 import { IGuild } from '../../guild/guild';
 import { Message, MessageEmbed } from 'discord.js';
-import { TYPES } from '../../types';
-import { inject, injectable } from 'inversify';
 import { AnswerColor } from '../answer-color';
+
+export type MessageFactory = () => MessageEmbed;
+
+export interface ICommandClass {
+  new (msgFactory: MessageFactory): ICommand;
+}
 
 export interface ICommand {
   /**
@@ -18,18 +22,17 @@ export interface ICommand {
    * @param guild: IGuild
    * @param msg: Message
    */
-  init(guild: IGuild, msg: Message): void
+  init(guild: IGuild, msg: Message): void,
 }
 
-@injectable()
 export abstract class Command implements ICommand {
-  private readonly msgFactory: () => MessageEmbed;
+  private readonly msgFactory: MessageFactory;
   protected curGuild: IGuild;
   protected msg: Message;
   protected answer: MessageEmbed;
 
   constructor(
-    @inject(TYPES.MessageFactory) msgFactory: () => MessageEmbed//interfaces.Factory<Answer>
+    msgFactory: MessageFactory
   ) {
     this.msgFactory = msgFactory;
   }

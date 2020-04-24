@@ -24,3 +24,12 @@ export function transformToNum(numString: string): number {
 
   return num;
 }
+
+/**
+ * Lower the first char of a string
+ *
+ * @param string string
+ */
+export function lowerFirstChar(string: string): string {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+}

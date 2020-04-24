@@ -22,7 +22,6 @@ export interface IBot {
 @injectable()
 export class Bot implements IBot {
   private client: Client;
-  private config;
   private readonly token: string;
   private readonly guildFactory: () => IGuild; //interfaces.Factory<IGuild>;
   private cmdHandler: ICommandHandler;
