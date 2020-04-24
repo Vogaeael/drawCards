@@ -13,5 +13,16 @@ export const TYPES = {
   Card: Symbol("Card"),
   CardFactory: Symbol("Factory<Card>"),
   Message: Symbol("Message"),
-  MessageFactory: Symbol("MessageFactory")
+  MessageFactory: Symbol("MessageFactory"),
+  // Commands
+  Shuffle: Symbol("ShuffleCommand"),
+  Draw: Symbol("DrawCommand"),
+  UseStandardDeck: Symbol("UseStandardDeckCommand"),
+  UseStrippedDeck: Symbol("UseStrippedDeckCommand"),
+  UseJoker: Symbol("UseJokerCommand"),
+  DontUseJoker: Symbol("DontUseJokerCommand"),
+  PrintMinimized: Symbol("PrintMinimizedCommand"),
+  PrintMaximized: Symbol("PrintMaximizedCommand"),
+  SetPrefix: Symbol("SetPrefixCommand"),
+  Help: Symbol("HelpCommand")
 };
