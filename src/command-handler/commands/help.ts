@@ -14,7 +14,11 @@ export class Help extends Command {
    * @inheritDoc
    */
   public run(params: string): void {
-    this.answer.setTitle('Draw Cards')
+    this.answer.setAuthor(
+      'Draw Cards',
+      'https://cdn.discordapp.com/avatars/701496633489096815/66f7d3f5e9a01a73022c71bd94d41811.png',
+      'https://github.com/Vogaeael/drawCards')
+      .setTitle('Draw Cards')
       .setDescription('Bot to shuffle a deck and draw cards from it.')
       .setURL('https://github.com/Vogaeael/drawCards')
       .attachFiles(['./media/images/deck_icons.png'])
