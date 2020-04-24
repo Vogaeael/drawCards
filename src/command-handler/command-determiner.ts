@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Command } from './command-handler';
+import { ICommand } from './commands/command';
 
 export interface ICommandDeterminer {
   /**
@@ -11,28 +11,28 @@ export interface ICommandDeterminer {
    * @return [Command, string]
    */
   handle(
-    commands: Map<string, Command>,
+    commands: Map<string, ICommand>,
     msg: string,
     prefix: string
-  ): [Command, string]
+  ): [ICommand, string]
 }
 
 @injectable()
 export class CommandDeterminer implements ICommandDeterminer {
-  private commands: Map<string, Command>;
+  private commands: Map<string, ICommand>;
   private curMsg: string;
   private guildPrefix: string;
-  private command: Command;
+  private command: ICommand;
   private params: string;
 
   /**
    * @inheritDoc
    */
   public handle(
-    commands: Map<string, Command>,
+    commands: Map<string, ICommand>,
     msg: string,
     prefix: string
-  ): [Command, string] {
+  ): [ICommand, string] {
     this.setValues(commands, msg, prefix);
 
     if (!this.hasPrefix()) {
@@ -49,14 +49,13 @@ export class CommandDeterminer implements ICommandDeterminer {
   }
 
   private setValues(
-    commands: Map<string, Command>,
+    commands: Map<string, ICommand>,
     msg: string,
     prefix: string
   ): void {
     this.commands = commands;
     this.curMsg = msg;
     this.guildPrefix = prefix;
-    this.command = (_: string) => { return undefined };
     this.params = '';
   }
 
