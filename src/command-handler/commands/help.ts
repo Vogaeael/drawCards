@@ -25,7 +25,7 @@ export class Help extends Command {
       .setThumbnail('attachment://deck_icons.png')
       .setColor(AnswerColor.info)
       .addField('!shuffle', 'Shuffle the hole deck new.')
-      .addField('!draw [?num]', 'Draw [num] cards of the deck. If nothing is set or the value is not valid it uses 1. Instead of a number, you can also say `all`')
+      .addField('!draw [?num]', 'Draw cards of the deck. Instead of `[?num]` insert a number like `3` or `all`. If nothing is set or the value is not valid it uses 1. Instead of a number, you can also say `all`')
       .addField('!useStandardDeck', 'Use standard (52 cards) deck (active from next shuffle on).')
       .addField('!useStrippedDeck', 'Use stripped (32 cards) deck (active from next shuffle on).')
       .addField('!useJoker', 'Add joker to the decks (active from next shuffle on).')
