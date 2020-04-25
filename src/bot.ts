@@ -1,5 +1,5 @@
 import {
-  Client,
+  Client, Guild,
   Message, Snowflake
 } from "discord.js";
 import {
@@ -48,9 +48,13 @@ export class Bot implements IBot {
       if (msg.author.bot) {
         return;
       }
-      const guild = this.getGuild(msg.guild.id);
 
-      this.cmdHandler.handle(msg, guild);
+      const dGuild: Guild = msg.guild;
+      if (dGuild) {
+        const guild: IGuild = this.getGuild(dGuild.id);
+
+        this.cmdHandler.handle(msg, guild);
+      }
     })
 
     return this.client.login(
