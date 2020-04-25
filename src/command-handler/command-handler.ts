@@ -67,7 +67,7 @@ export class CommandHandler implements ICommandHandler {
    */
   public addCommand(className: ICommandClass): void {
     const command: ICommand = new className(this.msgFactory);
-    const commandName: string = lowerFirstChar(className.toString());
+    const commandName: string = lowerFirstChar(className.name);
     this.commands.set(commandName, command);
   }
 
