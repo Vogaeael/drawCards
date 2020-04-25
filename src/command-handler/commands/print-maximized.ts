@@ -14,6 +14,7 @@ export class PrintMaximized extends Command {
    */
   public run(params: string): void {
     this.curGuild.getConfig().printMaximized();
+    this.saveGuildConfig();
 
     this.replyConfigChange('Maximized draw answers', 'maximized the draw answers.');
   }

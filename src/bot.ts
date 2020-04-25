@@ -44,14 +44,14 @@ export class Bot implements IBot {
    * @inheritDoc
    */
   public listen(): Promise<string> {
-    this.client.on('message', (msg: Message) => {
+    this.client.on('message', async (msg: Message) => {
       if (msg.author.bot) {
         return;
       }
 
       const dGuild: Guild = msg.guild;
       if (dGuild) {
-        const guild: IGuild = this.getGuild(dGuild.id);
+        const guild: IGuild = await this.getGuild(dGuild.id);
 
         this.cmdHandler.handle(msg, guild);
       }
@@ -67,9 +67,11 @@ export class Bot implements IBot {
    *
    * @param id
    */
-  private getGuild(id: Snowflake): IGuild {
+  private async getGuild(id: Snowflake): Promise<IGuild> {
     if (!this.guilds.has(id)) {
-      this.guilds.set(id, this.guildFactory());
+      const newGuild: IGuild = this.guildFactory();
+      await newGuild.init(id);
+      this.guilds.set(id, newGuild);
     }
 
     return this.guilds.get(id);

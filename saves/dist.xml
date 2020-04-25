@@ -1,0 +1,5 @@
+<!-- the name of the file should be the id of the guild -->
+<guildConfig prefix="!"
+             deckType="standard deck"
+             joker="false"
+             minimized="true"></guildConfig>

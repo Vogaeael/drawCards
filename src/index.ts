@@ -1,5 +1,3 @@
-import { CardsLeft } from './command-handler/commands/cards-left';
-
 require('dotenv').config(); // Recommended way of loading dotenv
 import container from "./inversify.config";
 import { TYPES } from "./types";
@@ -15,8 +13,7 @@ import { UseJoker } from './command-handler/commands/use-joker';
 import { UseStandardDeck } from './command-handler/commands/use-standard-deck';
 import { UseStrippedDeck } from './command-handler/commands/use-stripped-deck';
 import { CommandHandler } from './command-handler/command-handler';
-
-require('dotenv').config(); // Recommended way of loading dotenv
+import { CardsLeft } from './command-handler/commands/cards-left';
 
 let bot = container.get<Bot>(TYPES.Bot);
 

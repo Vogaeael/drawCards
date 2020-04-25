@@ -17,6 +17,7 @@ export class SetPrefix extends Command {
       newPrefix = '!';
     }
     this.curGuild.getConfig().setPrefix(newPrefix);
+    this.saveGuildConfig();
 
     this.replyConfigChange('Prefix changed', 'changed prefix to ' + newPrefix + '.');
   }

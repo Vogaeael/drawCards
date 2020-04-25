@@ -15,6 +15,7 @@ export class UseStandardDeck extends Command {
    */
   public run(params: string): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.standardDeck);
+    this.saveGuildConfig();
 
     this.replyConfigChange('Use standard deck', 'changed the next deck to a standard deck (52 cards).');
   }

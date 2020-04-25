@@ -5,6 +5,7 @@ import { ICommandDeterminer } from './command-determiner';
 import { TYPES } from '../types';
 import { ICommand, ICommandClass } from './commands/command';
 import { lowerFirstChar } from '../functions';
+import { IDatabaseApi } from '../database/database-api';
 
 export interface ICommandHandler {
   /**
@@ -28,17 +29,20 @@ export interface ICommandHandler {
 
 @injectable()
 export class CommandHandler implements ICommandHandler {
-  private cmdDeterminer: ICommandDeterminer;
+  private readonly cmdDeterminer: ICommandDeterminer;
   private readonly msgFactory: () => MessageEmbed;
+  private readonly databaseApi: IDatabaseApi;
   private curGuild: IGuild;
   private curMessage: Message;
   private commands: Map<string, ICommand>;
 
   constructor(
+    @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,
     @inject(TYPES.CommandDeterminer) cmdDeterminer: ICommandDeterminer,
     @inject(TYPES.MessageFactory) msgFactory: () => MessageEmbed,//interfaces.Factory<Answer>,
   ) {
-    this.cmdDeterminer = cmdDeterminer
+    this.databaseApi = databaseApi;
+    this.cmdDeterminer = cmdDeterminer;
     this.msgFactory = msgFactory;
     this.initCommands();
   }
@@ -66,9 +70,10 @@ export class CommandHandler implements ICommandHandler {
    * @inheritDoc
    */
   public addCommand(className: ICommandClass): void {
-    const command: ICommand = new className(this.msgFactory);
+    const command: ICommand = new className(this.msgFactory, this.databaseApi);
     const commandName: string = lowerFirstChar(className.name);
     this.commands.set(commandName, command);
+    console.log('add command: ' + commandName);
   }
 
   /**
