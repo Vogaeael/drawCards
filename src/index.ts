@@ -1,3 +1,5 @@
+import { CardsLeft } from './command-handler/commands/cards-left';
+
 require('dotenv').config(); // Recommended way of loading dotenv
 import container from "./inversify.config";
 import { TYPES } from "./types";
@@ -26,6 +28,7 @@ bot.listen().then(() => {
 
 const commandHandler = container.get<CommandHandler>(TYPES.CommandHandler);
 commandHandler.addCommands([
+  CardsLeft,
   DontUseJoker,
   Draw,
   Help,

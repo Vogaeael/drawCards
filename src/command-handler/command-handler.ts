@@ -75,6 +75,7 @@ export class CommandHandler implements ICommandHandler {
    * Init the commands:
    * - shuffle
    * - draw
+   * - cardsLeft
    * - useStandardDeck
    * - useStrippedDeck
    * - useJoker

@@ -26,6 +26,7 @@ export class Help extends Command {
       .setColor(AnswerColor.info)
       .addField('!shuffle', 'Shuffle the hole deck new.')
       .addField('!draw [?num]', 'Draw cards of the deck. Instead of `[?num]` insert a number like `3` or `all`. If nothing is set or the value is not valid it uses 1. Instead of a number, you can also say `all`')
+      .addField('!cardsLeft', 'Message how many cards are left in the deck')
       .addField('!useStandardDeck', 'Use standard (52 cards) deck (active from next shuffle on).')
       .addField('!useStrippedDeck', 'Use stripped (32 cards) deck (active from next shuffle on).')
       .addField('!useJoker', 'Add joker to the decks (active from next shuffle on).')

@@ -69,6 +69,10 @@ To draw one or multiple cards.
 !draw all   # for drawing all remaining cards
 ```
 
+### How many cards are remaining in the deck
+To know how many cards are remaining in the deck:
+`!cardsLeft`
+
 ### Use standard deck
 If you want to change back to the standard deck (52 cards):
 `!useStandardDeck`
