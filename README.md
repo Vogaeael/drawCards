@@ -4,7 +4,7 @@ A bot for drawing random cards out of a deck. Standard (52 Cards) or stripped (3
  more information visit Github: https://github.com/Vogaeael/drawCards.
 At the moment, the bot isn't published and there isn't a running server you can add to your discord server. To use this bot you
  have to host one yourself.
- 
+
 ## Permissions
 The Bots need the permission's to:
   * `read messages`
@@ -17,6 +17,8 @@ The permission's integer is `51200`. To add your bot to your server, you can use
 
 
 ## Install
+You need [npm](https://www.npmjs.com/) with the minimal version 12.
+
 ### Install dependencies
 To develop you need npm. To install the dependencies:
 ```shell script
