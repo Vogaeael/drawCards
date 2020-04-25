@@ -24,7 +24,10 @@ npm install
 ```
 
 ### Create .env
-You need a `.env` file, as template you can use the [.env.dist](.env.dist). Here you need to set a bot-token.
+You can copy the [.env.dist](.env.dist) file to `.env` and change the `your.token` to your generated bot-token.
+```shell script
+cp .env.dist .env
+```
 
 #### Generate bot token
 To generate your own bot-token use this [Tutorial](https://www.writebots.com/discord-bot-token/).
