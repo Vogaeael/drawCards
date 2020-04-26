@@ -2,6 +2,7 @@ import { Snowflake } from 'discord.js';
 import { IGuildConfig } from '../guild/guild-config';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
+import { ILogger } from '../logger/logger-interface';
 
 export interface IDatabaseApi {
   /**
@@ -24,11 +25,14 @@ export interface IDatabaseApi {
 export abstract class AbstractDatabaseApi implements IDatabaseApi {
   private readonly guildConfigFactory: () => IGuildConfig;
   protected guildConfig: IGuildConfig;
+  protected logger: ILogger;
 
   public constructor(
     @inject(TYPES.GuildConfigFactory) guildConfigFactory: () => IGuildConfig, //interfaces.Factory<IGuild>
+    @inject(TYPES.Logger) logger: ILogger
   ) {
     this.guildConfigFactory = guildConfigFactory;
+    this.logger = logger;
   }
 
   /**

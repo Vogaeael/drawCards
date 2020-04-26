@@ -14,16 +14,18 @@ import { UseStandardDeck } from './command-handler/commands/use-standard-deck';
 import { UseStrippedDeck } from './command-handler/commands/use-stripped-deck';
 import { CommandHandler } from './command-handler/command-handler';
 import { CardsLeft } from './command-handler/commands/cards-left';
+import { ILogger, Loglevel } from './logger/logger-interface';
 
-let bot = container.get<Bot>(TYPES.Bot);
+const bot = container.get<Bot>(TYPES.Bot);
+const logger = container.get<ILogger>(TYPES.Logger);
+const commandHandler = container.get<CommandHandler>(TYPES.CommandHandler);
 
 bot.listen().then(() => {
-  console.log('Logged in!')
+  logger.log(Loglevel.DEBUG, 'Logged in!');
 }).catch((error) => {
-  console.log('Oh no! ', error)
+  logger.log(Loglevel.ERROR, 'Oh no! ' + error);
 });
 
-const commandHandler = container.get<CommandHandler>(TYPES.CommandHandler);
 commandHandler.addCommands([
   CardsLeft,
   DontUseJoker,

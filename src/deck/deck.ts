@@ -3,6 +3,7 @@ import { DeckTypes, Joker, StandardDeck, StrippedDeck } from './deck-types';
 import { ICard } from './card';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
+import { ILogger, Loglevel } from '../logger/logger-interface';
 
 export interface IDeck {
   /**
@@ -32,10 +33,13 @@ export interface IDeck {
 export class Deck implements IDeck {
   private cards: ICard[];
   private readonly cardFactory: () => ICard;
+  private logger: ILogger;
 
   public constructor(
-    @inject(TYPES.CardFactory) cardFactory: () => ICard//interfaces.Factory(Card) {
+    @inject(TYPES.CardFactory) cardFactory: () => ICard,//interfaces.Factory(Card) {,
+    @inject(TYPES.Logger) logger: ILogger
   ) {
+    this.logger = logger;
     this.cardFactory = cardFactory;
     this.shuffle(DeckTypes.standardDeck);
   }
@@ -68,6 +72,12 @@ export class Deck implements IDeck {
    */
   private _fill(deckType: DeckTypes, joker: boolean = false): void {
     this.cards = [];
+
+    let logMessage = 'refill ' + deckType;
+    if (joker) {
+      logMessage += ' with joker';
+    }
+    this.logger.log(Loglevel.DEBUG, logMessage);
 
     this.addCards(deckType);
     if (joker) {
@@ -117,6 +127,7 @@ export class Deck implements IDeck {
    * Shuffle the deck
    */
   private _shuffle(): void {
+    this.logger.log(Loglevel.DEBUG, 'shuffle deck');
     for (let i = this.cards.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
       [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];

@@ -3,6 +3,7 @@ import { Snowflake } from 'discord.js';
 import { IGuildConfig } from '../../guild/guild-config';
 import { promises as FS } from 'fs';
 import * as PARSER from 'xml2json';
+import { Loglevel } from '../../logger/logger-interface';
 
 export class XmlApi extends AbstractDatabaseApi {
   private static path: string = './saves/';
@@ -13,6 +14,7 @@ export class XmlApi extends AbstractDatabaseApi {
    * @inheritDoc
    */
   public async loadGuildConfig(guildId: Snowflake): Promise<IGuildConfig> {
+    this.logger.log(Loglevel.DEBUG, 'load config of guild \'' + guildId + '\'');
     this.initGuildConfig();
 
     return FS.readFile(
@@ -31,6 +33,7 @@ export class XmlApi extends AbstractDatabaseApi {
       .catch(
         (e) => {
           // @TODO log error if not file not found error
+          this.logger.log(Loglevel.ERROR, 'couldn\'t load file for guild \'' + guildId + '\': ' + e);
           return this.guildConfig;
         }
       );
@@ -40,6 +43,8 @@ export class XmlApi extends AbstractDatabaseApi {
    * @inheritDoc
    */
   public saveGuildConfig(guildId: Snowflake, guildConfig: IGuildConfig): boolean {
+    this.logger.log(Loglevel.DEBUG, 'save config of guild \'' + guildId + '\'');
+
     const guildConfigJson = {
       'guildConfig': {
         'prefix': guildConfig.getPrefix(),
@@ -54,7 +59,10 @@ export class XmlApi extends AbstractDatabaseApi {
     FS.writeFile(
       XmlApi.path + XmlApi.prefix + guildId + '.xml',
       xml,
-      { encoding: XmlApi.encoding});
+      { encoding: XmlApi.encoding})
+      .catch((e) => {
+        this.logger.log(Loglevel.FATAL, 'couldn\'t save config of guild \'' + guildId + '\': ' + e);
+      });
 
     return true;
   }

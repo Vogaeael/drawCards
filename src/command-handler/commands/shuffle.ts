@@ -13,6 +13,7 @@ export class Shuffle extends Command {
    * @inheritDoc
    */
   public run(params: string): void {
+    this.logCommand('shuffle', params);
     this.curGuild.getDeck().shuffle(this.curGuild.getConfig().getDeckType(), this.curGuild.getConfig().getJoker());
 
     let description = 'shuffled ' + this.curGuild.getConfig().getDeckType();

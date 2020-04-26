@@ -38,7 +38,7 @@ container.bind<string>(TYPES.Token)
   .toConstantValue(process.env.TOKEN);
 
 container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
-  .toConstantValue(new CommandDeterminer());
+  .toConstantValue(new CommandDeterminer(container.get<ILogger>(TYPES.Logger)));
 container.bind<CommandHandler>(TYPES.CommandHandler)
   .to(CommandHandler).inSingletonScope();
 

@@ -6,6 +6,7 @@ import { TYPES } from '../types';
 import { ICommand, ICommandClass } from './commands/command';
 import { lowerFirstChar } from '../functions';
 import { IDatabaseApi } from '../database/database-api';
+import { ILogger, Loglevel } from '../logger/logger-interface';
 
 export interface ICommandHandler {
   /**
@@ -32,6 +33,7 @@ export class CommandHandler implements ICommandHandler {
   private readonly cmdDeterminer: ICommandDeterminer;
   private readonly msgFactory: () => MessageEmbed;
   private readonly databaseApi: IDatabaseApi;
+  private logger: ILogger;
   private curGuild: IGuild;
   private curMessage: Message;
   private commands: Map<string, ICommand>;
@@ -40,10 +42,12 @@ export class CommandHandler implements ICommandHandler {
     @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,
     @inject(TYPES.CommandDeterminer) cmdDeterminer: ICommandDeterminer,
     @inject(TYPES.MessageFactory) msgFactory: () => MessageEmbed,//interfaces.Factory<Answer>,
+    @inject(TYPES.Logger) logger: ILogger,
   ) {
     this.databaseApi = databaseApi;
     this.cmdDeterminer = cmdDeterminer;
     this.msgFactory = msgFactory;
+    this.logger = logger;
     this.initCommands();
   }
 
@@ -70,25 +74,19 @@ export class CommandHandler implements ICommandHandler {
    * @inheritDoc
    */
   public addCommand(className: ICommandClass): void {
-    const command: ICommand = new className(this.msgFactory, this.databaseApi);
-    const commandName: string = lowerFirstChar(className.name);
-    this.commands.set(commandName, command);
-    console.log('add command: ' + commandName);
+    try {
+      const commandName: string = lowerFirstChar(className.name);
+      const command: ICommand = new className(this.msgFactory, this.databaseApi, this.logger);
+      this.logger.log(Loglevel.DEBUG, 'add command: ' + commandName);
+      this.commands.set(commandName, command);
+    } catch (e) {
+      this.logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + e);
+    }
+
   }
 
   /**
-   * Init the commands:
-   * - shuffle
-   * - draw
-   * - cardsLeft
-   * - useStandardDeck
-   * - useStrippedDeck
-   * - useJoker
-   * - dontUseJoker
-   * - printMinimized
-   * - printMaximized
-   * - setPrefix
-   * - help
+   * Init the commands-list
    */
   private initCommands(): void {
     this.commands = new Map<string, ICommand>();
@@ -98,7 +96,7 @@ export class CommandHandler implements ICommandHandler {
    * Handle the message
    */
   private _handle(): void {
-    const commandAndParams = this.cmdDeterminer.handle(
+    const commandAndParams = this.cmdDeterminer.determine(
       this.commands,
       this.curMessage.content,
       this.curGuild.getConfig().getPrefix());
