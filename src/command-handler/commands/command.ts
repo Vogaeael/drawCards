@@ -1,5 +1,5 @@
 import { IGuild } from '../../guild/guild';
-import { Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed, ReactionEmoji } from 'discord.js';
 import { AnswerColor } from '../answer-color';
 import { inject } from 'inversify';
 import { TYPES } from '../../types';
@@ -82,10 +82,18 @@ export abstract class Command implements ICommand {
   /**
    * Reply to the change of the config
    *
-   * @param title: string
-   * @param description: string
+   * @param title: string the title of the message
+   * @param description: string the description of the message
+   * @param force: boolean default: false, if the maximized version should be forced.
    */
-  protected replyConfigChange(title: string, description: string): void {
+  protected replyConfigChange(title: string, description: string, force: boolean = false): void {
+    if (this.curGuild.getConfig().getMinimized()) {
+      this.msg.react('\N{+1}').then(() => {}).catch((e) => console.log(e));
+      this.msg.react(':white_check_mark:').then(() => {}).catch((e) => console.log(e));
+      this.msg.react('white_check_mark').then(() => {}).catch((e) => console.log(e));
+
+      return
+    }
     this.answer.setTitle(title)
       .setDescription(this.getMentionOfAuthor() + ' ' + description)
       .setColor(AnswerColor.config_reply);
