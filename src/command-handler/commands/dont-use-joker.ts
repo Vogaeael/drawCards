@@ -14,6 +14,7 @@ export class DontUseJoker extends Command {
    */
   public run(params: string): void {
     this.curGuild.getConfig().dontUseJoker();
+    this.saveGuildConfig();
 
     this.replyConfigChange('Don\'t use joker', 'removed joker from the next deck.')
   }

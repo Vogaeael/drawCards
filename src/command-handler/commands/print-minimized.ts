@@ -14,6 +14,7 @@ export class PrintMinimized extends Command {
    */
   public run(params: string): void {
     this.curGuild.getConfig().printMinimized();
+    this.saveGuildConfig();
 
     this.replyConfigChange('Minimize draw answers', 'minimized the draw answers.');
   }

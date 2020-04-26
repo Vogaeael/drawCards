@@ -1,11 +1,14 @@
 import { IGuild } from '../../guild/guild';
 import { Message, MessageEmbed } from 'discord.js';
 import { AnswerColor } from '../answer-color';
+import { inject } from 'inversify';
+import { TYPES } from '../../types';
+import { IDatabaseApi } from '../../database/database-api';
 
 export type MessageFactory = () => MessageEmbed;
 
 export interface ICommandClass {
-  new (msgFactory: MessageFactory): ICommand;
+  new (msgFactory: MessageFactory, databaseApi: IDatabaseApi): ICommand;
 }
 
 export interface ICommand {
@@ -26,15 +29,18 @@ export interface ICommand {
 }
 
 export abstract class Command implements ICommand {
+  private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
   protected curGuild: IGuild;
   protected msg: Message;
   protected answer: MessageEmbed;
 
   constructor(
-    msgFactory: MessageFactory
+    @inject(TYPES.MessageFactory) msgFactory: MessageFactory,
+    @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,
   ) {
     this.msgFactory = msgFactory;
+    this.databaseApi = databaseApi;
   }
 
   /**
@@ -84,5 +90,12 @@ export abstract class Command implements ICommand {
    */
   protected getMentionOfAuthor(): string {
     return '<@' + this.msg.author.id + '>';
+  }
+
+  /**
+   * Save the current guild config
+   */
+  protected saveGuildConfig(): void {
+    this.databaseApi.saveGuildConfig(this.curGuild.getId(), this.curGuild.getConfig());
   }
 }

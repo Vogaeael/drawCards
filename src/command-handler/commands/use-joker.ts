@@ -14,6 +14,7 @@ export class UseJoker extends Command {
    */
   public run(params: string): void {
     this.curGuild.getConfig().useJoker();
+    this.saveGuildConfig();
 
     this.replyConfigChange('Use joker', 'added joker to the next deck.');
   }

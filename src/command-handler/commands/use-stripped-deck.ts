@@ -15,6 +15,7 @@ export class UseStrippedDeck extends Command {
    */
   public run(params: string): void {
     this.curGuild.getConfig().setDeckType(DeckTypes.strippedDeck);
+    this.saveGuildConfig();
 
     this.replyConfigChange('Use stripped deck', 'changed the next deck to a stripped deck (32 cards).');
   }

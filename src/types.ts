@@ -13,5 +13,6 @@ export const TYPES = {
   Card: Symbol("Card"),
   CardFactory: Symbol("Factory<Card>"),
   Message: Symbol("Message"),
-  MessageFactory: Symbol("MessageFactory")
+  MessageFactory: Symbol("MessageFactory"),
+  DatabaseApi: Symbol("DatabaseApi")
 };

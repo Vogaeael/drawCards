@@ -20,6 +20,8 @@ import { PrintMinimized } from './command-handler/commands/print-minimized';
 import { PrintMaximized } from './command-handler/commands/print-maximized';
 import { SetPrefix } from './command-handler/commands/set-prefix';
 import { ICommand } from './command-handler/commands/command';
+import { IDatabaseApi } from './database/database-api';
+import { XmlApi } from './database/xml-api/xml-api';
 
 let container = new Container();
 
@@ -35,6 +37,8 @@ container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
 container.bind<CommandHandler>(TYPES.CommandHandler)
   .to(CommandHandler).inSingletonScope();
 
+container.bind<IDatabaseApi>(TYPES.DatabaseApi)
+  .to(XmlApi);
 container.bind<IGuild>(TYPES.Guild)
   .to(Guild);
 container.bind<interfaces.Factory<IGuild>>(TYPES.GuildFactory)

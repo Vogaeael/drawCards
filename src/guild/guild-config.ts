@@ -1,5 +1,7 @@
 import { DeckTypes } from '../deck/deck-types';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../types';
+import { IDatabaseApi } from '../database/database-api';
 
 export interface IGuildConfig {
   /**
@@ -8,6 +10,13 @@ export interface IGuildConfig {
    * @param newPref: string
    */
   setPrefix(newPref: string): void,
+
+  /**
+   * Set if joker should be in the deck
+   *
+   * @param joker
+   */
+  setJoker(joker: boolean): void,
 
   /**
    * Add joker to the deck
@@ -25,6 +34,11 @@ export interface IGuildConfig {
    * @param deckType: DeckTypes
    */
   setDeckType(deckType: DeckTypes): void
+
+  /**
+   * Set if the messages should be minimized
+   */
+  setMinimized(minimized: boolean): void,
 
   /**
    * Set that the answers should be printed minimized and short.
@@ -82,15 +96,22 @@ export class GuildConfig implements IGuildConfig {
   /**
    * @inheritDoc
    */
+  public setJoker(joker: boolean): void {
+    this.joker = joker;
+  }
+
+  /**
+   * @inheritDoc
+   */
   public useJoker(): void {
-    this.joker = true;
+    this.setJoker(true);
   }
 
   /**
    * @inheritDoc
    */
   public dontUseJoker(): void {
-    this.joker = false;
+    this.setJoker(false);
   }
 
   /**
@@ -103,15 +124,22 @@ export class GuildConfig implements IGuildConfig {
   /**
    * @inheritDoc
    */
+  public setMinimized(minimized: boolean): void {
+    this.minimized = minimized;
+  }
+
+  /**
+   * @inheritDoc
+   */
   public printMinimized(): void {
-    this.minimized = true;
+    this.setMinimized(true);
   }
 
   /**
    * @inheritDoc
    */
   public printMaximized(): void {
-    this.minimized = false;
+    this.setMinimized(false);
   }
 
   /**
