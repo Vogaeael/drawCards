@@ -1,16 +1,18 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ICommand } from './commands/command';
+import { TYPES } from '../types';
+import { ILogger, Loglevel } from '../logger/logger-interface';
 
 export interface ICommandDeterminer {
   /**
    *
    * @param commands: Map<string, Command>, the map of commands
-   * @param msg: string, the string to handle
+   * @param msg: string, the string to determine
    * @param prefix: string, the prefix of commands
    *
    * @return [Command, string]
    */
-  handle(
+  determine(
     commands: Map<string, ICommand>,
     msg: string,
     prefix: string
@@ -24,25 +26,35 @@ export class CommandDeterminer implements ICommandDeterminer {
   private guildPrefix: string;
   private command: ICommand;
   private params: string;
+  private logger: ILogger;
+
+  constructor(
+    @inject(TYPES.Logger) logger: ILogger
+  ) {
+    this.logger = logger;
+  }
 
   /**
    * @inheritDoc
    */
-  public handle(
+  public determine(
     commands: Map<string, ICommand>,
     msg: string,
     prefix: string
   ): [ICommand, string] {
+    this.logger.log(Loglevel.DEBUG, 'determine if \'' + msg + '\' is a command with the prefix \'' + prefix + '\'');
     this.setValues(commands, msg, prefix);
 
     if (!this.hasPrefix()) {
       return undefined;
     }
+    this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' has the prefix \'' + prefix + '\'');
     this.removePrefix();
 
     if (!this.determineCommand()) {
       return undefined;
     }
+    this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' is a command');
     this.determineParams();
 
     return [this.command, this.params];

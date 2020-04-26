@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { Loglevel } from '../../logger/logger-interface';
 
 /**
  * Command !cardsLeft
@@ -12,6 +13,8 @@ export class CardsLeft extends Command {
    * @inheritDoc
    */
   public run(params: string): void {
+    this.logCommand('cardsLeft', params);
+    this.logger.log(Loglevel.DEBUG, 'Command: cardsLeft from guild ' + this.curGuild.getId());
     this.replyConfigChange('Cards Left', this.curGuild.getDeck().count() + ' cards are left in the deck.');
   }
 }

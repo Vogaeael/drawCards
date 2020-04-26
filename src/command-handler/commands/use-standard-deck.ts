@@ -14,6 +14,7 @@ export class UseStandardDeck extends Command {
    * @inheritDoc
    */
   public run(params: string): void {
+    this.logCommand('useStandardDeck', params);
     this.curGuild.getConfig().setDeckType(DeckTypes.standardDeck);
     this.saveGuildConfig();
 

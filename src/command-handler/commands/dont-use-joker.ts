@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { Loglevel } from '../../logger/logger-interface';
 
 /**
  * Command !dontUseJoker
@@ -13,6 +14,7 @@ export class DontUseJoker extends Command {
    * @inheritDoc
    */
   public run(params: string): void {
+    this.logCommand('dontUseJoker', params);
     this.curGuild.getConfig().dontUseJoker();
     this.saveGuildConfig();
 

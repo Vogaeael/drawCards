@@ -1,5 +1,6 @@
 import { Command } from './command';
 import { AnswerColor } from '../answer-color';
+import { Loglevel } from '../../logger/logger-interface';
 
 /**
  * Command !help
@@ -14,6 +15,7 @@ export class Help extends Command {
    * @inheritDoc
    */
   public run(params: string): void {
+    this.logCommand('help', params);
     this.answer.setAuthor(
       'Draw Cards',
       'https://cdn.discordapp.com/avatars/701496633489096815/66f7d3f5e9a01a73022c71bd94d41811.png',
