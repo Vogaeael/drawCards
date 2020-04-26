@@ -26,13 +26,22 @@ npm install
 ```
 
 ### Create .env
-You can copy the [.env.dist](.env.dist) file to `.env` and change the `your.token` to your generated bot-token.
+You can copy the [.env.dist](.env.dist) file to `.env`.
+You have to change the `your.token` to your generated bot-token and you can set the loglevel there.
 ```shell script
 cp .env.dist .env
 ```
 
 #### Generate bot token
 To generate your own bot-token use this [Tutorial](https://www.writebots.com/discord-bot-token/).
+
+#### Possible loglevel
+Possible loglevel are:
+  * `info`
+  * `fatal`
+  * `error`
+  * `deprecated`
+  * `debug`
 
 ## Compile to .js files
 ### One time

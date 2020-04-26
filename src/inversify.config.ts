@@ -27,6 +27,8 @@ import { ConsoleLogger } from './logger/console-log/console-logger';
 
 let container = new Container();
 
+container.bind<string>(TYPES.LogLevel)
+  .toConstantValue(process.env.LOGLEVEL);
 container.bind<ILogger>(TYPES.Logger)
   .to(ConsoleLogger).inSingletonScope();
 

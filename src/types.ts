@@ -15,5 +15,6 @@ export const TYPES = {
   Message: Symbol("Message"),
   MessageFactory: Symbol("MessageFactory"),
   DatabaseApi: Symbol("DatabaseApi"),
-  Logger: Symbol("Logger")
+  Logger: Symbol("Logger"),
+  LogLevel: Symbol("LogLevel")
 };

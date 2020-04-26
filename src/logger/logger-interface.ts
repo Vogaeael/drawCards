@@ -1,4 +1,5 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../types';
 
 export enum Loglevel {
   INFO = 'info',
@@ -30,9 +31,15 @@ export abstract class AbstractLogger implements ILogger {
   protected printLevel: number;
   protected logLevelList: Map<string, number>;
 
-  constructor() {
+  constructor(
+    @inject(TYPES.LogLevel) logLevel: string
+  ) {
     this.initLogLevelList();
-    this.printLevel = this.logLevelList.get(Loglevel.ERROR);
+    this.printLevel = this.logLevelList.get(logLevel);
+    if (undefined === this.printLevel) {
+      this.printLevel = this.logLevelList.get(Loglevel.ERROR);
+      this.log(Loglevel.FATAL, 'loglevel \'' + logLevel + '\' doesn\'t exist. Will use \'' + Loglevel.ERROR + '\'');
+    }
   }
 
   /**
