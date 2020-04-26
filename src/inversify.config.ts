@@ -22,8 +22,13 @@ import { SetPrefix } from './command-handler/commands/set-prefix';
 import { ICommand } from './command-handler/commands/command';
 import { IDatabaseApi } from './database/database-api';
 import { XmlApi } from './database/xml-api/xml-api';
+import { ILogger } from './logger/logger-interface';
+import { ConsoleLogger } from './logger/console-log/console-logger';
 
 let container = new Container();
+
+container.bind<ILogger>(TYPES.Logger)
+  .to(ConsoleLogger).inSingletonScope();
 
 container.bind<IBot>(TYPES.Bot)
   .to(Bot).inSingletonScope();
