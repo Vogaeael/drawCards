@@ -5,13 +5,15 @@ import { inject } from 'inversify';
 import { TYPES } from '../../types';
 import { IDatabaseApi } from '../../database/database-api';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
+import { ICommandHandler } from '../command-handler';
 
 export type MessageFactory = () => MessageEmbed;
 
 export interface ICommandClass {
   new (msgFactory: MessageFactory,
        databaseApi: IDatabaseApi,
-       logger: ILogger): ICommand;
+       logger: ILogger,
+       cmdHandler: ICommandHandler): ICommand;
 }
 
 export interface ICommand {
@@ -29,6 +31,11 @@ export interface ICommand {
    * @param msg: Message
    */
   init(guild: IGuild, msg: Message): void,
+
+  /**
+   * Print the command help
+   */
+  help(): void
 }
 
 export abstract class Command implements ICommand {
@@ -37,6 +44,7 @@ export abstract class Command implements ICommand {
   private static readonly box_check_mark = '☑';
   private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
+  protected readonly cmdHandler: ICommandHandler;
   protected curGuild: IGuild;
   protected msg: Message;
   protected answer: MessageEmbed;
@@ -45,11 +53,13 @@ export abstract class Command implements ICommand {
   constructor(
     @inject(TYPES.MessageFactory) msgFactory: MessageFactory,
     @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,
-    @inject(TYPES.Logger) logger: ILogger
+    @inject(TYPES.Logger) logger: ILogger,
+    @inject(TYPES.CommandHandler) cmdHandler: ICommandHandler
   ) {
     this.msgFactory = msgFactory;
     this.databaseApi = databaseApi;
     this.logger = logger;
+    this.cmdHandler = cmdHandler;
   }
 
   /**
@@ -66,6 +76,11 @@ export abstract class Command implements ICommand {
     this.msg = msg;
     this.initAnswer();
   }
+
+  /**
+   * @inheritDoc
+   */
+  public abstract help(): void;
 
   /**
    * Initialize the answer
@@ -139,5 +154,24 @@ export abstract class Command implements ICommand {
       logMessage += ' with param \'' + param + '\'';
     }
     this.logger.log(Loglevel.DEBUG, logMessage);
+  }
+
+  /**
+   * Send a short help for the command
+   *
+   * @param name: string
+   * @param description: string
+   */
+  protected sendShortHelp(name: string, description: string): void {
+    this.answer.setAuthor(
+      name,
+      'https://cdn.discordapp.com/avatars/701496633489096815/66f7d3f5e9a01a73022c71bd94d41811.png',
+      'https://github.com/Vogaeael/drawCards')
+      .setDescription(description)
+      .setTitle(name)
+      .setColor(AnswerColor.info)
+      .attachFiles(['./media/images/deck_icons.png'])
+      .setThumbnail('attachment://deck_icons.png');
+    this.sendAnswer();
   }
 }

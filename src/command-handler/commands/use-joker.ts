@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !useJoker
@@ -18,5 +19,14 @@ export class UseJoker extends Command {
     this.saveGuildConfig();
 
     this.replyConfigChange('Use joker', 'added joker to the next deck.');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help UseJoker',
+      'Command to add joker to the next deck. You have to shuffle to make it effective.');
   }
 }

@@ -46,11 +46,23 @@ export class Draw extends Command {
     this.drawMaximized(num);
   }
 
+  /**
+   * @inheritDoc
+   */
   public init(guild: IGuild, msg: Message): void {
     super.init(guild, msg);
     this.initFieldsToAdd();
     this.initColors();
     this.countAnswers = 1;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help Draw',
+      'Command to draw a card of the deck. You can add a number, or all after the command to draw the number of cards or all remaining in the deck.');
   }
 
   /**

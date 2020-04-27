@@ -1,5 +1,6 @@
 import { Command } from './command';
 import { Loglevel } from '../../logger/logger-interface';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !dontUseJoker
@@ -19,5 +20,14 @@ export class DontUseJoker extends Command {
     this.saveGuildConfig();
 
     this.replyConfigChange('Don\'t use joker', 'removed joker from the next deck.')
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help DontUseJoker',
+      'Command to add joker to the future decks. You have to shuffle to have a deck with joker.');
   }
 }

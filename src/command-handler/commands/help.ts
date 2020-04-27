@@ -1,6 +1,9 @@
-import { Command } from './command';
+import { Command, ICommand } from './command';
 import { AnswerColor } from '../answer-color';
 import { Loglevel } from '../../logger/logger-interface';
+import container from '../../inversify.config';
+import { ICommandHandler } from '../command-handler';
+import { TYPES } from '../../types';
 
 /**
  * Command !help
@@ -16,6 +19,21 @@ export class Help extends Command {
    */
   public run(params: string): void {
     this.logCommand('help', params);
+    const command: ICommand = this.cmdHandler.getCommand(params);
+    if (command) {
+      command.init(this.curGuild, this.msg);
+      command.help();
+
+      return;
+    }
+
+    this.help();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
     this.answer.setAuthor(
       'Draw Cards',
       'https://cdn.discordapp.com/avatars/701496633489096815/66f7d3f5e9a01a73022c71bd94d41811.png',

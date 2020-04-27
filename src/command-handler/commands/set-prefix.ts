@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !setPrefix
@@ -21,5 +22,14 @@ export class SetPrefix extends Command {
     this.saveGuildConfig();
 
     this.replyConfigChange('Prefix changed', 'changed prefix to ' + newPrefix + '.');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help SetPrefix',
+      'Command set a new prefix fo the commands. If no param is set, it will return to `!`.');
   }
 }

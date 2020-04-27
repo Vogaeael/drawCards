@@ -1,5 +1,6 @@
 import { Command } from './command';
 import { DeckTypes } from '../../deck/deck-types';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !useStrippedDeck
@@ -19,5 +20,14 @@ export class UseStrippedDeck extends Command {
     this.saveGuildConfig();
 
     this.replyConfigChange('Use stripped deck', 'changed the next deck to a stripped deck (32 cards).');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help UseStrippedDeck',
+      'Command to set config to use a stripped (32 cards) deck. You have to shuffle to have the effect.');
   }
 }

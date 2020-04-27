@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !printMinimized
@@ -18,5 +19,14 @@ export class PrintMinimized extends Command {
     this.saveGuildConfig();
 
     this.replyConfigChange('Minimize draw answers', 'minimized the draw answers.');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help PrintMinimized',
+      'Command to minimize the answers. Multiple draw answers will be merged.');
   }
 }

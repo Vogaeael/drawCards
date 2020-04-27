@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !shuffle
@@ -22,5 +23,14 @@ export class Shuffle extends Command {
     }
 
     this.replyConfigChange('Shuffle', description);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help Shuffle',
+      'Command to shuffle a new deck. If the config was changed to a new deck, or the config if joker should be in the deck or not was changed, the new deck will have the changes.');
   }
 }

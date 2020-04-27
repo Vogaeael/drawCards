@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !printMaximized
@@ -18,5 +19,14 @@ export class PrintMaximized extends Command {
     this.saveGuildConfig();
 
     this.replyConfigChange('Maximized draw answers', 'maximized the draw answers.');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.sendShortHelp(
+      'Help PrintMaximized',
+      'Command to set the config to maximise the answers.');
   }
 }

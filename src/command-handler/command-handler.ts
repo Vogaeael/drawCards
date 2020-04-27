@@ -26,6 +26,14 @@ export interface ICommandHandler {
    * @param classList
    */
   addCommands(classList): void,
+
+  /**
+   * Get a special command
+   *
+   * @param name: string
+   * @return ICommand | undefined
+   */
+  getCommand(name: string): ICommand | undefined,
 }
 
 @injectable()
@@ -33,7 +41,7 @@ export class CommandHandler implements ICommandHandler {
   private readonly cmdDeterminer: ICommandDeterminer;
   private readonly msgFactory: () => MessageEmbed;
   private readonly databaseApi: IDatabaseApi;
-  private logger: ILogger;
+  private readonly logger: ILogger;
   private curGuild: IGuild;
   private curMessage: Message;
   private commands: Map<string, ICommand>;
@@ -76,13 +84,23 @@ export class CommandHandler implements ICommandHandler {
   public addCommand(className: ICommandClass): void {
     try {
       const commandName: string = lowerFirstChar(className.name);
-      const command: ICommand = new className(this.msgFactory, this.databaseApi, this.logger);
+      const command: ICommand = new className(
+        this.msgFactory,
+        this.databaseApi,
+        this.logger,
+        this);
       this.logger.log(Loglevel.DEBUG, 'add command: ' + commandName);
       this.commands.set(commandName, command);
     } catch (e) {
       this.logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + e);
     }
+  }
 
+  /**
+   * @inheritDoc
+   */
+  public getCommand(name: string): ICommand | undefined {
+    return this.commands.get(name);
   }
 
   /**
