@@ -64,7 +64,7 @@ export class Draw extends Command {
    * |  1  |   1   | red_black_card |
    */
   private setDrawColor(): void {
-    let color = AnswerColor.red_black_cards;
+    let color: string = AnswerColor.red_black_cards;
     if (!this.hasRed && this.hasBlack) {
       color = AnswerColor.black_card;
     }
@@ -219,6 +219,9 @@ export class Draw extends Command {
     this.hasRed = false;
   }
 
+  /**
+   * Send minimized answer
+   */
   private sendMinimizedAnswer(): void {
     this.setDrawColor();
     this.answer.addFields(this.fieldsToAdd);
