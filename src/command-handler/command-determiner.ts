@@ -46,13 +46,13 @@ export class CommandDeterminer implements ICommandDeterminer {
     this.setValues(commands, msg, prefix);
 
     if (!this.hasPrefix()) {
-      return undefined;
+      return [undefined, undefined];
     }
     this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' has the prefix \'' + prefix + '\'');
     this.removePrefix();
 
     if (!this.determineCommand()) {
-      return undefined;
+      return [undefined, undefined];
     }
     this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' is a command');
     this.determineParams();
