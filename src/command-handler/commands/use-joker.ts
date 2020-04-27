@@ -5,6 +5,10 @@ import { Command } from './command';
  * Add joker to the next deck
  */
 export class UseJoker extends Command {
+  /**
+   * @inheritDoc
+   */
+  public name: string = 'useJoker';
 
   /**
    * Command !useJoker

@@ -4,7 +4,6 @@ import { Message, MessageEmbed } from 'discord.js';
 import { ICommandDeterminer } from './command-determiner';
 import { TYPES } from '../types';
 import { ICommand, ICommandClass } from './commands/command';
-import { lowerFirstChar } from '../functions';
 import { IDatabaseApi } from '../database/database-api';
 import { ILogger, Loglevel } from '../logger/logger-interface';
 
@@ -83,14 +82,13 @@ export class CommandHandler implements ICommandHandler {
    */
   public addCommand(className: ICommandClass): void {
     try {
-      const commandName: string = lowerFirstChar(className.name);
       const command: ICommand = new className(
         this.msgFactory,
         this.databaseApi,
         this.logger,
         this);
-      this.logger.log(Loglevel.DEBUG, 'add command: ' + commandName);
-      this.commands.set(commandName, command);
+      this.logger.log(Loglevel.DEBUG, 'add command: ' + command.name);
+      this.commands.set(command.name, command);
     } catch (e) {
       this.logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + e);
     }

@@ -5,6 +5,10 @@ import { Command } from './command';
  * Set the new prefix
  */
 export class SetPrefix extends Command {
+  /**
+   * @inheritDoc
+   */
+  public name: string = 'setPrefix';
 
   /**
    * Command !setPrefix

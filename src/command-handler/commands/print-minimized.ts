@@ -7,6 +7,11 @@ import { Command } from './command';
 export class PrintMinimized extends Command {
 
   /**
+   * @inheritDoc
+   */
+  public name: string = 'printMinimized';
+
+  /**
    * Command !printMinimized
    * Print the answers short and minimized
    *

@@ -10,10 +10,10 @@ import { ICommandHandler } from '../command-handler';
 export type MessageFactory = () => MessageEmbed;
 
 export interface ICommandClass {
-  new (msgFactory: MessageFactory,
-       databaseApi: IDatabaseApi,
-       logger: ILogger,
-       cmdHandler: ICommandHandler): ICommand;
+  new(msgFactory: MessageFactory,
+      databaseApi: IDatabaseApi,
+      logger: ILogger,
+      cmdHandler: ICommandHandler): ICommand;
 }
 
 export interface ICommand {
@@ -35,7 +35,12 @@ export interface ICommand {
   /**
    * Print the command help
    */
-  help(): void
+  help(): void,
+
+  /**
+   * The name of the command
+   */
+  name: string
 }
 
 export abstract class Command implements ICommand {
@@ -49,6 +54,10 @@ export abstract class Command implements ICommand {
   protected msg: Message;
   protected answer: MessageEmbed;
   protected logger: ILogger;
+  /**
+   * @inheritDoc
+   */
+  public abstract name: string;
 
   constructor(
     @inject(TYPES.MessageFactory) msgFactory: MessageFactory,

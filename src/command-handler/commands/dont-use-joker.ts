@@ -7,6 +7,11 @@ import { Command } from './command';
 export class DontUseJoker extends Command {
 
   /**
+   * @inheritDoc
+   */
+  public name: string = 'dontUseJoker';
+
+  /**
    * Command !dontUseJoker
    * Remove the joker from the next deck
    *

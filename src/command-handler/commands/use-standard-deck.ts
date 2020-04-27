@@ -6,6 +6,10 @@ import { DeckTypes } from '../../deck/deck-types';
  * Change the next deck to a standard deck
  */
 export class UseStandardDeck extends Command {
+  /**
+   * @inheritDoc
+   */
+  public name: string = 'useStandardDeck';
 
   /**
    * Command !useStandardDeck

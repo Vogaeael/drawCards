@@ -7,6 +7,11 @@ import { Command } from './command';
 export class PrintMaximized extends Command {
 
   /**
+   * @inheritDoc
+   */
+  public name: string = 'printMaximized';
+
+  /**
    * Command !printMaximized
    * Print the answers long and maximized
    *

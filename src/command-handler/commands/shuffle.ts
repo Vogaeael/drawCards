@@ -5,6 +5,10 @@ import { Command } from './command';
  * Shuffle a new deck
  */
 export class Shuffle extends Command {
+  /**
+   * @inheritDoc
+   */
+  public name: string = 'shuffle';
 
   /**
    * Command !shuffle

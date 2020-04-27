@@ -7,6 +7,11 @@ import { Loglevel } from '../../logger/logger-interface';
  */
 export class CardsLeft extends Command {
   /**
+   * @inheritDoc
+   */
+  public name: string = 'cardsLeft';
+
+  /**
    * Command !cardsLeft
    * Get how many cards are remaining in the deck.
    *

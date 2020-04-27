@@ -6,6 +6,10 @@ import { AnswerColor } from '../answer-color';
  * Print the help information
  */
 export class Help extends Command {
+  /**
+   * @inheritDoc
+   */
+  public name: string = 'help';
 
   /**
    * Command !help

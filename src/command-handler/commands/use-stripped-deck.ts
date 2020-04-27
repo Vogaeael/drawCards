@@ -6,6 +6,10 @@ import { DeckTypes } from '../../deck/deck-types';
  * Change the next deck to a stripped deck
  */
 export class UseStrippedDeck extends Command {
+  /**
+   * @inheritDoc
+   */
+  public name: string = 'useStrippedDeck';
 
   /**
    * Command !useStrippedDeck
