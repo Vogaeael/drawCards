@@ -4,4 +4,4 @@ node_modules
 **/*.js.map
 **/*.d.ts
 saves/save*.xml
-logs/
+log/
