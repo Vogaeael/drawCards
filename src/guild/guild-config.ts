@@ -1,7 +1,5 @@
 import { DeckTypes } from '../deck/deck-types';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../types';
-import { IDatabaseApi } from '../database/database-api';
 
 export interface IGuildConfig {
   /**

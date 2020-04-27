@@ -1,6 +1,4 @@
 import { Command } from './command';
-import { Loglevel } from '../../logger/logger-interface';
-import { AnswerColor } from '../answer-color';
 
 /**
  * Command !dontUseJoker

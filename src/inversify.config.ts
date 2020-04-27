@@ -9,11 +9,9 @@ import { IGuildConfig, GuildConfig } from './guild/guild-config';
 import { IDeck, Deck } from './deck/deck';
 import { ICard, Card } from './deck/card';
 import { CommandHandler } from './command-handler/command-handler';
-import { ICommand } from './command-handler/commands/command';
 import { IDatabaseApi } from './database/database-api';
 import { XmlApi } from './database/xml-api/xml-api';
 import { ILogger } from './logger/logger-interface';
-import { ConsoleLogger } from './logger/console-log/console-logger';
 import { FileLogger } from './logger/file-log/file-logger';
 
 let container = new Container();

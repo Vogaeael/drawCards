@@ -1,6 +1,5 @@
 import { Command } from './command';
 import { DeckTypes } from '../../deck/deck-types';
-import { AnswerColor } from '../answer-color';
 
 /**
  * Command !useStandardDeck

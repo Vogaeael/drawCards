@@ -1,5 +1,4 @@
 import { Command } from './command';
-import { AnswerColor } from '../answer-color';
 
 /**
  * Command !useJoker

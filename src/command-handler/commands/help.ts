@@ -1,9 +1,5 @@
 import { Command, ICommand } from './command';
 import { AnswerColor } from '../answer-color';
-import { Loglevel } from '../../logger/logger-interface';
-import container from '../../inversify.config';
-import { ICommandHandler } from '../command-handler';
-import { TYPES } from '../../types';
 
 /**
  * Command !help
