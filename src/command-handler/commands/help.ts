@@ -45,7 +45,8 @@ export class Help extends Command {
       .setThumbnail('attachment://deck_icons.png')
       .setColor(AnswerColor.info)
       .addField('!shuffle', 'Shuffle the hole deck new.')
-      .addField('!draw [?num]', 'Draw cards of the deck. Instead of `[?num]` insert a number like `3` or `all`. If nothing is set or the value is not valid it uses 1. Instead of a number, you can also say `all`')
+      .addField('!draw [?num]', 'Draw cards of the deck. Instead of `[?num]` insert a number like `3` or `all`.' +
+        ' If nothing is set or the value is not valid it uses 1. Instead of a number, you can also say `all`')
       .addField('!cardsLeft', 'Message how many cards are left in the deck')
       .addField('!useStandardDeck', 'Use standard (52 cards) deck (active from next shuffle on).')
       .addField('!useStrippedDeck', 'Use stripped (32 cards) deck (active from next shuffle on).')
@@ -53,9 +54,13 @@ export class Help extends Command {
       .addField('!dontUseJoker', 'Don\'t add joker to the decks (active from next shuffle on).')
       .addField('!printMinimized', 'Print the answer from draw minimized.')
       .addField('!printMaximized', 'Print the answer from draw maximized.')
-      .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another. If no parameter is set, it changes back to `!`')
-      .addField('!help', 'Get this help information')
-      .addField('Default', 'By default it uses a standard deck (52 cards) without joker and print it minimized. The default prefix is `!`');
+      .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another.' +
+        ' If no parameter is set, it changes back to `!`')
+      .addField('!help [?command]', 'Get the help information.' +
+        ' If you set the name of a command instead of `[?command] you get the special help for this command.' +
+        ' If you dont set something for `[?command]` the normal help will be answerd.')
+      .addField('Default', 'By default it uses a standard deck (52 cards) without joker and print it minimized.' +
+        ' The default prefix is `!`');
     this.sendAnswer();
   }
 }
