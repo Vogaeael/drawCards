@@ -2,7 +2,6 @@ import { Command } from './command';
 import { capitalize, transformToNum } from '../../functions';
 import { AnswerColor } from '../answer-color';
 import { ICard } from '../../deck/card';
-import { Joker } from '../../deck/deck-types';
 import { Suits } from '../../deck/suits';
 import { EmbedFieldData, Message } from 'discord.js';
 import { IGuild } from '../../guild/guild';
@@ -82,12 +81,9 @@ export class Draw extends Command {
    * @param card: Card
    */
   private addCardImage(card: ICard): void {
-    let fileName = 'deck_icons.png';
-    let path = './media/images/';
-    if (card.getRank() !== Joker.black_joker || card.getRank() !== Joker.black_joker2) {
-      fileName = card.getRank() + '_' + card.getSuit() + '.png';
-      path = './media/images/cards/';
-    }
+    const fileName = card.getRank() + '_' + card.getSuit() + '.png';
+    const path = './media/images/cards/';
+
 
     this.answer.attachFiles([path + fileName]);
     this.answer.setImage('attachment://' + fileName);

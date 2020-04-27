@@ -3,5 +3,5 @@ export enum Suits {
   diamonds = 'diamonds',
   hearts = 'hearts',
   spades = 'spades',
-  joker = ''
+  joker = 'black_joker'
 }

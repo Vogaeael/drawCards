@@ -24,5 +24,5 @@ export const StandardDeck = StrippedDeck.concat([
 
 export enum Joker {
   black_joker = 'black_joker',
-  black_joker2 = 'black_joker'
+  red_joker = 'red_joker'
 }
