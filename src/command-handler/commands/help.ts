@@ -57,7 +57,7 @@ export class Help extends Command {
       .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another.' +
         ' If no parameter is set, it changes back to `!`')
       .addField('!help [?command]', 'Get the help information.' +
-        ' If you set the name of a command instead of `[?command] you get the special help for this command.' +
+        ' If you set the name of a command instead of `[?command]` you get the special help for this command.' +
         ' If you dont set something for `[?command]` the normal help will be answerd.')
       .addField('Default', 'By default it uses a standard deck (52 cards) without joker and print it minimized.' +
         ' The default prefix is `!`');
