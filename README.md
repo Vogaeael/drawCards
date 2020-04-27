@@ -11,9 +11,11 @@ The Bots need the permission's to:
   * `write messages`
   * `embed links`
   * `attach files`
+  * `read message history`
+  * `add reactions`
 
-The permission's integer is `51200`. To add your bot to your server, you can use this link. You have to change the `[clientId]` to the client id of your bot:
-`https://discordapp.com/api/oauth2/authorize?client_id=[clientId]`&permissions=51200&scope=bot`
+The permission's integer is `116800`. To add your bot to your server, you can use this link. You have to change the `[clientId]` to the client id of your bot:
+`https://discordapp.com/api/oauth2/authorize?client_id=[clientId]&permissions=116800&scope=bot`
 
 
 ## Install

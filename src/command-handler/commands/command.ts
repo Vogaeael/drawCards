@@ -32,6 +32,9 @@ export interface ICommand {
 }
 
 export abstract class Command implements ICommand {
+  private static readonly black_check_mark = '✔';
+  private static readonly white_check_mark = '✅';
+  private static readonly box_check_mark = '☑';
   private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
   protected curGuild: IGuild;
@@ -82,10 +85,27 @@ export abstract class Command implements ICommand {
   /**
    * Reply to the change of the config
    *
-   * @param title: string
-   * @param description: string
+   * @param title: string the title of the message
+   * @param description: string the description of the message
+   * @param force: boolean default: false, if the maximized version should be forced.
    */
-  protected replyConfigChange(title: string, description: string): void {
+  protected replyConfigChange(title: string, description: string, force: boolean = false): void {
+    if (!force && this.curGuild.getConfig().getMinimized()) {
+      this.msg.react(Command.white_check_mark)
+        .catch(
+          (e) => {
+            this.logger.log(
+              Loglevel.FATAL,
+              'couldn\'t add reaction in channel \'' +
+              this.msg.channel +
+              '\' in guild \'' +
+              this.msg.guild +
+              '\': ' +
+              e);
+          });
+
+      return
+    }
     this.answer.setTitle(title)
       .setDescription(this.getMentionOfAuthor() + ' ' + description)
       .setColor(AnswerColor.config_reply);

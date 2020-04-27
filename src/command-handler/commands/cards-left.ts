@@ -15,6 +15,9 @@ export class CardsLeft extends Command {
   public run(params: string): void {
     this.logCommand('cardsLeft', params);
     this.logger.log(Loglevel.DEBUG, 'Command: cardsLeft from guild ' + this.curGuild.getId());
-    this.replyConfigChange('Cards Left', this.curGuild.getDeck().count() + ' cards are left in the deck.');
+    this.replyConfigChange(
+      'Cards Left',
+      this.curGuild.getDeck().count() + ' cards are left in the deck.',
+      true);
   }
 }

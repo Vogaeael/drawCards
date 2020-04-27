@@ -82,4 +82,28 @@ export abstract class AbstractLogger implements ILogger {
     this.logLevelList.set(Loglevel.DEPRECATED, 3);
     this.logLevelList.set(Loglevel.DEBUG, 4);
   }
+
+  /**
+   * Create the log message
+   *
+   * @param level: Loglevel
+   * @param message: string
+   */
+  protected createLogMessage(level: Loglevel, message: string): string {
+    const now: number = Date.now();
+    const dtf = new Intl.DateTimeFormat('en',
+      {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    const [{ value: mo },,{ value: da },,{ value: ye },,{ value: hour },,{ value: min },,{ value:sec }] = dtf.formatToParts(now)
+
+    return '[' + ye + '-' + mo + '-' + da + 'T' + hour + ':' + min + ':' + sec + ']' +
+      '[' + level.toString().toUpperCase() + ']: ' +
+      message;
+  }
 }
