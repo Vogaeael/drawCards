@@ -96,14 +96,12 @@ export class CommandHandler implements ICommandHandler {
    * Handle the message
    */
   private _handle(): void {
-    const commandAndParams = this.cmdDeterminer.determine(
+    const [command, params] = this.cmdDeterminer.determine(
       this.commands,
       this.curMessage.content,
       this.curGuild.getConfig().getPrefix());
 
-    if (commandAndParams) {
-      const command: ICommand = commandAndParams[0];
-      const params: string = commandAndParams[1];
+    if (command) {
       command.init(this.curGuild, this.curMessage);
       command.run(params);
     }
