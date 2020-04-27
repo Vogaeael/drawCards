@@ -1,5 +1,5 @@
 import { IGuild } from '../../guild/guild';
-import { Message, MessageEmbed, ReactionEmoji } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import { AnswerColor } from '../answer-color';
 import { inject } from 'inversify';
 import { TYPES } from '../../types';
@@ -32,6 +32,9 @@ export interface ICommand {
 }
 
 export abstract class Command implements ICommand {
+  private static readonly black_check_mark = '✔';
+  private static readonly white_check_mark = '✅';
+  private static readonly box_check_mark = '☑';
   private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
   protected curGuild: IGuild;
@@ -87,10 +90,19 @@ export abstract class Command implements ICommand {
    * @param force: boolean default: false, if the maximized version should be forced.
    */
   protected replyConfigChange(title: string, description: string, force: boolean = false): void {
-    if (this.curGuild.getConfig().getMinimized()) {
-      this.msg.react('\N{+1}').then(() => {}).catch((e) => console.log(e));
-      this.msg.react(':white_check_mark:').then(() => {}).catch((e) => console.log(e));
-      this.msg.react('white_check_mark').then(() => {}).catch((e) => console.log(e));
+    if (!force && this.curGuild.getConfig().getMinimized()) {
+      this.msg.react(Command.white_check_mark)
+        .catch(
+          (e) => {
+            this.logger.log(
+              Loglevel.FATAL,
+              'couldn\'t add reaction in channel \'' +
+              this.msg.channel +
+              '\' in guild \'' +
+              this.msg.guild +
+              '\': ' +
+              e);
+          });
 
       return
     }
