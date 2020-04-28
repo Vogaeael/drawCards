@@ -15,6 +15,7 @@ import { UseStrippedDeck } from './command-handler/commands/use-stripped-deck';
 import { CommandHandler } from './command-handler/command-handler';
 import { CardsLeft } from './command-handler/commands/cards-left';
 import { ILogger, Loglevel } from './logger/logger-interface';
+import { Konami } from './command-handler/commands/konami';
 
 const bot = container.get<Bot>(TYPES.Bot);
 const logger = container.get<ILogger>(TYPES.Logger);
@@ -31,6 +32,7 @@ commandHandler.addCommands([
   DontUseJoker,
   Draw,
   Help,
+  Konami,
   PrintMaximized,
   PrintMinimized,
   SetPrefix,
