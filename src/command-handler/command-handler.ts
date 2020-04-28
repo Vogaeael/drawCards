@@ -3,7 +3,7 @@ import { IGuild } from '../guild/guild';
 import { Message, MessageEmbed } from 'discord.js';
 import { ICommandDeterminer } from './command-determiner';
 import { TYPES } from '../types';
-import { ICommand, ICommandClass } from './commands/command';
+import { CommandFactory, ICommand, ICommandClass } from './commands/command';
 import { IDatabaseApi } from '../database/database-api';
 import { ILogger, Loglevel } from '../logger/logger-interface';
 
@@ -41,6 +41,7 @@ export class CommandHandler implements ICommandHandler {
   private readonly msgFactory: () => MessageEmbed;
   private readonly databaseApi: IDatabaseApi;
   private readonly logger: ILogger;
+  private readonly cmdFactory: CommandFactory;
   private curGuild: IGuild;
   private curMessage: Message;
   private commands: Map<string, ICommand>;
@@ -50,11 +51,13 @@ export class CommandHandler implements ICommandHandler {
     @inject(TYPES.CommandDeterminer) cmdDeterminer: ICommandDeterminer,
     @inject(TYPES.MessageFactory) msgFactory: () => MessageEmbed,//interfaces.Factory<Answer>,
     @inject(TYPES.Logger) logger: ILogger,
+    @inject(TYPES.CommandFactory) cmdFactory: CommandFactory,
   ) {
     this.databaseApi = databaseApi;
     this.cmdDeterminer = cmdDeterminer;
     this.msgFactory = msgFactory;
     this.logger = logger;
+    this.cmdFactory = cmdFactory;
     this.initCommands();
   }
 
@@ -82,13 +85,14 @@ export class CommandHandler implements ICommandHandler {
    */
   public addCommand(className: ICommandClass): void {
     try {
-      const command: ICommand = new className(
-        this.msgFactory,
-        this.databaseApi,
-        this.logger,
-        this);
-      this.logger.log(Loglevel.DEBUG, 'add command: ' + command.name);
-      this.commands.set(command.name, command);
+      const command: ICommand | undefined = this.cmdFactory(className, this);
+      if (command) {
+        this.logger.log(Loglevel.DEBUG, 'add command: ' + command.name);
+        this.commands.set(command.name, command);
+
+        return
+      }
+      this.logger.log(Loglevel.FATAL, 'couldn\'t init command: command is undefined');
     } catch (e) {
       this.logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + e);
     }

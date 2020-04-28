@@ -1,18 +1,19 @@
 import "reflect-metadata";
 import { Container, interfaces } from "inversify";
 import { TYPES } from "./types";
-import { IBot, Bot } from "./bot";
+import { Bot, IBot } from "./bot";
 import { Client, MessageEmbed } from "discord.js";
 import { CommandDeterminer } from './command-handler/command-determiner';
-import { IGuild, Guild } from './guild/guild';
-import { IGuildConfig, GuildConfig } from './guild/guild-config';
-import { IDeck, Deck } from './deck/deck';
-import { ICard, Card } from './deck/card';
-import { CommandHandler } from './command-handler/command-handler';
+import { Guild, IGuild } from './guild/guild';
+import { GuildConfig, IGuildConfig } from './guild/guild-config';
+import { Deck, IDeck } from './deck/deck';
+import { Card, ICard } from './deck/card';
+import { CommandHandler, ICommandHandler } from './command-handler/command-handler';
 import { IDatabaseApi } from './database/database-api';
 import { XmlApi } from './database/xml-api/xml-api';
-import { ILogger } from './logger/logger-interface';
+import { ILogger, Loglevel } from './logger/logger-interface';
 import { FileLogger } from './logger/file-log/file-logger';
+import { CommandFactory, ICommand, ICommandClass, MessageFactory } from './command-handler/commands/command';
 
 let container = new Container();
 
@@ -32,6 +33,26 @@ container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
   .toConstantValue(new CommandDeterminer(container.get<ILogger>(TYPES.Logger)));
 container.bind<CommandHandler>(TYPES.CommandHandler)
   .to(CommandHandler).inSingletonScope();
+
+container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFactory)
+  .toFactory((context: interfaces.Context) => {
+    const msgFactory: MessageFactory = context.container.get<MessageFactory>(TYPES.MessageFactory);
+    const databaseApi: IDatabaseApi = context.container.get<IDatabaseApi>(TYPES.DatabaseApi);
+    const logger: ILogger = context.container.get<ILogger>(TYPES.Logger);
+    return (name: ICommandClass, cmdHandler: ICommandHandler) => {
+      try {
+        return new name(
+          msgFactory,
+          databaseApi,
+          logger,
+          cmdHandler
+        );
+      } catch (e) {
+        logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + name.toString() + ': ' + e);
+        return undefined;
+      }
+    };
+  });
 
 container.bind<IDatabaseApi>(TYPES.DatabaseApi)
   .to(XmlApi);

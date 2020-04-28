@@ -9,6 +9,8 @@ import { ICommandHandler } from '../command-handler';
 
 export type MessageFactory = () => MessageEmbed;
 
+export type CommandFactory = (name: ICommandClass, cmdHandler: ICommandHandler) => ICommand;
+
 export interface ICommandClass {
   new(msgFactory: MessageFactory,
       databaseApi: IDatabaseApi,
