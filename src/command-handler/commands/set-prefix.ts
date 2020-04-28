@@ -17,7 +17,7 @@ export class SetPrefix extends Command {
    * @inheritDoc
    */
   public run(commandName: string, newPrefix: string): void {
-    this.logCommand('setPrefix', newPrefix);
+    this.logCommand('setPrefix', commandName, newPrefix);
     if ('' === newPrefix) {
       newPrefix = '!';
     }

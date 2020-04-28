@@ -157,10 +157,15 @@ export abstract class Command implements ICommand {
    * Log command with debug level
    *
    * @param command: string
+   * @param commandName: string
    * @param param: string
    */
-  protected logCommand(command: string, param: string = ''): void {
-    let logMessage = 'Command \'' + command + '\' from guild \'' + this.curGuild.getId() + '\'';
+  protected logCommand(
+    command: string,
+    commandName: string,
+    param: string
+  ): void {
+    let logMessage = 'Run Command-class \'' + command + '\' with command \'' + commandName + '\' from guild \'' + this.curGuild.getId() + '\'';
     if ('' !== param) {
       logMessage += ' with param \'' + param + '\'';
     }

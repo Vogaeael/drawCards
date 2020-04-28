@@ -28,7 +28,7 @@ export class Draw extends Command {
    * @inheritDoc
    */
   public run(commandName: string, numString: string): void {
-    this.logCommand('draw', numString);
+    this.logCommand('draw', commandName, numString);
     if (undefined === this.curGuild.getDeck()) {
       this.answerEmpty();
 

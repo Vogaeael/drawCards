@@ -18,7 +18,7 @@ export class PrintMinimized extends Command {
    * @inheritDoc
    */
   public run(commandName: string, params: string): void {
-    this.logCommand('printMinimized', params);
+    this.logCommand('printMinimized', commandName, params);
     this.curGuild.getConfig().printMinimized();
     this.saveGuildConfig();
 

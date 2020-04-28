@@ -17,7 +17,7 @@ export class UseJoker extends Command {
    * @inheritDoc
    */
   public run(commandName: string, params: string): void {
-    this.logCommand('useJoker', params);
+    this.logCommand('useJoker', commandName, params);
     this.curGuild.getConfig().useJoker();
     this.saveGuildConfig();
 
