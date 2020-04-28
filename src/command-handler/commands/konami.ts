@@ -12,7 +12,7 @@ export class Konami extends Command {
    *
    * @inheritDoc
    */
-  public run(params: string): void {
+  public run(commandName: string, params: string): void {
     this.logCommand('konami', params);
     this.msg.reply('You little cheater 😉')
       .catch((e) => this.logger.log(Loglevel.ERROR, e));

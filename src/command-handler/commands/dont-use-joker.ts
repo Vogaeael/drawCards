@@ -17,7 +17,7 @@ export class DontUseJoker extends Command {
    *
    * @inheritDoc
    */
-  public run(params: string): void {
+  public run(commandName: string, params: string): void {
     this.logCommand('dontUseJoker', params);
     this.curGuild.getConfig().dontUseJoker();
     this.saveGuildConfig();

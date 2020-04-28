@@ -16,7 +16,7 @@ export class Shuffle extends Command {
    *
    * @inheritDoc
    */
-  public run(params: string): void {
+  public run(commandName: string, params: string): void {
     this.logCommand('shuffle', params);
     this.curGuild.getDeck().shuffle(this.curGuild.getConfig().getDeckType(), this.curGuild.getConfig().getJoker());
 

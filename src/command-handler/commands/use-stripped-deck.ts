@@ -17,7 +17,7 @@ export class UseStrippedDeck extends Command {
    *
    * @inheritDoc
    */
-  public run(params: string): void {
+  public run(commandName: string, params: string): void {
     this.logCommand('useStrippedDeck', params);
     this.curGuild.getConfig().setDeckType(DeckTypes.strippedDeck);
     this.saveGuildConfig();

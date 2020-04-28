@@ -10,6 +10,7 @@ import { Message } from 'discord.js';
 
 export interface CommandToHandle {
   command: ICommand,
+  commandName: string,
   param: string,
   message: Message,
   guild: IGuild
@@ -34,6 +35,7 @@ export class CommandDeterminer implements ICommandDeterminer {
   private commandToHandle: ReplaySubject<CommandToHandle>;
   private curMsg: string;
   private guildPrefix: string;
+  private commandName: string;
   private command: ICommand;
   private params: string;
 
@@ -86,6 +88,7 @@ export class CommandDeterminer implements ICommandDeterminer {
         this.commandToHandle.next(
           {
             command: this.command,
+            commandName: this.commandName,
             param: this.params,
             message: msg.msg,
             guild: msg.guild
@@ -117,6 +120,7 @@ export class CommandDeterminer implements ICommandDeterminer {
     for (let command of this.cmdList.getNames()) {
       if (this.curMsg.startsWith(command)) {
         this.curMsg = this.curMsg.replace(command, '');
+        this.commandName = command;
 
         if (this.curMsg.length > 0) {
           if (!this.curMsg.startsWith(' ')) {

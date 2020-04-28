@@ -17,7 +17,7 @@ export class CardsLeft extends Command {
    *
    * @inheritDoc
    */
-  public run(params: string): void {
+  public run(commandName: string, params: string): void {
     this.logCommand('cardsLeft', params);
     this.logger.log(Loglevel.DEBUG, 'Command: cardsLeft from guild ' + this.curGuild.getId());
     this.replyConfigChange(

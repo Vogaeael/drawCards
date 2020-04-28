@@ -24,7 +24,7 @@ export interface ICommand {
    *
    * @param params: string
    */
-  run(params: string): void,
+  run(commandName: string, params: string): void,
 
   /**
    * Initialize the command and set the values
@@ -76,7 +76,7 @@ export abstract class Command implements ICommand {
   /**
    * @inheritDoc
    */
-  public abstract run(params: string): void;
+  public abstract run(commandName: string, params: string): void;
 
   /**
    * @inheritDoc
