@@ -8,7 +8,7 @@ export class UseJoker extends Command {
   /**
    * @inheritDoc
    */
-  public name: string = 'useJoker';
+  public name: string[] = [ 'useJoker' ];
 
   /**
    * Command !useJoker

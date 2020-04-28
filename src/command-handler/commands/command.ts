@@ -42,7 +42,7 @@ export interface ICommand {
   /**
    * The name of the command
    */
-  name: string
+  name: string[]
 }
 
 export abstract class Command implements ICommand {
@@ -59,7 +59,7 @@ export abstract class Command implements ICommand {
   /**
    * @inheritDoc
    */
-  public abstract name: string;
+  public abstract name: string[];
 
   constructor(
     @inject(TYPES.MessageFactory) msgFactory: MessageFactory,

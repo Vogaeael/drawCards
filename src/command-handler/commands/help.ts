@@ -9,7 +9,7 @@ export class Help extends Command {
   /**
    * @inheritDoc
    */
-  public name: string = 'help';
+  public name: string[] = [ 'help' ];
 
   /**
    * Command !help

@@ -88,7 +88,9 @@ export class CommandHandler implements ICommandHandler {
       const command: ICommand | undefined = this.cmdFactory(className, this);
       if (command) {
         this.logger.log(Loglevel.DEBUG, 'add command: ' + command.name);
-        this.commands.set(command.name, command);
+        command.name.forEach((name: string) => {
+          this.commands.set(name, command);
+        });
 
         return
       }

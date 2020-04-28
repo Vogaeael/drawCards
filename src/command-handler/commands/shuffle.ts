@@ -8,7 +8,7 @@ export class Shuffle extends Command {
   /**
    * @inheritDoc
    */
-  public name: string = 'shuffle';
+  public name: string[] = [ 'shuffle' ];
 
   /**
    * Command !shuffle

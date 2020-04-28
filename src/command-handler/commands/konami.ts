@@ -5,7 +5,7 @@ export class Konami extends Command {
   /**
    * @inheritDoc
    */
-  public name: string = "⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️🅱️🅰️";
+  public name: string[] = [ "⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️🅱️🅰️" ];
 
   /**
    * Command !

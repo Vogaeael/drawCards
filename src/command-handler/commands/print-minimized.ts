@@ -9,7 +9,7 @@ export class PrintMinimized extends Command {
   /**
    * @inheritDoc
    */
-  public name: string = 'printMinimized';
+  public name: string[] = [ 'printMinimized' ];
 
   /**
    * Command !printMinimized
