@@ -24,3 +24,16 @@ export function transformToNum(numString: string): number {
 
   return num;
 }
+
+/**
+ * Return a random of an array
+ *
+ * @param array: array
+ *
+ * @return any
+ */
+export function randomFromArray(array: any[]): any {
+  const randomNum: number = array.length * Math.random();
+
+  return array[randomNum];
+}

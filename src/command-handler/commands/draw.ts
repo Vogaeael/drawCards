@@ -92,20 +92,6 @@ export class Draw extends Command {
   }
 
   /**
-   * Add an image for the card
-   *
-   * @param card: Card
-   */
-  private addCardImage(card: ICard): void {
-    const fileName = card.getRank() + '_' + card.getSuit() + '.png';
-    const path = './media/images/cards/';
-
-
-    this.answer.attachFiles([path + fileName]);
-    this.answer.setImage('attachment://' + fileName);
-  }
-
-  /**
    * Answer that the deck it empty
    *
    * @param num: number, number of remaining cards

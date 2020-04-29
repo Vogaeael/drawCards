@@ -6,6 +6,7 @@ import { TYPES } from '../../types';
 import { IDatabaseApi } from '../../database/database-api';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
 import { ICommandList } from '../command-list';
+import { ICard } from '../../deck/card';
 
 export type MessageFactory = () => MessageEmbed;
 
@@ -22,6 +23,7 @@ export interface ICommand {
   /**
    * Run the command with the params
    *
+   * @param commandName: string
    * @param params: string
    */
   run(commandName: string, params: string): void,
@@ -189,5 +191,29 @@ export abstract class Command implements ICommand {
       .attachFiles(['./media/images/deck_icons.png'])
       .setThumbnail('attachment://deck_icons.png');
     this.sendAnswer();
+  }
+
+  /**
+   * Add an image for the card
+   *
+   * @param card: Card
+   */
+  protected addCardImage(card: ICard): void {
+    const [path, fileName] = this.getCardPathAndFileName(card);
+
+    this.answer.attachFiles([path + fileName]);
+    this.answer.setImage('attachment://' + fileName);
+  }
+
+  /**
+   * Get the picture path and file name of a card
+   *
+   * @param card: ICard
+   */
+  protected getCardPathAndFileName(card: ICard): [string, string] {
+    const fileName = card.getRank() + '_' + card.getSuit() + '.png';
+    const path = './media/images/cards/';
+
+    return [path, fileName];
   }
 }
