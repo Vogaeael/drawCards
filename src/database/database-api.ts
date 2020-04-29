@@ -4,6 +4,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { ILogger, Loglevel } from '../logger/logger-interface';
 import { Observable, ReplaySubject } from 'rxjs';
+import { ReplaySubjectFactory } from '../inversify.config';
 
 export interface IDatabaseApi {
   /**
@@ -25,14 +26,14 @@ export interface IDatabaseApi {
 @injectable()
 export abstract class AbstractDatabaseApi implements IDatabaseApi {
   protected readonly guildConfigFactory: () => IGuildConfig;
-  protected readonly replaySubjectFactory: <T>() => ReplaySubject<T>;
+  protected readonly replaySubjectFactory:  ReplaySubjectFactory;
   protected guildConfig: IGuildConfig;
   protected logger: ILogger;
 
   public constructor(
     @inject(TYPES.GuildConfigFactory) guildConfigFactory: () => IGuildConfig, //interfaces.Factory<IGuild>
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory:  ReplaySubjectFactory
   ) {
     this.replaySubjectFactory = replaySubjectFactory;
     this.guildConfigFactory = guildConfigFactory;

@@ -6,6 +6,7 @@ import { TYPES } from '../../types';
 import { IDatabaseApi } from '../../database/database-api';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
 import { ICommandList } from '../command-list';
+import { IDesignHandler } from '../../design/designHandler';
 import { ICard } from '../../deck/card';
 import { from, Observable } from 'rxjs';
 
@@ -17,7 +18,9 @@ export interface ICommandClass {
   new(msgFactory: MessageFactory,
       databaseApi: IDatabaseApi,
       logger: ILogger,
-      cmdHandler: ICommandList): ICommand;
+      cmdHandler: ICommandList,
+      designHandler: IDesignHandler
+  ): ICommand;
 }
 
 export interface ICommand {
@@ -55,6 +58,7 @@ export abstract class Command implements ICommand {
   private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
   protected readonly cmdList: ICommandList;
+  protected readonly designHandler: IDesignHandler;
   protected curGuild: IGuild;
   protected msg: Message;
   protected answer: MessageEmbed;
@@ -68,12 +72,14 @@ export abstract class Command implements ICommand {
     @inject(TYPES.MessageFactory) msgFactory: MessageFactory,
     @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.CommandList) cmdList: ICommandList
+    @inject(TYPES.CommandList) cmdList: ICommandList,
+    @inject(TYPES.DesignHandler) designHandler: IDesignHandler
   ) {
     this.msgFactory = msgFactory;
     this.databaseApi = databaseApi;
     this.logger = logger;
     this.cmdList = cmdList;
+    this.designHandler = designHandler;
   }
 
   /**

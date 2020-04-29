@@ -5,7 +5,7 @@ import { IGuild } from './guild/guild';
 import { ILogger, Loglevel } from './logger/logger-interface';
 import { from, Observable, ReplaySubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { MapFactory } from './inversify.config';
+import { MapFactory, ReplaySubjectFactory } from './inversify.config';
 
 export interface MessageToHandle {
   msg: Message,
@@ -28,7 +28,7 @@ export class Bot implements IBot {
   private client: Client;
   private readonly token: string;
   private readonly guildFactory: () => IGuild; //interfaces.Factory<IGuild>;
-  private readonly replaySubjectFactory: <T>() => ReplaySubject<T>;
+  private readonly replaySubjectFactory:  ReplaySubjectFactory;
   private guilds: Map<Snowflake, IGuild>;
   private logger: ILogger;
   private lastMessage: ReplaySubject<Message>;
@@ -39,7 +39,7 @@ export class Bot implements IBot {
     @inject(TYPES.Token) token: string,
     @inject(TYPES.GuildFactory) guildFactory: () => IGuild,//interfaces.Factory<IGuild>,
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>,
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory:  ReplaySubjectFactory,
     @inject(TYPES.MapFactory) mapFactory: MapFactory
   ) {
     this.replaySubjectFactory = replaySubjectFactory;

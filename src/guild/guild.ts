@@ -5,6 +5,7 @@ import { TYPES } from '../types';
 import { Snowflake } from 'discord.js';
 import { IDatabaseApi } from '../database/database-api';
 import { ReplaySubject } from 'rxjs';
+import { ReplaySubjectFactory } from '../inversify.config';
 
 export interface IGuild {
 
@@ -43,14 +44,14 @@ export interface IGuild {
 export class Guild implements IGuild {
   private readonly databaseApi: IDatabaseApi
   private readonly deck: IDeck;
-  private readonly replaySubjectFactory: <T>() => ReplaySubject<T>;
+  private readonly replaySubjectFactory:  ReplaySubjectFactory;
   private config: IGuildConfig;
   private id: Snowflake;
 
   public constructor(
     @inject(TYPES.DeckFactory) deckFactory: () => IDeck,//interfaces.Factory<IDeck>,
     @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,//interfaces.Factory<IGuildConfig>,
-    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory:  ReplaySubjectFactory
   ) {
     this.replaySubjectFactory = replaySubjectFactory;
     this.databaseApi = databaseApi;
