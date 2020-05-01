@@ -12,14 +12,14 @@ import { Shuffle } from './command-handler/commands/shuffle';
 import { UseJoker } from './command-handler/commands/use-joker';
 import { UseStandardDeck } from './command-handler/commands/use-standard-deck';
 import { UseStrippedDeck } from './command-handler/commands/use-stripped-deck';
-import { CommandHandler } from './command-handler/command-handler';
 import { CardsLeft } from './command-handler/commands/cards-left';
 import { ILogger, Loglevel } from './logger/logger-interface';
 import { Konami } from './command-handler/commands/konami';
+import { ICommandList } from './command-handler/command-list';
 
 const bot = container.get<Bot>(TYPES.Bot);
 const logger = container.get<ILogger>(TYPES.Logger);
-const commandHandler = container.get<CommandHandler>(TYPES.CommandHandler);
+const commandList: ICommandList = container.get<ICommandList>(TYPES.CommandList);
 
 bot.listen().then(() => {
   logger.log(Loglevel.DEBUG, 'Logged in!');
@@ -27,7 +27,7 @@ bot.listen().then(() => {
   logger.log(Loglevel.ERROR, 'Oh no! ' + error);
 });
 
-commandHandler.addCommands([
+commandList.addCommands([
   CardsLeft,
   DontUseJoker,
   Draw,

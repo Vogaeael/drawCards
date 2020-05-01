@@ -3,6 +3,7 @@ import { IGuildConfig } from '../guild/guild-config';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { ILogger } from '../logger/logger-interface';
+import { Observable, Subject } from 'rxjs';
 
 export interface IDatabaseApi {
   /**
@@ -10,7 +11,7 @@ export interface IDatabaseApi {
    *
    * @param guildId: Snowflake
    */
-  loadGuildConfig(guildId: Snowflake): Promise<IGuildConfig>,
+  loadGuildConfig(guildId: Snowflake): Subject<IGuildConfig>,
 
   /**
    * Save the config of a guildConfig
@@ -18,12 +19,12 @@ export interface IDatabaseApi {
    * @param guildId: Snowflake
    * @param guildConfig: IGuildConfig
    */
-  saveGuildConfig(guildId: Snowflake, guildConfig: IGuildConfig): boolean
+  saveGuildConfig(guildId: Snowflake, guildConfig: IGuildConfig): Observable<void>
 }
 
 @injectable()
 export abstract class AbstractDatabaseApi implements IDatabaseApi {
-  private readonly guildConfigFactory: () => IGuildConfig;
+  protected readonly guildConfigFactory: () => IGuildConfig;
   protected guildConfig: IGuildConfig;
   protected logger: ILogger;
 
@@ -38,17 +39,10 @@ export abstract class AbstractDatabaseApi implements IDatabaseApi {
   /**
    * @inheritDoc
    */
-  public abstract loadGuildConfig(guildId: Snowflake): Promise<IGuildConfig>;
+  public abstract loadGuildConfig(guildId: Snowflake): Subject<IGuildConfig>;
 
   /**
    * @inheritDoc
    */
-  public abstract saveGuildConfig(guildId: Snowflake, guildConfig: IGuildConfig): boolean;
-
-  /**
-   * Initialize the guild-config
-   */
-  protected initGuildConfig(): void {
-    this.guildConfig = this.guildConfigFactory();
-  }
+  public abstract saveGuildConfig(guildId: Snowflake, guildConfig: IGuildConfig): Observable<void>;
 }
