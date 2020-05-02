@@ -43,13 +43,16 @@ export interface IGuild {
 export class Guild implements IGuild {
   private readonly databaseApi: IDatabaseApi
   private readonly deck: IDeck;
+  private readonly replaySubjectFactory: <T>() => ReplaySubject<T>;
   private config: IGuildConfig;
   private id: Snowflake;
 
   public constructor(
     @inject(TYPES.DeckFactory) deckFactory: () => IDeck,//interfaces.Factory<IDeck>,
     @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,//interfaces.Factory<IGuildConfig>,
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
   ) {
+    this.replaySubjectFactory = replaySubjectFactory;
     this.databaseApi = databaseApi;
     this.deck = deckFactory();
   }
@@ -79,7 +82,7 @@ export class Guild implements IGuild {
    * @inheritDoc
    */
   public init(id: Snowflake): ReplaySubject<void> {
-    const ret: ReplaySubject<void> = new ReplaySubject<void>();
+    const ret: ReplaySubject<void> = this.replaySubjectFactory<void>();
     this.id = id;
     this.databaseApi.loadGuildConfig(id)
       .subscribe(

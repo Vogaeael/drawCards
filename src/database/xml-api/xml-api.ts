@@ -17,7 +17,7 @@ export class XmlApi extends AbstractDatabaseApi {
   public loadGuildConfig(guildId: Snowflake): ReplaySubject<IGuildConfig> {
     this.logger.log(Loglevel.DEBUG, 'load config of guild \'' + guildId + '\'');
 
-    const guildConfigSubject: ReplaySubject<IGuildConfig> = new ReplaySubject<IGuildConfig>();
+    const guildConfigSubject: ReplaySubject<IGuildConfig> = this.replaySubjectFactory<IGuildConfig>();
 
     from(FS.readFile(
       XmlApi.path + XmlApi.prefix + guildId + '.xml',

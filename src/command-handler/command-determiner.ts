@@ -31,7 +31,7 @@ export interface ICommandDeterminer {
 export class CommandDeterminer implements ICommandDeterminer {
   private readonly cmdList: ICommandList;
   private readonly logger: ILogger;
-  private commandToHandle: ReplaySubject<CommandToHandle> = new ReplaySubject<CommandToHandle>();
+  private commandToHandle: ReplaySubject<CommandToHandle>;
   private curMsg: string;
   private guildPrefix: string;
   private command: ICommand;
@@ -40,8 +40,10 @@ export class CommandDeterminer implements ICommandDeterminer {
   constructor(
     @inject(TYPES.Bot) bot: IBot,
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.CommandList) cmdList: ICommandList
+    @inject(TYPES.CommandList) cmdList: ICommandList,
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
   ) {
+    this.commandToHandle = replaySubjectFactory<CommandToHandle>();
     this.logger = logger;
     this.cmdList = cmdList;
     this.listenToMessageToHandle(bot);

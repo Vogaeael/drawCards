@@ -25,13 +25,16 @@ export interface IDatabaseApi {
 @injectable()
 export abstract class AbstractDatabaseApi implements IDatabaseApi {
   protected readonly guildConfigFactory: () => IGuildConfig;
+  protected readonly replaySubjectFactory: <T>() => ReplaySubject<T>;
   protected guildConfig: IGuildConfig;
   protected logger: ILogger;
 
   public constructor(
     @inject(TYPES.GuildConfigFactory) guildConfigFactory: () => IGuildConfig, //interfaces.Factory<IGuild>
-    @inject(TYPES.Logger) logger: ILogger
+    @inject(TYPES.Logger) logger: ILogger,
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
   ) {
+    this.replaySubjectFactory = replaySubjectFactory;
     this.guildConfigFactory = guildConfigFactory;
     this.logger = logger;
     this.logger.log(Loglevel.DEBUG, 'Constructed Database-Api');

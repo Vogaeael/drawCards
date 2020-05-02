@@ -27,17 +27,22 @@ export class Bot implements IBot {
   private client: Client;
   private readonly token: string;
   private readonly guildFactory: () => IGuild; //interfaces.Factory<IGuild>;
+  private readonly replaySubjectFactory: <T>() => ReplaySubject<T>;
   private guilds: Map<Snowflake, IGuild>;
   private logger: ILogger;
-  private lastMessage: ReplaySubject<Message> = new ReplaySubject<Message>();
-  private msgToHandle: ReplaySubject<MessageToHandle> = new ReplaySubject<MessageToHandle>();
+  private lastMessage: ReplaySubject<Message>;
+  private msgToHandle: ReplaySubject<MessageToHandle>;
 
   constructor(
     @inject(TYPES.Client) client: Client,
     @inject(TYPES.Token) token: string,
     @inject(TYPES.GuildFactory) guildFactory: () => IGuild,//interfaces.Factory<IGuild>,
-    @inject(TYPES.Logger) logger: ILogger
+    @inject(TYPES.Logger) logger: ILogger,
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
   ) {
+    this.replaySubjectFactory = replaySubjectFactory;
+    this.lastMessage = replaySubjectFactory<Message>();
+    this.msgToHandle = replaySubjectFactory<MessageToHandle>();
     this.guildFactory = guildFactory;
     this.client = client;
     this.token = token;
@@ -102,7 +107,7 @@ export class Bot implements IBot {
    * @return ReplaySubject<IGuild>
    */
   private getGuild(id: Snowflake): ReplaySubject<IGuild> {
-    const guild = new ReplaySubject<IGuild>();
+    const guild = this.replaySubjectFactory<IGuild>();
 
     if (!this.guilds.has(id)) {
       this.logger.log(Loglevel.DEBUG, 'guild \'' + id + '\' not loaded from database yet');

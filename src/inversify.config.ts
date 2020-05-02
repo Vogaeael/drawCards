@@ -15,6 +15,7 @@ import { ILogger, Loglevel } from './logger/logger-interface';
 import { FileLogger } from './logger/file-log/file-logger';
 import { CommandFactory, ICommandClass, MessageFactory } from './command-handler/commands/command';
 import { CommandList, ICommandList } from './command-handler/command-list';
+import { ReplaySubject } from 'rxjs';
 
 let container = new Container();
 
@@ -85,6 +86,11 @@ container.bind<MessageEmbed>(TYPES.Message)
 container.bind<interfaces.Factory<MessageEmbed>>(TYPES.MessageFactory)
   .toFactory(() =>
     () => new MessageEmbed()
+  );
+
+container.bind<interfaces.Factory<ReplaySubject<any>>>(TYPES.ReplaySubjectFactory)
+  .toFactory(() =>
+    <T>() => new ReplaySubject<T>()
   );
 
 export default container;

@@ -18,5 +18,6 @@ export const TYPES = {
   Logger: Symbol("Logger"),
   LogLevel: Symbol("LogLevel"),
   CommandFactory: Symbol("CommandFactory"),
-  CommandList: Symbol("CommandList")
+  CommandList: Symbol("CommandList"),
+  ReplaySubjectFactory: Symbol("ReplaySubjectFactory"),
 };
