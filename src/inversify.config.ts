@@ -13,7 +13,7 @@ import { IDatabaseApi } from './database/database-api';
 import { XmlApi } from './database/xml-api/xml-api';
 import { ILogger, Loglevel } from './logger/logger-interface';
 import { FileLogger } from './logger/file-log/file-logger';
-import { CommandFactory, ICommand, ICommandClass, MessageFactory } from './command-handler/commands/command';
+import { CommandFactory, ICommandClass, MessageFactory } from './command-handler/commands/command';
 import { CommandList, ICommandList } from './command-handler/command-list';
 
 let container = new Container();
@@ -33,11 +33,9 @@ container.bind<string>(TYPES.Token)
 container.bind<ICommandList>(TYPES.CommandList)
   .to(CommandList).inSingletonScope();
 
-// container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
-//   .toConstantValue(new CommandDeterminer(container.get<ILogger>(TYPES.Logger)));
 container.bind<ICommandDeterminer>(TYPES.CommandDeterminer)
   .to(CommandDeterminer).inSingletonScope();
-container.bind<CommandHandler>(TYPES.CommandHandler)
+container.bind<ICommandHandler>(TYPES.CommandHandler)
   .to(CommandHandler).inSingletonScope();
 
 container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFactory)
@@ -61,7 +59,7 @@ container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFac
   });
 
 container.bind<IDatabaseApi>(TYPES.DatabaseApi)
-  .to(XmlApi);
+  .to(XmlApi).inSingletonScope();
 container.bind<IGuild>(TYPES.Guild)
   .to(Guild);
 container.bind<interfaces.Factory<IGuild>>(TYPES.GuildFactory)

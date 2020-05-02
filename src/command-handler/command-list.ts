@@ -47,6 +47,7 @@ export class CommandList implements ICommandList{
     this.logger = logger;
     this.cmdFactory = cmdFactory;
     this.commands = new Map<string, ICommand>();
+    this.logger.log(Loglevel.DEBUG, 'Constructed command-list');
   }
 
   /**

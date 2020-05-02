@@ -40,6 +40,7 @@ export abstract class AbstractLogger implements ILogger {
       this.printLevel = this.logLevelList.get(Loglevel.ERROR);
       this.log(Loglevel.FATAL, 'loglevel \'' + logLevel + '\' doesn\'t exist. Will use \'' + Loglevel.ERROR + '\'');
     }
+    this.log(Loglevel.DEBUG, 'Constructed logger');
   }
 
   /**

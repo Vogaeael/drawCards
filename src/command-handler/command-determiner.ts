@@ -45,6 +45,7 @@ export class CommandDeterminer implements ICommandDeterminer {
     this.logger = logger;
     this.cmdList = cmdList;
     this.listenToMessageToHandle(bot);
+    this.logger.log(Loglevel.DEBUG, 'Constructed command-determiner');
   }
 
   /**

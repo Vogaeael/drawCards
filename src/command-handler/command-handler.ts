@@ -16,6 +16,7 @@ export class CommandHandler implements ICommandHandler {
   ) {
     this.listenToHandle(cmdDeterminer);
     this.logger = logger;
+    this.logger.log(Loglevel.DEBUG, 'Constructed command-handler');
   }
 
   /**

@@ -49,6 +49,7 @@ export class Bot implements IBot {
     this.token = token;
     this.logger = logger;
     this.initGuilds();
+    this.logger.log(Loglevel.DEBUG, 'Constructed bot');
   }
 
   /**

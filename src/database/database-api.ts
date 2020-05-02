@@ -2,7 +2,7 @@ import { Snowflake } from 'discord.js';
 import { IGuildConfig } from '../guild/guild-config';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
-import { ILogger } from '../logger/logger-interface';
+import { ILogger, Loglevel } from '../logger/logger-interface';
 import { Observable, Subject } from 'rxjs';
 
 export interface IDatabaseApi {
@@ -34,6 +34,7 @@ export abstract class AbstractDatabaseApi implements IDatabaseApi {
   ) {
     this.guildConfigFactory = guildConfigFactory;
     this.logger = logger;
+    this.logger.log(Loglevel.DEBUG, 'Constructed Database-Api');
   }
 
   /**
