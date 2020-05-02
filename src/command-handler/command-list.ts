@@ -2,6 +2,7 @@ import { CommandFactory, ICommand, ICommandClass } from './commands/command';
 import { ILogger, Loglevel } from '../logger/logger-interface';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
+import { MapFactory } from '../inversify.config';
 
 export interface ICommandList {
   /**
@@ -42,11 +43,12 @@ export class CommandList implements ICommandList{
 
   constructor(
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.CommandFactory) cmdFactory: CommandFactory
+    @inject(TYPES.CommandFactory) cmdFactory: CommandFactory,
+    @inject(TYPES.MapFactory) mapFactory: MapFactory
   ) {
     this.logger = logger;
     this.cmdFactory = cmdFactory;
-    this.commands = new Map<string, ICommand>();
+    this.commands = mapFactory<string, ICommand>();
     this.logger.log(Loglevel.DEBUG, 'Constructed command-list');
   }
 

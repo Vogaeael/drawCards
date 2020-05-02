@@ -20,4 +20,5 @@ export const TYPES = {
   CommandFactory: Symbol("CommandFactory"),
   CommandList: Symbol("CommandList"),
   ReplaySubjectFactory: Symbol("ReplaySubjectFactory"),
+  MapFactory: Symbol("MapFactory"),
 };

@@ -17,6 +17,8 @@ import { CommandFactory, ICommandClass, MessageFactory } from './command-handler
 import { CommandList, ICommandList } from './command-handler/command-list';
 import { ReplaySubject } from 'rxjs';
 
+export type MapFactory = <T, S>() => Map<T, S>;
+
 let container = new Container();
 
 container.bind<string>(TYPES.LogLevel)
@@ -91,6 +93,11 @@ container.bind<interfaces.Factory<MessageEmbed>>(TYPES.MessageFactory)
 container.bind<interfaces.Factory<ReplaySubject<any>>>(TYPES.ReplaySubjectFactory)
   .toFactory(() =>
     <T>() => new ReplaySubject<T>()
+  );
+
+container.bind<interfaces.Factory<Map<any, any>>>(TYPES.MapFactory)
+  .toFactory(() =>
+  <T, S>() => new Map<T, S>()
   );
 
 export default container;

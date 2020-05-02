@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
+import { MapFactory } from '../inversify.config';
 
 export enum Loglevel {
   INFO = 'info',
@@ -32,9 +33,10 @@ export abstract class AbstractLogger implements ILogger {
   protected logLevelList: Map<string, number>;
 
   constructor(
-    @inject(TYPES.LogLevel) logLevel: string
+    @inject(TYPES.LogLevel) logLevel: string,
+    @inject(TYPES.MapFactory) mapFactory: MapFactory
   ) {
-    this.initLogLevelList();
+    this.initLogLevelList(mapFactory);
     this.printLevel = this.logLevelList.get(logLevel);
     if (undefined === this.printLevel) {
       this.printLevel = this.logLevelList.get(Loglevel.ERROR);
@@ -74,9 +76,11 @@ export abstract class AbstractLogger implements ILogger {
    * - Error
    * - Deprecated
    * - Debug
+   *
+   * @param mapFactory: MapFactory
    */
-  private initLogLevelList(): void {
-    this.logLevelList = new Map<string, number>();
+  private initLogLevelList(mapFactory: MapFactory): void {
+    this.logLevelList = mapFactory<string, number>();
     this.logLevelList.set(Loglevel.INFO, 0);
     this.logLevelList.set(Loglevel.FATAL, 1);
     this.logLevelList.set(Loglevel.ERROR, 2);

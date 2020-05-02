@@ -5,6 +5,7 @@ import { IGuild } from './guild/guild';
 import { ILogger, Loglevel } from './logger/logger-interface';
 import { from, Observable, ReplaySubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { MapFactory } from './inversify.config';
 
 export interface MessageToHandle {
   msg: Message,
@@ -38,7 +39,8 @@ export class Bot implements IBot {
     @inject(TYPES.Token) token: string,
     @inject(TYPES.GuildFactory) guildFactory: () => IGuild,//interfaces.Factory<IGuild>,
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>,
+    @inject(TYPES.MapFactory) mapFactory: MapFactory
   ) {
     this.replaySubjectFactory = replaySubjectFactory;
     this.lastMessage = replaySubjectFactory<Message>();
@@ -47,7 +49,7 @@ export class Bot implements IBot {
     this.client = client;
     this.token = token;
     this.logger = logger;
-    this.initGuilds();
+    this.initGuilds(mapFactory);
     this.logger.log(Loglevel.DEBUG, 'Constructed bot');
     this.listen().subscribe(
       () => this.logger.log(Loglevel.DEBUG, 'Logged in!'),
@@ -129,8 +131,10 @@ export class Bot implements IBot {
 
   /**
    * Initialize the guild-map
+   *
+   * @param mapFactory: MapFactory
    */
-  private initGuilds(): void {
-    this.guilds = new Map<Snowflake, IGuild>();
+  private initGuilds(mapFactory: MapFactory): void {
+    this.guilds = mapFactory<Snowflake, IGuild>();
   }
 }
