@@ -3,7 +3,7 @@ import { IGuildConfig } from '../guild/guild-config';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { ILogger, Loglevel } from '../logger/logger-interface';
-import { Observable, Subject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 
 export interface IDatabaseApi {
   /**
@@ -11,7 +11,7 @@ export interface IDatabaseApi {
    *
    * @param guildId: Snowflake
    */
-  loadGuildConfig(guildId: Snowflake): Subject<IGuildConfig>,
+  loadGuildConfig(guildId: Snowflake): ReplaySubject<IGuildConfig>,
 
   /**
    * Save the config of a guildConfig
@@ -40,7 +40,7 @@ export abstract class AbstractDatabaseApi implements IDatabaseApi {
   /**
    * @inheritDoc
    */
-  public abstract loadGuildConfig(guildId: Snowflake): Subject<IGuildConfig>;
+  public abstract loadGuildConfig(guildId: Snowflake): ReplaySubject<IGuildConfig>;
 
   /**
    * @inheritDoc

@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { Snowflake } from 'discord.js';
 import { IDatabaseApi } from '../database/database-api';
-import { Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 export interface IGuild {
 
@@ -13,9 +13,9 @@ export interface IGuild {
    *
    * @param id: Snowflake
    *
-   * @return Subject<void>
+   * @return ReplaySubject<void>
    */
-  init(id: Snowflake): Subject<void>,
+  init(id: Snowflake): ReplaySubject<void>,
 
   /**
    * Get the guild-id
@@ -78,8 +78,8 @@ export class Guild implements IGuild {
   /**
    * @inheritDoc
    */
-  public init(id: Snowflake): Subject<void> {
-    const ret: Subject<void> = new Subject<void>();
+  public init(id: Snowflake): ReplaySubject<void> {
+    const ret: ReplaySubject<void> = new ReplaySubject<void>();
     this.id = id;
     this.databaseApi.loadGuildConfig(id)
       .subscribe(

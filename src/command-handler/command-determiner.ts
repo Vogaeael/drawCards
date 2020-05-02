@@ -3,7 +3,7 @@ import { ICommand } from './commands/command';
 import { TYPES } from '../types';
 import { ILogger, Loglevel } from '../logger/logger-interface';
 import { IBot, MessageToHandle } from '../bot';
-import { Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { ICommandList } from './command-list';
 import { IGuild } from '../guild/guild';
 import { Message } from 'discord.js';
@@ -31,7 +31,7 @@ export interface ICommandDeterminer {
 export class CommandDeterminer implements ICommandDeterminer {
   private readonly cmdList: ICommandList;
   private readonly logger: ILogger;
-  private commandToHandle: Subject<CommandToHandle> = new Subject<CommandToHandle>();
+  private commandToHandle: ReplaySubject<CommandToHandle> = new ReplaySubject<CommandToHandle>();
   private curMsg: string;
   private guildPrefix: string;
   private command: ICommand;
@@ -65,20 +65,20 @@ export class CommandDeterminer implements ICommandDeterminer {
    */
   private listenToMessageToHandle(bot: IBot): void {
     bot.listenMessageToHandle((msg: MessageToHandle) => {
-        this.logger.log(Loglevel.DEBUG, 'determine if \'' + msg + '\' is a command with the prefix \'' + this.guildPrefix + '\'');
+        this.logger.log(Loglevel.DEBUG, 'determine if \'' + msg.msg.content + '\' is a command with the prefix \'' + this.guildPrefix + '\'');
         this.curMsg = msg.msg.content;
         this.guildPrefix = msg.guild.getConfig().getPrefix();
 
         if (!this.hasPrefix()) {
           return
         }
-        this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' has the prefix \'' + this.guildPrefix + '\'');
+        this.logger.log(Loglevel.DEBUG, 'Message \'' + msg.msg.content + '\' has the prefix \'' + this.guildPrefix + '\'');
         this.removePrefix();
 
         if (!this.determineCommand()) {
-          return;
+          return
         }
-        this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' is a command');
+        this.logger.log(Loglevel.DEBUG, 'Message \'' + msg.msg.content + '\' is a command');
         this.determineParams();
 
         this.commandToHandle.next(

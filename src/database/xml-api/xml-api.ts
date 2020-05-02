@@ -4,7 +4,7 @@ import { IGuildConfig } from '../../guild/guild-config';
 import { promises as FS } from 'fs';
 import * as PARSER from 'xml2json';
 import { Loglevel } from '../../logger/logger-interface';
-import { from, Observable, Subject } from 'rxjs';
+import { from, Observable, ReplaySubject } from 'rxjs';
 
 export class XmlApi extends AbstractDatabaseApi {
   private static path: string = './saves/';
@@ -14,10 +14,10 @@ export class XmlApi extends AbstractDatabaseApi {
   /**
    * @inheritDoc
    */
-  public loadGuildConfig(guildId: Snowflake): Subject<IGuildConfig> {
+  public loadGuildConfig(guildId: Snowflake): ReplaySubject<IGuildConfig> {
     this.logger.log(Loglevel.DEBUG, 'load config of guild \'' + guildId + '\'');
 
-    const guildConfigSubject: Subject<IGuildConfig> = new Subject<IGuildConfig>();
+    const guildConfigSubject: ReplaySubject<IGuildConfig> = new ReplaySubject<IGuildConfig>();
 
     from(FS.readFile(
       XmlApi.path + XmlApi.prefix + guildId + '.xml',

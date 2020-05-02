@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from './types';
 import { IGuild } from './guild/guild';
 import { ILogger, Loglevel } from './logger/logger-interface';
-import { Subject } from 'rxjs';
+import { from, Observable, ReplaySubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 export interface MessageToHandle {
@@ -12,12 +12,6 @@ export interface MessageToHandle {
 }
 
 export interface IBot {
-  /**
-   * Listen to messages
-   *
-   * @return Promise<string>
-   */
-  listen(): Promise<string>,
 
   /**
    * Listen to the next message to handle
@@ -35,8 +29,8 @@ export class Bot implements IBot {
   private readonly guildFactory: () => IGuild; //interfaces.Factory<IGuild>;
   private guilds: Map<Snowflake, IGuild>;
   private logger: ILogger;
-  private lastMessage: Subject<Message> = new Subject<Message>();
-  private msgToHandle: Subject<MessageToHandle> = new Subject<MessageToHandle>();
+  private lastMessage: ReplaySubject<Message> = new ReplaySubject<Message>();
+  private msgToHandle: ReplaySubject<MessageToHandle> = new ReplaySubject<MessageToHandle>();
 
   constructor(
     @inject(TYPES.Client) client: Client,
@@ -50,20 +44,24 @@ export class Bot implements IBot {
     this.logger = logger;
     this.initGuilds();
     this.logger.log(Loglevel.DEBUG, 'Constructed bot');
+    this.listen().subscribe(
+      () => this.logger.log(Loglevel.DEBUG, 'Logged in!'),
+      (e) => this.logger.log(Loglevel.FATAL, 'Fail to log in: ' + e));
   }
 
   /**
    * @inheritDoc
    */
-  public listen(): Promise<string> {
+  private listen(): Observable<string> {
     this.listenMessage();
     this.client.on('message', async(msg: Message) => {
+      this.logger.log(Loglevel.DEBUG, 'Incoming message: ' + msg.content)
       this.lastMessage.next(msg);
     })
 
-    return this.client.login(
+    return from(this.client.login(
       this.token
-    );
+    ));
   }
 
   /**
@@ -82,6 +80,7 @@ export class Bot implements IBot {
       filter((msg: Message) => !!msg.guild))
       .subscribe(
         (msg: Message) => {
+          this.logger.log(Loglevel.DEBUG, 'Message \'' + msg.content + '\' written in guild and not from bot');
           this.getGuild(msg.guild.id).subscribe(
             (guild: IGuild) => {
               this.logger.log(Loglevel.DEBUG, 'Set message to handle');
@@ -98,10 +97,12 @@ export class Bot implements IBot {
   /**
    * Get the guild with the id, or create a new one
    *
-   * @param id
+   * @param id: Snowflake
+   *
+   * @return ReplaySubject<IGuild>
    */
-  private getGuild(id: Snowflake): Subject<IGuild> {
-    const guild = new Subject<IGuild>();
+  private getGuild(id: Snowflake): ReplaySubject<IGuild> {
+    const guild = new ReplaySubject<IGuild>();
 
     if (!this.guilds.has(id)) {
       this.logger.log(Loglevel.DEBUG, 'guild \'' + id + '\' not loaded from database yet');
