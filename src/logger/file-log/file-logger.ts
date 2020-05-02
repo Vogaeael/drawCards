@@ -14,10 +14,8 @@ export class FileLogger extends AbstractLogger {
     FS.promises.appendFile(
       FileLogger.dir + FileLogger.file,
       this.createLogMessage(level, message + '\n'),
-      { encoding: FileLogger.encoding }
-    ).catch((e) => {
-      console.log(e);
-    });
+      {encoding: FileLogger.encoding}
+    ).catch((e) => console.log(e));
   }
 
   /**
