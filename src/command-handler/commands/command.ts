@@ -5,17 +5,17 @@ import { inject } from 'inversify';
 import { TYPES } from '../../types';
 import { IDatabaseApi } from '../../database/database-api';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
-import { ICommandHandler } from '../command-handler';
+import { ICommandList } from '../command-list';
 
 export type MessageFactory = () => MessageEmbed;
 
-export type CommandFactory = (name: ICommandClass, cmdHandler: ICommandHandler) => ICommand;
+export type CommandFactory = (name: ICommandClass, cmdHandler: ICommandList) => ICommand;
 
 export interface ICommandClass {
   new(msgFactory: MessageFactory,
       databaseApi: IDatabaseApi,
       logger: ILogger,
-      cmdHandler: ICommandHandler): ICommand;
+      cmdHandler: ICommandList): ICommand;
 }
 
 export interface ICommand {
@@ -51,7 +51,7 @@ export abstract class Command implements ICommand {
   private static readonly box_check_mark = '☑';
   private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
-  protected readonly cmdHandler: ICommandHandler;
+  protected readonly cmdList: ICommandList;
   protected curGuild: IGuild;
   protected msg: Message;
   protected answer: MessageEmbed;
@@ -65,12 +65,12 @@ export abstract class Command implements ICommand {
     @inject(TYPES.MessageFactory) msgFactory: MessageFactory,
     @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.CommandHandler) cmdHandler: ICommandHandler
+    @inject(TYPES.CommandList) cmdList: ICommandList
   ) {
     this.msgFactory = msgFactory;
     this.databaseApi = databaseApi;
     this.logger = logger;
-    this.cmdHandler = cmdHandler;
+    this.cmdList = cmdList;
   }
 
   /**

@@ -3,7 +3,7 @@ import { Container, interfaces } from "inversify";
 import { TYPES } from "./types";
 import { Bot, IBot } from "./bot";
 import { Client, MessageEmbed } from "discord.js";
-import { CommandDeterminer } from './command-handler/command-determiner';
+import { CommandDeterminer, ICommandDeterminer } from './command-handler/command-determiner';
 import { Guild, IGuild } from './guild/guild';
 import { GuildConfig, IGuildConfig } from './guild/guild-config';
 import { Deck, IDeck } from './deck/deck';
@@ -13,7 +13,8 @@ import { IDatabaseApi } from './database/database-api';
 import { XmlApi } from './database/xml-api/xml-api';
 import { ILogger, Loglevel } from './logger/logger-interface';
 import { FileLogger } from './logger/file-log/file-logger';
-import { CommandFactory, ICommand, ICommandClass, MessageFactory } from './command-handler/commands/command';
+import { CommandFactory, ICommandClass, MessageFactory } from './command-handler/commands/command';
+import { CommandList, ICommandList } from './command-handler/command-list';
 
 let container = new Container();
 
@@ -29,9 +30,12 @@ container.bind<Client>(TYPES.Client)
 container.bind<string>(TYPES.Token)
   .toConstantValue(process.env.TOKEN);
 
-container.bind<CommandDeterminer>(TYPES.CommandDeterminer)
-  .toConstantValue(new CommandDeterminer(container.get<ILogger>(TYPES.Logger)));
-container.bind<CommandHandler>(TYPES.CommandHandler)
+container.bind<ICommandList>(TYPES.CommandList)
+  .to(CommandList).inSingletonScope();
+
+container.bind<ICommandDeterminer>(TYPES.CommandDeterminer)
+  .to(CommandDeterminer).inSingletonScope();
+container.bind<ICommandHandler>(TYPES.CommandHandler)
   .to(CommandHandler).inSingletonScope();
 
 container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFactory)
@@ -39,13 +43,13 @@ container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFac
     const msgFactory: MessageFactory = context.container.get<MessageFactory>(TYPES.MessageFactory);
     const databaseApi: IDatabaseApi = context.container.get<IDatabaseApi>(TYPES.DatabaseApi);
     const logger: ILogger = context.container.get<ILogger>(TYPES.Logger);
-    return (name: ICommandClass, cmdHandler: ICommandHandler) => {
+    return (name: ICommandClass, cmdList: ICommandList) => {
       try {
         return new name(
           msgFactory,
           databaseApi,
           logger,
-          cmdHandler
+          cmdList
         );
       } catch (e) {
         logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + name.toString() + ': ' + e);
@@ -55,7 +59,7 @@ container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFac
   });
 
 container.bind<IDatabaseApi>(TYPES.DatabaseApi)
-  .to(XmlApi);
+  .to(XmlApi).inSingletonScope();
 container.bind<IGuild>(TYPES.Guild)
   .to(Guild);
 container.bind<interfaces.Factory<IGuild>>(TYPES.GuildFactory)

@@ -17,5 +17,6 @@ export const TYPES = {
   DatabaseApi: Symbol("DatabaseApi"),
   Logger: Symbol("Logger"),
   LogLevel: Symbol("LogLevel"),
-  CommandFactory: Symbol("CommandFactory")
+  CommandFactory: Symbol("CommandFactory"),
+  CommandList: Symbol("CommandList")
 };

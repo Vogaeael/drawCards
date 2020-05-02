@@ -1,9 +1,10 @@
 import { IDeck } from '../deck/deck';
 import { IGuildConfig } from './guild-config';
-import { inject, injectable, interfaces } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { Snowflake } from 'discord.js';
 import { IDatabaseApi } from '../database/database-api';
+import { ReplaySubject } from 'rxjs';
 
 export interface IGuild {
 
@@ -11,8 +12,10 @@ export interface IGuild {
    * Initialize the guildConfig and load the config
    *
    * @param id: Snowflake
+   *
+   * @return ReplaySubject<void>
    */
-  init(id: Snowflake): Promise<void>,
+  init(id: Snowflake): ReplaySubject<void>,
 
   /**
    * Get the guild-id
@@ -75,9 +78,17 @@ export class Guild implements IGuild {
   /**
    * @inheritDoc
    */
-  public async init(id: Snowflake): Promise<void> {
+  public init(id: Snowflake): ReplaySubject<void> {
+    const ret: ReplaySubject<void> = new ReplaySubject<void>();
     this.id = id;
-    this.config = await this.databaseApi.loadGuildConfig(id);
-    this.deck.shuffle(this.config.getDeckType(), this.config.getJoker());
+    this.databaseApi.loadGuildConfig(id)
+      .subscribe(
+        (config: IGuildConfig) => {
+          this.config = config;
+          this.deck.shuffle(this.config.getDeckType(), this.config.getJoker());
+          ret.next();
+        },
+        (e) => ret.error(e));
+    return ret;
   }
 }

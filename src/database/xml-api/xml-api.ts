@@ -4,6 +4,7 @@ import { IGuildConfig } from '../../guild/guild-config';
 import { promises as FS } from 'fs';
 import * as PARSER from 'xml2json';
 import { Loglevel } from '../../logger/logger-interface';
+import { from, Observable, ReplaySubject } from 'rxjs';
 
 export class XmlApi extends AbstractDatabaseApi {
   private static path: string = './saves/';
@@ -13,36 +14,40 @@ export class XmlApi extends AbstractDatabaseApi {
   /**
    * @inheritDoc
    */
-  public async loadGuildConfig(guildId: Snowflake): Promise<IGuildConfig> {
+  public loadGuildConfig(guildId: Snowflake): ReplaySubject<IGuildConfig> {
     this.logger.log(Loglevel.DEBUG, 'load config of guild \'' + guildId + '\'');
-    this.initGuildConfig();
 
-    return FS.readFile(
-        XmlApi.path + XmlApi.prefix + guildId + '.xml',
-        { encoding: XmlApi.encoding })
-      .then((data: string | Buffer) => {
-        const json = JSON.parse(PARSER.toJson(data, {reversible: true}));
-        const guildConfig = json["guildConfig"];
-        this.guildConfig.setPrefix(guildConfig['prefix']);
-        this.guildConfig.setDeckType(guildConfig['deckType']);
-        this.guildConfig.setJoker(JSON.parse(guildConfig['joker']));
-        this.guildConfig.setMinimized(JSON.parse(guildConfig['minimized']));
+    const guildConfigSubject: ReplaySubject<IGuildConfig> = new ReplaySubject<IGuildConfig>();
 
-        return this.guildConfig;
-      })
-      .catch(
+    from(FS.readFile(
+      XmlApi.path + XmlApi.prefix + guildId + '.xml',
+      {encoding: XmlApi.encoding}))
+      .subscribe(
+        (data: string | Buffer) => {
+          const guildConfig = this.guildConfigFactory();
+          const json = JSON.parse(PARSER.toJson(data, {reversible: true}));
+          const guildConfigJson = json["guildConfig"];
+          guildConfig.setPrefix(guildConfigJson['prefix']);
+          guildConfig.setDeckType(guildConfigJson['deckType']);
+          guildConfig.setJoker(JSON.parse(guildConfigJson['joker']));
+          guildConfig.setMinimized(JSON.parse(guildConfigJson['minimized']));
+
+          guildConfigSubject.next(guildConfig);
+        },
         (e) => {
-          // @TODO log error if not file not found error
           this.logger.log(Loglevel.ERROR, 'couldn\'t load file for guild \'' + guildId + '\': ' + e);
-          return this.guildConfig;
+
+          guildConfigSubject.next(this.guildConfigFactory());
         }
       );
+
+    return guildConfigSubject;
   }
 
   /**
    * @inheritDoc
    */
-  public saveGuildConfig(guildId: Snowflake, guildConfig: IGuildConfig): boolean {
+  public saveGuildConfig(guildId: Snowflake, guildConfig: IGuildConfig): Observable<void> {
     this.logger.log(Loglevel.DEBUG, 'save config of guild \'' + guildId + '\'');
 
     const guildConfigJson = {
@@ -56,14 +61,12 @@ export class XmlApi extends AbstractDatabaseApi {
 
     let xml = PARSER.toXml(JSON.stringify(guildConfigJson));
 
-    FS.writeFile(
+    return from(FS.writeFile(
       XmlApi.path + XmlApi.prefix + guildId + '.xml',
       xml,
-      { encoding: XmlApi.encoding})
+      { encoding: XmlApi.encoding })
       .catch((e) => {
         this.logger.log(Loglevel.FATAL, 'couldn\'t save config of guild \'' + guildId + '\': ' + e);
-      });
-
-    return true;
+      }));
   }
 }

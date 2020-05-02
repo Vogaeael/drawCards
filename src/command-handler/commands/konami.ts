@@ -22,7 +22,7 @@ export class Konami extends Command {
    * @inheritDoc
    */
   public help(): void {
-    const help: ICommand = this.cmdHandler.getCommand('help');
+    const help: ICommand = this.cmdList.getCommand('help');
     if (help) {
       help.help();
     }

@@ -2,73 +2,94 @@ import { inject, injectable } from 'inversify';
 import { ICommand } from './commands/command';
 import { TYPES } from '../types';
 import { ILogger, Loglevel } from '../logger/logger-interface';
+import { IBot, MessageToHandle } from '../bot';
+import { ReplaySubject } from 'rxjs';
+import { ICommandList } from './command-list';
+import { IGuild } from '../guild/guild';
+import { Message } from 'discord.js';
+
+export interface CommandToHandle {
+  command: ICommand,
+  param: string,
+  message: Message,
+  guild: IGuild
+}
 
 export interface ICommandDeterminer {
   /**
+   * Listen to the next command to handle
    *
-   * @param commands: Map<string, Command>, the map of commands
-   * @param msg: string, the string to determine
-   * @param prefix: string, the prefix of commands
-   *
-   * @return [Command, string]
+   * @param next: (value: CommandToHandle) => void
+   * @param error: (e) => void
    */
-  determine(
-    commands: Map<string, ICommand>,
-    msg: string,
-    prefix: string
-  ): [ICommand, string]
+  listenToCommandToHandle(
+    next: (value: CommandToHandle) => void,
+    error: (e) => void): void
 }
 
 @injectable()
 export class CommandDeterminer implements ICommandDeterminer {
-  private commands: Map<string, ICommand>;
+  private readonly cmdList: ICommandList;
+  private readonly logger: ILogger;
+  private commandToHandle: ReplaySubject<CommandToHandle> = new ReplaySubject<CommandToHandle>();
   private curMsg: string;
   private guildPrefix: string;
   private command: ICommand;
   private params: string;
-  private logger: ILogger;
 
   constructor(
-    @inject(TYPES.Logger) logger: ILogger
+    @inject(TYPES.Bot) bot: IBot,
+    @inject(TYPES.Logger) logger: ILogger,
+    @inject(TYPES.CommandList) cmdList: ICommandList
   ) {
     this.logger = logger;
+    this.cmdList = cmdList;
+    this.listenToMessageToHandle(bot);
+    this.logger.log(Loglevel.DEBUG, 'Constructed command-determiner');
   }
 
   /**
    * @inheritDoc
    */
-  public determine(
-    commands: Map<string, ICommand>,
-    msg: string,
-    prefix: string
-  ): [ICommand, string] {
-    this.logger.log(Loglevel.DEBUG, 'determine if \'' + msg + '\' is a command with the prefix \'' + prefix + '\'');
-    this.setValues(commands, msg, prefix);
-
-    if (!this.hasPrefix()) {
-      return [undefined, undefined];
-    }
-    this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' has the prefix \'' + prefix + '\'');
-    this.removePrefix();
-
-    if (!this.determineCommand()) {
-      return [undefined, undefined];
-    }
-    this.logger.log(Loglevel.DEBUG, 'Message \'' + msg + '\' is a command');
-    this.determineParams();
-
-    return [this.command, this.params];
+  public listenToCommandToHandle(
+    next: (value: CommandToHandle) => void,
+    error: (e) => void
+  ): void {
+    this.commandToHandle.subscribe(next, error);
   }
 
-  private setValues(
-    commands: Map<string, ICommand>,
-    msg: string,
-    prefix: string
-  ): void {
-    this.commands = commands;
-    this.curMsg = msg;
-    this.guildPrefix = prefix;
-    this.params = '';
+  /**
+   * Start listening to the MessageToHandle of the bot.
+   *
+   * @param bot: IBot
+   */
+  private listenToMessageToHandle(bot: IBot): void {
+    bot.listenMessageToHandle((msg: MessageToHandle) => {
+        this.logger.log(Loglevel.DEBUG, 'determine if \'' + msg.msg.content + '\' is a command with the prefix \'' + this.guildPrefix + '\'');
+        this.curMsg = msg.msg.content;
+        this.guildPrefix = msg.guild.getConfig().getPrefix();
+
+        if (!this.hasPrefix()) {
+          return
+        }
+        this.logger.log(Loglevel.DEBUG, 'Message \'' + msg.msg.content + '\' has the prefix \'' + this.guildPrefix + '\'');
+        this.removePrefix();
+
+        if (!this.determineCommand()) {
+          return
+        }
+        this.logger.log(Loglevel.DEBUG, 'Message \'' + msg.msg.content + '\' is a command');
+        this.determineParams();
+
+        this.commandToHandle.next(
+          {
+            command: this.command,
+            param: this.params,
+            message: msg.msg,
+            guild: msg.guild
+          });
+      },
+      (e) => this.logger.log(Loglevel.FATAL, 'Error with Message to handle: ' + e));
   }
 
   /**
@@ -91,7 +112,7 @@ export class CommandDeterminer implements ICommandDeterminer {
    */
   private determineCommand(): boolean {
     /** @var command string */
-    for (let command of this.commands.keys()) {
+    for (let command of this.cmdList.getNames()) {
       if (this.curMsg.startsWith(command)) {
         this.curMsg = this.curMsg.replace(command, '');
 
@@ -102,7 +123,7 @@ export class CommandDeterminer implements ICommandDeterminer {
 
           this.curMsg = this.curMsg.replace(' ', '');
         }
-        this.command = this.commands.get(command);
+        this.command = this.cmdList.getCommand(command);
 
         return true;
       }
@@ -111,6 +132,9 @@ export class CommandDeterminer implements ICommandDeterminer {
     return false;
   }
 
+  /**
+   * Set the last of the message to the params
+   */
   private determineParams(): void {
     this.params = this.curMsg;
   }

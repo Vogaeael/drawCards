@@ -19,7 +19,7 @@ export class Help extends Command {
    */
   public run(params: string): void {
     this.logCommand('help', params);
-    const command: ICommand = this.cmdHandler.getCommand(params);
+    const command: ICommand = this.cmdList.getCommand(params);
     if (command) {
       command.init(this.curGuild, this.msg);
       command.help();
