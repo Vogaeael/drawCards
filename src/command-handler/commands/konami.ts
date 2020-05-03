@@ -6,10 +6,11 @@ import { Message, Snowflake } from 'discord.js';
 import { Suits } from '../../deck/suits';
 import { StandardDeck } from '../../deck/deck-types';
 import { randomFromArray } from '../../functions';
-import container from '../../inversify.config';
+import container, { MapFactory } from '../../inversify.config';
 import { TYPES } from '../../types';
 import { ICommandList } from '../command-list';
 import { from } from 'rxjs';
+import { IDesignHandler } from '../../design/designHandler';
 
 interface CardTrick {
   userId: Snowflake;
@@ -39,14 +40,18 @@ export class Konami extends Command {
     msgFactory: MessageFactory,
     databaseApi: IDatabaseApi,
     logger: ILogger,
-    cmdList: ICommandList
+    cmdList: ICommandList,
+    designHandler: IDesignHandler,
+    mapFactory: MapFactory
   ) {
     super(msgFactory,
       databaseApi,
       logger,
-      cmdList);
+      cmdList,
+      designHandler,
+      mapFactory);
     this.initSubCommands();
-    this.userSubGames = new Map<Snowflake, CardTrick>();
+    this.userSubGames = this.mapFactory<Snowflake, CardTrick>();
     this.name = Array.from(this.subCommands.keys());
   }
 
@@ -85,7 +90,7 @@ export class Konami extends Command {
    * Initialize the subCommands
    */
   private initSubCommands(): void {
-    this.subCommands = new Map<string, SubCommand>();
+    this.subCommands = this.mapFactory<string, SubCommand>();
     this.subCommands.set(Konami.konamiCode, () => this.konami());
     this.subCommands.set(Konami.pullCard, () => this.pullCard());
     this.subCommands.set(Konami.pushCard, () => this.pushCard());
