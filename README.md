@@ -7,15 +7,16 @@ At the moment, the bot isn't published and there isn't a running server you can 
 
 ## Permissions
 The Bots need the permission's to:
-  * `read messages`
-  * `write messages`
-  * `embed links`
-  * `attach files`
-  * `read message history`
-  * `add reactions`
+  * `read messages` (for reading your commands)
+  * `manage messages` (for a little easter egg ;) )
+  * `write messages` (for answering you)
+  * `embed links` (for the help)
+  * `attach files` (for showing the card as picture)
+  * `read message history` (for adding reactions if the answers should be minimized)
+  * `add reactions` (for adding reactions if the answers should be minimized)
 
-The permission's integer is `116800`. To add your bot to your server, you can use this link. You have to change the `[clientId]` to the client id of your bot:
-`https://discordapp.com/api/oauth2/authorize?client_id=[clientId]&permissions=116800&scope=bot`
+The permission's integer is `124992`. To add your bot to your server, you can use this link. You have to change the `[clientId]` to the client id of your bot:
+`https://discordapp.com/api/oauth2/authorize?client_id=[clientId]&permissions=124992&scope=bot`
 
 
 ## Install
