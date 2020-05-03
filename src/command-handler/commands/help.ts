@@ -54,11 +54,14 @@ export class Help extends Command {
       .addField('!dontUseJoker', 'Don\'t add joker to the decks (active from next shuffle on).')
       .addField('!printMinimized', 'Print the answer from draw minimized.')
       .addField('!printMaximized', 'Print the answer from draw maximized.')
+      .addField('!setDesign [?design]', 'Set the cards design.' +
+        ' If you set the name of a design instead of `[?design]` set this design.' +
+        ' If the name of the design is unknown it won\'t change. If nothing is set as `[?design]` it change back to default.')
       .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another.' +
         ' If no parameter is set, it changes back to `!`')
       .addField('!help [?command]', 'Get the help information.' +
         ' If you set the name of a command instead of `[?command]` you get the special help for this command.' +
-        ' If you dont set something for `[?command]` the normal help will be answerd.')
+        ' If you dont set something for `[?command]` the normal help will be answered.')
       .addField('Default', 'By default it uses a standard deck (52 cards) without joker and print it minimized.' +
         ' The default prefix is `!`');
     this.sendAnswer();

@@ -15,6 +15,13 @@ export interface IDesignHandler {
   getDesignList(): string[];
 
   /**
+   * Get the name of the default design
+   *
+   * @return string
+   */
+  getDefaultDesign(): string;
+
+  /**
    * Get the path to a card picture, use fallback if the other of the design doesn't exist
    *
    * @param design: string
@@ -47,6 +54,13 @@ export class DesignHandler implements IDesignHandler {
    */
   public getDesignList(): string[] {
     return this.possibleDesigns;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public getDefaultDesign(): string {
+    return this.fallback;
   }
 
   /**
