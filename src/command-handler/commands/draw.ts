@@ -27,8 +27,8 @@ export class Draw extends Command {
    *
    * @inheritDoc
    */
-  public run(numString: string): void {
-    this.logCommand('draw', numString);
+  public run(commandName: string, numString: string): void {
+    this.logCommand('draw', commandName, numString);
     if (undefined === this.curGuild.getDeck()) {
       this.answerEmpty();
 
@@ -89,20 +89,6 @@ export class Draw extends Command {
     }
 
     this.answer.setColor(color);
-  }
-
-  /**
-   * Add an image for the card
-   *
-   * @param card: Card
-   */
-  private addCardImage(card: ICard): void {
-    const fileName = card.getRank() + '_' + card.getSuit() + '.png';
-    const path = './media/images/cards/';
-
-
-    this.answer.attachFiles([path + fileName]);
-    this.answer.setImage('attachment://' + fileName);
   }
 
   /**

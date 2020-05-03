@@ -28,7 +28,7 @@ export class CommandHandler implements ICommandHandler {
     cmdDeterminer.listenToCommandToHandle(
       (cmd: CommandToHandle) => {
         cmd.command.init(cmd.guild, cmd.message);
-        cmd.command.run(cmd.param);
+        cmd.command.run(cmd.commandName, cmd.param);
       },
       (e) => this.logger.log(Loglevel.FATAL, 'Error with command to handle: ' + e));
   }

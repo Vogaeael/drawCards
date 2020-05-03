@@ -6,6 +6,8 @@ import { TYPES } from '../../types';
 import { IDatabaseApi } from '../../database/database-api';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
 import { ICommandList } from '../command-list';
+import { ICard } from '../../deck/card';
+import { from, Observable } from 'rxjs';
 
 export type MessageFactory = () => MessageEmbed;
 
@@ -22,9 +24,10 @@ export interface ICommand {
   /**
    * Run the command with the params
    *
+   * @param commandName: string
    * @param params: string
    */
-  run(params: string): void,
+  run(commandName: string, params: string): void,
 
   /**
    * Initialize the command and set the values
@@ -76,7 +79,7 @@ export abstract class Command implements ICommand {
   /**
    * @inheritDoc
    */
-  public abstract run(params: string): void;
+  public abstract run(commandName: string, params: string): void;
 
   /**
    * @inheritDoc
@@ -103,9 +106,12 @@ export abstract class Command implements ICommand {
   /**
    * Send the current answer
    */
-  protected sendAnswer(): void {
+  protected sendAnswer(
+    then: (message: Message) => void = () => {},
+    error: (e) => void = (e) => this.logger.log(Loglevel.ERROR, 'Couldn\'t send answer: ' + e)
+  ): void {
     this.logger.log(Loglevel.DEBUG, 'send answer');
-    this.msg.channel.send(this.answer);
+    from(this.msg.channel.send(this.answer)).subscribe(then, error);
   }
 
   /**
@@ -157,10 +163,15 @@ export abstract class Command implements ICommand {
    * Log command with debug level
    *
    * @param command: string
+   * @param commandName: string
    * @param param: string
    */
-  protected logCommand(command: string, param: string = ''): void {
-    let logMessage = 'Command \'' + command + '\' from guild \'' + this.curGuild.getId() + '\'';
+  protected logCommand(
+    command: string,
+    commandName: string,
+    param: string
+  ): void {
+    let logMessage = 'Run Command-class \'' + command + '\' with command \'' + commandName + '\' from guild \'' + this.curGuild.getId() + '\'';
     if ('' !== param) {
       logMessage += ' with param \'' + param + '\'';
     }
@@ -184,5 +195,29 @@ export abstract class Command implements ICommand {
       .attachFiles(['./media/images/deck_icons.png'])
       .setThumbnail('attachment://deck_icons.png');
     this.sendAnswer();
+  }
+
+  /**
+   * Add an image for the card
+   *
+   * @param card: Card
+   */
+  protected addCardImage(card: ICard): void {
+    const [path, fileName] = this.getCardPathAndFileName(card);
+
+    this.answer.attachFiles([path + fileName]);
+    this.answer.setImage('attachment://' + fileName);
+  }
+
+  /**
+   * Get the picture path and file name of a card
+   *
+   * @param card: ICard
+   */
+  protected getCardPathAndFileName(card: ICard): [string, string] {
+    const fileName = card.getRank() + '_' + card.getSuit() + '.png';
+    const path = './media/images/cards/';
+
+    return [path, fileName];
   }
 }

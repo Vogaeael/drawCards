@@ -17,8 +17,8 @@ export class Help extends Command {
    *
    * @inheritDoc
    */
-  public run(params: string): void {
-    this.logCommand('help', params);
+  public run(commandName: string, params: string): void {
+    this.logCommand('help', commandName, params);
     const command: ICommand = this.cmdList.getCommand(params);
     if (command) {
       command.init(this.curGuild, this.msg);

@@ -17,8 +17,8 @@ export class PrintMaximized extends Command {
    *
    * @inheritDoc
    */
-  public run(params: string): void {
-    this.logCommand('printMaximized', params);
+  public run(commandName: string, params: string): void {
+    this.logCommand('printMaximized', commandName, params);
     this.curGuild.getConfig().printMaximized();
     this.saveGuildConfig();
 
