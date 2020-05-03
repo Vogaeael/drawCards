@@ -2,7 +2,7 @@ import { Command, ICommand, MessageFactory } from './command';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
 import { IDatabaseApi } from '../../database/database-api';
 import { ICard } from '../../deck/card';
-import { MessageEmbed, Snowflake } from 'discord.js';
+import { Message, Snowflake } from 'discord.js';
 import { Suits } from '../../deck/suits';
 import { StandardDeck } from '../../deck/deck-types';
 import { randomFromArray } from '../../functions';
@@ -13,7 +13,7 @@ import { from } from 'rxjs';
 
 interface CardTrick {
   userId: Snowflake;
-  cardShowMessage: MessageEmbed;
+  cardShowMessage: Message;
   showedCard: ICard;
   lastCommand: string;
 }
@@ -144,8 +144,7 @@ export class Konami extends Command {
       '. Remember it an push it back in the deck (command: ' +
       Konami.pushCard + ')');
     this.addCardImage(this.curUserSubGame.showedCard);
-    this.curUserSubGame.cardShowMessage = this.answer;
-    this.sendAnswer();
+    this.sendAnswer((message: Message) => this.curUserSubGame.cardShowMessage = message);
     this.curUserSubGame.lastCommand = Konami.pullCard;
   }
 
@@ -158,8 +157,10 @@ export class Konami extends Command {
     }
     this.msg.reply('Thank you for the card. Now I will shuffle the deck...')
       .catch((e) => this.logger.log(Loglevel.ERROR, 'cant reply message: ' + e));
-    // this.curUserSubGame.cardShowMessage.delete();
-    // @TODO delete message with card
+    from(this.curUserSubGame.cardShowMessage.delete())
+      .subscribe(
+        () => this.logger.log(Loglevel.DEBUG, 'Delete showMessage'),
+        (e) => this.logger.log(Loglevel.ERROR, 'Couldn\'t delete showMessage: ' + e));
     setTimeout(() => {
       const rightCard = Konami.getRandomBoolean(80);
       const card: ICard = Konami.getMagicCard(this.curUserSubGame, rightCard);
