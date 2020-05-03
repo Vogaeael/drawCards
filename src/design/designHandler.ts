@@ -6,6 +6,11 @@ import { TYPES } from '../types';
 import { from, ReplaySubject } from 'rxjs';
 import { ReplaySubjectFactory } from '../inversify.config';
 
+export interface CardFile {
+  path: string,
+  file: string
+}
+
 export interface IDesignHandler {
   /**
    * Get the list of possible designs
@@ -27,9 +32,9 @@ export interface IDesignHandler {
    * @param design: string
    * @param card: ICard
    *
-   * @return string
+   * @return ReplaySubject<CardFile>
    */
-  getCardPath(design: string, card: ICard): ReplaySubject<string>;
+  getCardPath(design: string, card: ICard): ReplaySubject<CardFile>;
 }
 
 @injectable()
@@ -66,12 +71,12 @@ export class DesignHandler implements IDesignHandler {
   /**
    * @inheritDoc
    */
-  public getCardPath(design: string, card: ICard): ReplaySubject<string> {
-    const pathSubject: ReplaySubject<string> = this.replaySubjectFactory<string>();
+  public getCardPath(design: string, card: ICard): ReplaySubject<CardFile> {
+    const pathSubject: ReplaySubject<CardFile> = this.replaySubjectFactory<CardFile>();
     this.hasPicture(design, card)
       .subscribe(
-        (path: string) => {
-          pathSubject.next(path);
+        (cardFile: CardFile) => {
+          pathSubject.next(cardFile);
           pathSubject.complete();
         },
         (e: string) => {
@@ -85,8 +90,8 @@ export class DesignHandler implements IDesignHandler {
             ': ' +
             e);
           this.hasPicture(this.fallback, card).subscribe(
-            (path: string) => {
-              pathSubject.next(path);
+            (cardFile: CardFile) => {
+              pathSubject.next(cardFile);
               pathSubject.complete();
             },
             (e) => {
@@ -131,16 +136,20 @@ export class DesignHandler implements IDesignHandler {
    * @param design: string
    * @param card: ICard
    *
-   * @return ReplaySubject<string>
+   * @return ReplaySubject<CardFile>
    */
-  private hasPicture(design: string, card: ICard): ReplaySubject<string> {
-    const hasPictureSubject: ReplaySubject<string> = this.replaySubjectFactory<string>();
-    let path: string = this.path + design + '/' + card.getRank() + '_' + card.getSuit() + '.png';
-    from(FS.lstat(path))
+  private hasPicture(design: string, card: ICard): ReplaySubject<CardFile> {
+    const hasPictureSubject: ReplaySubject<CardFile> = this.replaySubjectFactory<CardFile>();
+    let path: string = this.path + design + '/';
+    let file: string = card.getRank() + '_' + card.getSuit() + '.png';
+    from(FS.lstat(path + file))
       .subscribe(
         (stats: Stats) => {
           if (stats.isFile()) {
-            hasPictureSubject.next(path);
+            hasPictureSubject.next({
+              path: path,
+              file: file
+            });
             hasPictureSubject.complete();
 
             return

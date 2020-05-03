@@ -163,9 +163,11 @@ export class Draw extends Command {
           ' ' +
           capitalize(card.getRank()));
 
-      this.addCardImage(card);
-
-      this.sendAnswer();
+      this.addCardImage(card)
+        .subscribe(
+          () => this.sendAnswer(),
+          () => this.sendAnswer()
+        );
     }
   }
 

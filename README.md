@@ -114,6 +114,10 @@ If you want your draw answers short and minimized:
 If you want your draw answers large and maximized:
 `!printMaximized`
 
+### List Designs
+If you want to know all possible designs:
+`!listDesigns`
+
 ### Set Design
 If you want to change the design.
 ```shell script

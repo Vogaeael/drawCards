@@ -54,6 +54,7 @@ export class Help extends Command {
       .addField('!dontUseJoker', 'Don\'t add joker to the decks (active from next shuffle on).')
       .addField('!printMinimized', 'Print the answer from draw minimized.')
       .addField('!printMaximized', 'Print the answer from draw maximized.')
+      .addField('!listDesigns', 'List all possible designs.')
       .addField('!setDesign [?design]', 'Set the cards design.' +
         ' If you set the name of a design instead of `[?design]` set this design.' +
         ' If the name of the design is unknown it won\'t change. If nothing is set as `[?design]` it change back to default.')
