@@ -118,12 +118,14 @@ export class Bot implements IBot {
         () => {
           this.guilds.set(id, newGuild);
           guild.next(this.guilds.get(id));
+          guild.complete();
         },
         (e) =>
           this.logger.log(Loglevel.FATAL, 'Error with initializing guild: ' + e)
       );
     } else {
       guild.next(this.guilds.get(id));
+      guild.complete();
     }
 
     return guild;
