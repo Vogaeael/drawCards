@@ -33,7 +33,7 @@ export function transformToNum(numString: string): number {
  * @return any
  */
 export function randomFromArray(array: any[]): any {
-  const randomNum: number = Math.round(array.length * Math.random());
+  const randomNum: number = Math.round((array.length - 1) * Math.random());
 
   return array[randomNum];
 }
