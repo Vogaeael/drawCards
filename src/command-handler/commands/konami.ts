@@ -4,7 +4,7 @@ import { IDatabaseApi } from '../../database/database-api';
 import { ICard } from '../../deck/card';
 import { MessageEmbed, Snowflake } from 'discord.js';
 import { Suits } from '../../deck/suits';
-import { DeckTypes } from '../../deck/deck-types';
+import { StandardDeck } from '../../deck/deck-types';
 import { randomFromArray } from '../../functions';
 import container from '../../inversify.config';
 import { TYPES } from '../../types';
@@ -28,7 +28,7 @@ export class Konami extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ "⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️🅱️🅰️" ];
+  public name: string[] = ["⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️🅱️🅰️"];
   private subCommands: Map<string, SubCommand>;
   private userSubGames: Map<Snowflake, CardTrick>;
   private curCommandName: string;
@@ -49,6 +49,7 @@ export class Konami extends Command {
     this.userSubGames = new Map<Snowflake, CardTrick>();
     this.name = Array.from(this.subCommands.keys());
   }
+
   /**
    * Command !
    *
@@ -86,8 +87,8 @@ export class Konami extends Command {
   private initSubCommands(): void {
     this.subCommands = new Map<string, SubCommand>();
     this.subCommands.set(Konami.konamiCode, () => this.konami());
-    this.subCommands.set(Konami.pullCard, () => this.pullCard);
-    this.subCommands.set(Konami.pushCard, () => this.pushCard);
+    this.subCommands.set(Konami.pullCard, () => this.pullCard());
+    this.subCommands.set(Konami.pushCard, () => this.pushCard());
   }
 
   /**
@@ -109,6 +110,19 @@ export class Konami extends Command {
         showedCard: Konami.getRandomCard(),
         lastCommand: this.curCommandName
       }
+      this.logger.log(
+        Loglevel.DEBUG,
+        'UserSubGame initialized with the values: userID: \'' +
+        this.curUserSubGame.userId +
+        '\' cardShowMessage: \'' +
+        this.curUserSubGame.cardShowMessage +
+        '\' card: (suit: \'' +
+        this.curUserSubGame.showedCard.getSuit() +
+        '\' rank: \'' +
+        this.curUserSubGame.showedCard.getRank() +
+        '\') lastCommand: \'' +
+        this.curUserSubGame.lastCommand +
+        '\'');
     }
     this.curUserSubGame.lastCommand = Konami.konamiCode;
     this.userSubGames.set(this.curUserSubGame.userId, this.curUserSubGame);
@@ -143,22 +157,28 @@ export class Konami extends Command {
       return
     }
     this.msg.reply('Thank you for the card. Now I will shuffle the deck...')
-      .catch((e) => this.logger.log(Loglevel.ERROR, 'cant reply message: '+ e));
+      .catch((e) => this.logger.log(Loglevel.ERROR, 'cant reply message: ' + e));
     // this.curUserSubGame.cardShowMessage.delete();
     // @TODO delete message with card
-    setTimeout(() => {},6000);
-    const rightCard = Konami.getRandomBoolean(80);
-    const card: ICard = Konami.getMagicCard(this.curUserSubGame, rightCard);
-    this.initAnswer();
-    this.answer.setDescription(this.getMentionOfAuthor() + ', was that your cards?');
-    this.addCardImage(card);
-    if (!rightCard) {
-      setTimeout(() => {}, 6000);
+    setTimeout(() => {
+      const rightCard = Konami.getRandomBoolean(80);
+      const card: ICard = Konami.getMagicCard(this.curUserSubGame, rightCard);
       this.initAnswer();
-      this.answer.setDescription('Ohh, sorry I made a mistake .-.');
-      this.sendAnswer();
-    }
-    this.userSubGames.delete(this.curUserSubGame.userId);
+      this.answer.setDescription(this.getMentionOfAuthor() + ', was that your card?');
+      this.addCardImage(card);
+      this.sendAnswer().subscribe(() => {
+        if (!rightCard) {
+          setTimeout(() => {
+            this.initAnswer();
+            this.answer.setDescription(this.getMentionOfAuthor() + ', Ohh, sorry I made a mistake .-.');
+            this.sendAnswer();
+          }, 3000);
+
+        }
+      });
+
+      this.userSubGames.delete(this.curUserSubGame.userId);
+    }, 6000);
   }
 
   /**
@@ -168,7 +188,7 @@ export class Konami extends Command {
    */
   private static getRandomCard(): ICard {
     const suits: string[] = Array.from(Object.keys(Suits).filter((suit: string) => Suits[suit] !== Suits.joker));
-    const ranks: string[] = Array.from(Object.keys(DeckTypes.standardDeck));
+    const ranks: string[] = Array.from(Object.values(StandardDeck));
 
     const suit = randomFromArray(suits);
     const rank = randomFromArray(ranks);
@@ -187,7 +207,7 @@ export class Konami extends Command {
    * @return boolean, random boolean
    */
   private static getRandomBoolean(percentToGetTrue: number): boolean {
-    return percentToGetTrue < (Math.random() * 100);
+    return percentToGetTrue > (Math.random() * 100);
   }
 
   /**

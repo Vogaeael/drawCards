@@ -7,6 +7,7 @@ import { IDatabaseApi } from '../../database/database-api';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
 import { ICommandList } from '../command-list';
 import { ICard } from '../../deck/card';
+import { from, Observable } from 'rxjs';
 
 export type MessageFactory = () => MessageEmbed;
 
@@ -104,10 +105,12 @@ export abstract class Command implements ICommand {
 
   /**
    * Send the current answer
+   *
+   * @return Observable<Message>
    */
-  protected sendAnswer(): void {
+  protected sendAnswer(): Observable<Message> {
     this.logger.log(Loglevel.DEBUG, 'send answer');
-    this.msg.channel.send(this.answer);
+    return from(this.msg.channel.send(this.answer));
   }
 
   /**
