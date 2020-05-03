@@ -105,12 +105,13 @@ export abstract class Command implements ICommand {
 
   /**
    * Send the current answer
-   *
-   * @return Observable<Message>
    */
-  protected sendAnswer(): Observable<Message> {
+  protected sendAnswer(
+    then: (message: Message) => void = () => {},
+    error: (e) => void = (e) => this.logger.log(Loglevel.ERROR, 'Couldn\'t send answer: ' + e)
+  ): void {
     this.logger.log(Loglevel.DEBUG, 'send answer');
-    return from(this.msg.channel.send(this.answer));
+    from(this.msg.channel.send(this.answer)).subscribe(then, error);
   }
 
   /**

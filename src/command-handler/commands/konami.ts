@@ -166,14 +166,13 @@ export class Konami extends Command {
       this.initAnswer();
       this.answer.setDescription(this.getMentionOfAuthor() + ', was that your card?');
       this.addCardImage(card);
-      this.sendAnswer().subscribe(() => {
+      this.sendAnswer(() => {
         if (!rightCard) {
           setTimeout(() => {
             this.initAnswer();
             this.answer.setDescription(this.getMentionOfAuthor() + ', Ohh, sorry I made a mistake .-.');
             this.sendAnswer();
           }, 3000);
-
         }
       });
 
