@@ -49,6 +49,8 @@ container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFac
     const databaseApi: IDatabaseApi = context.container.get<IDatabaseApi>(TYPES.DatabaseApi);
     const logger: ILogger = context.container.get<ILogger>(TYPES.Logger);
     const designHandler: IDesignHandler = context.container.get<IDesignHandler>(TYPES.DesignHandler);
+    const mapFactory: MapFactory = context.container.get<MapFactory>(TYPES.MapFactory);
+    const replaySubjectFactory: ReplaySubjectFactory = context.container.get<ReplaySubjectFactory>(TYPES.ReplaySubjectFactory);
     return (name: ICommandClass, cmdList: ICommandList) => {
       try {
         return new name(
@@ -56,7 +58,9 @@ container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFac
           databaseApi,
           logger,
           cmdList,
-          designHandler
+          designHandler,
+          mapFactory,
+          replaySubjectFactory,
         );
       } catch (e) {
         logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + name.toString() + ': ' + e);

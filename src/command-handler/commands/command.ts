@@ -20,7 +20,9 @@ export interface ICommandClass {
       databaseApi: IDatabaseApi,
       logger: ILogger,
       cmdHandler: ICommandList,
-      designHandler: IDesignHandler
+      designHandler: IDesignHandler,
+      mapFactory: MapFactory,
+      replaySubjectFactory: ReplaySubjectFactory
   ): ICommand;
 }
 
