@@ -7,6 +7,7 @@ import { ReplaySubject } from 'rxjs';
 import { ICommandList } from './command-list';
 import { IGuild } from '../guild/guild';
 import { Message } from 'discord.js';
+import { ReplaySubjectFactory } from '../inversify.config';
 
 export interface CommandToHandle {
   command: ICommand,
@@ -43,7 +44,7 @@ export class CommandDeterminer implements ICommandDeterminer {
     @inject(TYPES.Bot) bot: IBot,
     @inject(TYPES.Logger) logger: ILogger,
     @inject(TYPES.CommandList) cmdList: ICommandList,
-    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: <T>() => ReplaySubject<T>
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory:  ReplaySubjectFactory
   ) {
     this.commandToHandle = replaySubjectFactory<CommandToHandle>();
     this.logger = logger;

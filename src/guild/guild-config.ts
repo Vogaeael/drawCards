@@ -39,6 +39,13 @@ export interface IGuildConfig {
   setMinimized(minimized: boolean): void,
 
   /**
+   * Set the current design
+   *
+   * @param design: string
+   */
+  setDesign(design: string): void,
+
+  /**
    * Set that the answers should be printed minimized and short.
    */
   printMinimized(): void,
@@ -75,6 +82,13 @@ export interface IGuildConfig {
    * @return boolean
    */
   getMinimized(): boolean
+
+  /**
+   * Get the current design
+   *
+   * @return string
+   */
+  getDesign(): string
 }
 
 @injectable()
@@ -83,6 +97,7 @@ export class GuildConfig implements IGuildConfig {
   private joker: boolean = false;
   private minimized: boolean = true;
   private deckType: DeckTypes = DeckTypes.standardDeck;
+  private design: string;
 
   /**
    * @inheritDoc
@@ -129,6 +144,13 @@ export class GuildConfig implements IGuildConfig {
   /**
    * @inheritDoc
    */
+  public setDesign(design: string): void {
+    this.design = design;
+  }
+
+  /**
+   * @inheritDoc
+   */
   public printMinimized(): void {
     this.setMinimized(true);
   }
@@ -166,5 +188,12 @@ export class GuildConfig implements IGuildConfig {
    */
   public getMinimized(): boolean {
     return this.minimized;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public getDesign(): string {
+    return this.design;
   }
 }

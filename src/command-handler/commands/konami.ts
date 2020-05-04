@@ -6,10 +6,11 @@ import { Message, Snowflake } from 'discord.js';
 import { Suits } from '../../deck/suits';
 import { StandardDeck } from '../../deck/deck-types';
 import { randomFromArray } from '../../functions';
-import container from '../../inversify.config';
+import container, { MapFactory, ReplaySubjectFactory } from '../../inversify.config';
 import { TYPES } from '../../types';
 import { ICommandList } from '../command-list';
 import { from } from 'rxjs';
+import { IDesignHandler } from '../../design/designHandler';
 
 interface CardTrick {
   userId: Snowflake;
@@ -39,14 +40,20 @@ export class Konami extends Command {
     msgFactory: MessageFactory,
     databaseApi: IDatabaseApi,
     logger: ILogger,
-    cmdList: ICommandList
+    cmdList: ICommandList,
+    designHandler: IDesignHandler,
+    mapFactory: MapFactory,
+    replaySubjectFactory: ReplaySubjectFactory
   ) {
     super(msgFactory,
       databaseApi,
       logger,
-      cmdList);
+      cmdList,
+      designHandler,
+      mapFactory,
+      replaySubjectFactory);
     this.initSubCommands();
-    this.userSubGames = new Map<Snowflake, CardTrick>();
+    this.userSubGames = this.mapFactory<Snowflake, CardTrick>();
     this.name = Array.from(this.subCommands.keys());
   }
 
@@ -85,7 +92,7 @@ export class Konami extends Command {
    * Initialize the subCommands
    */
   private initSubCommands(): void {
-    this.subCommands = new Map<string, SubCommand>();
+    this.subCommands = this.mapFactory<string, SubCommand>();
     this.subCommands.set(Konami.konamiCode, () => this.konami());
     this.subCommands.set(Konami.pullCard, () => this.pullCard());
     this.subCommands.set(Konami.pushCard, () => this.pushCard());
@@ -143,9 +150,17 @@ export class Konami extends Command {
       ': ' + this.curUserSubGame.showedCard.getRank() +
       '. Remember it an push it back in the deck (command: ' +
       Konami.pushCard + ')');
-    this.addCardImage(this.curUserSubGame.showedCard);
-    this.sendAnswer((message: Message) => this.curUserSubGame.cardShowMessage = message);
-    this.curUserSubGame.lastCommand = Konami.pullCard;
+    this.addCardImage(this.curUserSubGame.showedCard)
+      .subscribe(
+        () => {
+          this.sendAnswer((message: Message) => this.curUserSubGame.cardShowMessage = message);
+          this.curUserSubGame.lastCommand = Konami.pullCard;
+        },
+        () => {
+          this.sendAnswer((message: Message) => this.curUserSubGame.cardShowMessage = message);
+          this.curUserSubGame.lastCommand = Konami.pullCard;
+        }
+      );
   }
 
   /**
@@ -166,18 +181,23 @@ export class Konami extends Command {
       const card: ICard = Konami.getMagicCard(this.curUserSubGame, rightCard);
       this.initAnswer();
       this.answer.setDescription(this.getMentionOfAuthor() + ', was that your card?');
-      this.addCardImage(card);
-      this.sendAnswer(() => {
-        if (!rightCard) {
-          setTimeout(() => {
-            this.initAnswer();
-            this.answer.setDescription(this.getMentionOfAuthor() + ', Ohh, sorry I made a mistake .-.');
-            this.sendAnswer();
-          }, 3000);
-        }
-      });
+      this.addCardImage(card)
+        .subscribe( //@TODO improve
+          () => {
+            this.sendAnswer(() => {
+              this.sendMistakeAnswer(rightCard);
+            });
 
-      this.userSubGames.delete(this.curUserSubGame.userId);
+            this.userSubGames.delete(this.curUserSubGame.userId);
+          },
+          () => {
+            this.sendAnswer(() => {
+              this.sendMistakeAnswer(rightCard);
+            });
+
+            this.userSubGames.delete(this.curUserSubGame.userId);
+          }
+        );
     }, 6000);
   }
 
@@ -229,5 +249,20 @@ export class Konami extends Command {
     }
 
     return card;
+  }
+
+  /**
+   * Send that it was a mistake
+   *
+   * @param rightCard: boolean
+   */
+  private sendMistakeAnswer(rightCard: boolean): void {
+    if (!rightCard) {
+      setTimeout(() => {
+        this.initAnswer();
+        this.answer.setDescription(this.getMentionOfAuthor() + ', Ohh, sorry I made a mistake .-.');
+        this.sendAnswer();
+      }, 3000);
+    }
   }
 }

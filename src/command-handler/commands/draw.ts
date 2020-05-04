@@ -146,27 +146,41 @@ export class Draw extends Command {
    * @param num: number, number of cards to draw
    */
   private drawMaximized(num: number): void {
-    for (let i = num; i > 0; --i) {
-      const card: ICard = this.curGuild.getDeck().draw();
-      if (undefined === card) {
-        this.answerEmpty(i);
+    const card: ICard = this.curGuild.getDeck().draw();
+    if (undefined === card) {
+      this.answerEmpty(num);
 
-        return
-      }
-
-      this.initAnswer();
-      this.answer.setTitle('Draw Card :' + card.getSuit() + ': ' + capitalize(card.getRank()))
-        .setDescription(
-          this.getMentionOfAuthor() +
-          ' draw card ' +
-          capitalize(card.getSuit()) +
-          ' ' +
-          capitalize(card.getRank()));
-
-      this.addCardImage(card);
-
-      this.sendAnswer();
+      return
     }
+
+    this.initAnswer();
+    this.answer.setTitle('Draw Card :' + card.getSuit() + ': ' + capitalize(card.getRank()))
+      .setDescription(
+        this.getMentionOfAuthor() +
+        ' draw card ' +
+        capitalize(card.getSuit()) +
+        ' ' +
+        capitalize(card.getRank()));
+
+    this.addCardImage(card)
+      .subscribe(
+        () => {
+          this.sendAnswer(() => {
+            --num;
+            if (0 < num) {
+              this.drawMaximized(num);
+            }
+          });
+        },
+        () => {
+          this.sendAnswer(() => {
+            --num;
+            if (0 < num) {
+              this.drawMaximized(num);
+            }
+          });
+        }
+      );
   }
 
   /**

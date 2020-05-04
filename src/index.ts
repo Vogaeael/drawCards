@@ -1,5 +1,3 @@
-import { ICommandHandler } from './command-handler/command-handler';
-
 require('dotenv').config(); // Recommended way of loading dotenv
 import container from "./inversify.config";
 import { TYPES } from "./types";
@@ -16,6 +14,9 @@ import { UseStrippedDeck } from './command-handler/commands/use-stripped-deck';
 import { CardsLeft } from './command-handler/commands/cards-left';
 import { Konami } from './command-handler/commands/konami';
 import { ICommandList } from './command-handler/command-list';
+import { SetDesign } from './command-handler/commands/set-design';
+import { ListDesigns } from './command-handler/commands/listDesigns';
+import { ICommandHandler } from './command-handler/command-handler';
 
 const commandList: ICommandList = container.get<ICommandList>(TYPES.CommandList);
 // To construct the handler, if not, it will never be initialized and the command-determiner also.
@@ -27,8 +28,10 @@ commandList.addCommands([
   Draw,
   Help,
   Konami,
+  ListDesigns,
   PrintMaximized,
   PrintMinimized,
+  SetDesign,
   SetPrefix,
   Shuffle,
   UseJoker,

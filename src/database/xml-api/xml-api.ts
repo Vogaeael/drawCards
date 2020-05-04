@@ -33,11 +33,13 @@ export class XmlApi extends AbstractDatabaseApi {
           guildConfig.setMinimized(JSON.parse(guildConfigJson['minimized']));
 
           guildConfigSubject.next(guildConfig);
+          guildConfigSubject.complete();
         },
         (e) => {
           this.logger.log(Loglevel.ERROR, 'couldn\'t load file for guild \'' + guildId + '\': ' + e);
 
           guildConfigSubject.next(this.guildConfigFactory());
+          guildConfigSubject.complete();
         }
       );
 

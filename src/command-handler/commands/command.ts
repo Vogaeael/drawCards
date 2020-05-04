@@ -6,8 +6,10 @@ import { TYPES } from '../../types';
 import { IDatabaseApi } from '../../database/database-api';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
 import { ICommandList } from '../command-list';
+import { CardFile, IDesignHandler } from '../../design/designHandler';
 import { ICard } from '../../deck/card';
-import { from, Observable } from 'rxjs';
+import { from, ReplaySubject } from 'rxjs';
+import { MapFactory, ReplaySubjectFactory } from '../../inversify.config';
 
 export type MessageFactory = () => MessageEmbed;
 
@@ -17,7 +19,11 @@ export interface ICommandClass {
   new(msgFactory: MessageFactory,
       databaseApi: IDatabaseApi,
       logger: ILogger,
-      cmdHandler: ICommandList): ICommand;
+      cmdHandler: ICommandList,
+      designHandler: IDesignHandler,
+      mapFactory: MapFactory,
+      replaySubjectFactory: ReplaySubjectFactory
+  ): ICommand;
 }
 
 export interface ICommand {
@@ -54,7 +60,10 @@ export abstract class Command implements ICommand {
   private static readonly box_check_mark = '☑';
   private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
+  private readonly replaySubjectFactory: ReplaySubjectFactory;
   protected readonly cmdList: ICommandList;
+  protected readonly designHandler: IDesignHandler;
+  protected readonly mapFactory: MapFactory;
   protected curGuild: IGuild;
   protected msg: Message;
   protected answer: MessageEmbed;
@@ -68,12 +77,18 @@ export abstract class Command implements ICommand {
     @inject(TYPES.MessageFactory) msgFactory: MessageFactory,
     @inject(TYPES.DatabaseApi) databaseApi: IDatabaseApi,
     @inject(TYPES.Logger) logger: ILogger,
-    @inject(TYPES.CommandList) cmdList: ICommandList
+    @inject(TYPES.CommandList) cmdList: ICommandList,
+    @inject(TYPES.DesignHandler) designHandler: IDesignHandler,
+    @inject(TYPES.MapFactory) mapFactory: MapFactory,
+    @inject(TYPES.ReplaySubjectFactory) replaySubjectFactory: ReplaySubjectFactory
   ) {
     this.msgFactory = msgFactory;
     this.databaseApi = databaseApi;
     this.logger = logger;
     this.cmdList = cmdList;
+    this.designHandler = designHandler;
+    this.mapFactory = mapFactory;
+    this.replaySubjectFactory = replaySubjectFactory;
   }
 
   /**
@@ -201,23 +216,25 @@ export abstract class Command implements ICommand {
    * Add an image for the card
    *
    * @param card: Card
-   */
-  protected addCardImage(card: ICard): void {
-    const [path, fileName] = this.getCardPathAndFileName(card);
-
-    this.answer.attachFiles([path + fileName]);
-    this.answer.setImage('attachment://' + fileName);
-  }
-
-  /**
-   * Get the picture path and file name of a card
    *
-   * @param card: ICard
+   * @return ReplaySubject<void>
    */
-  protected getCardPathAndFileName(card: ICard): [string, string] {
-    const fileName = card.getRank() + '_' + card.getSuit() + '.png';
-    const path = './media/images/cards/';
-
-    return [path, fileName];
+  protected addCardImage(card: ICard): ReplaySubject<void> {
+    const subject: ReplaySubject<void> = this.replaySubjectFactory<void>();
+    this.designHandler.getCardPath(this.curGuild.getConfig().getDesign(), card)
+      .subscribe(
+        (cardFile: CardFile) => {
+          this.answer.attachFiles([cardFile.path + cardFile.file]);
+          this.answer.setImage('attachment://' + cardFile.file);
+          subject.next();
+          subject.complete();
+        },
+        (e) => {
+          this.logger.log(Loglevel.FATAL, 'Card image not found: ' + e);
+          subject.error('Card image not found.');
+          subject.complete();
+        }
+      );
+    return subject;
   }
 }

@@ -15,9 +15,11 @@ import { ILogger, Loglevel } from './logger/logger-interface';
 import { FileLogger } from './logger/file-log/file-logger';
 import { CommandFactory, ICommandClass, MessageFactory } from './command-handler/commands/command';
 import { CommandList, ICommandList } from './command-handler/command-list';
+import { DesignHandler, IDesignHandler } from './design/designHandler';
 import { ReplaySubject } from 'rxjs';
 
 export type MapFactory = <T, S>() => Map<T, S>;
+export type ReplaySubjectFactory = <T>() => ReplaySubject<T>;
 
 let container = new Container();
 
@@ -46,13 +48,19 @@ container.bind<(context: interfaces.Context) => CommandFactory>(TYPES.CommandFac
     const msgFactory: MessageFactory = context.container.get<MessageFactory>(TYPES.MessageFactory);
     const databaseApi: IDatabaseApi = context.container.get<IDatabaseApi>(TYPES.DatabaseApi);
     const logger: ILogger = context.container.get<ILogger>(TYPES.Logger);
+    const designHandler: IDesignHandler = context.container.get<IDesignHandler>(TYPES.DesignHandler);
+    const mapFactory: MapFactory = context.container.get<MapFactory>(TYPES.MapFactory);
+    const replaySubjectFactory: ReplaySubjectFactory = context.container.get<ReplaySubjectFactory>(TYPES.ReplaySubjectFactory);
     return (name: ICommandClass, cmdList: ICommandList) => {
       try {
         return new name(
           msgFactory,
           databaseApi,
           logger,
-          cmdList
+          cmdList,
+          designHandler,
+          mapFactory,
+          replaySubjectFactory,
         );
       } catch (e) {
         logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + name.toString() + ': ' + e);
@@ -89,6 +97,9 @@ container.bind<interfaces.Factory<MessageEmbed>>(TYPES.MessageFactory)
   .toFactory(() =>
     () => new MessageEmbed()
   );
+
+container.bind<IDesignHandler>(TYPES.DesignHandler)
+  .to(DesignHandler).inSingletonScope();
 
 container.bind<interfaces.Factory<ReplaySubject<any>>>(TYPES.ReplaySubjectFactory)
   .toFactory(() =>

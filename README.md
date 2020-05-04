@@ -114,7 +114,19 @@ If you want your draw answers short and minimized:
 If you want your draw answers large and maximized:
 `!printMaximized`
 
-### Set prefix
+### List Designs
+If you want to know all possible designs:
+`!listDesigns`
+
+### Set Design
+If you want to change the design.
+```shell script
+!setDesign jack-mc-gee  # change to the design `jack-mc-gee`
+!setDesign eee          # does nothing, because the design `eee` is unknown
+!setDesign              # does set the design to default
+```
+
+### Set Prefix
 If you want to change the prefix from `!` to something else.
 ```shell script
 !setPrefix bob  # change the prefix to bob => "bobdraw" would be the new "draw"
