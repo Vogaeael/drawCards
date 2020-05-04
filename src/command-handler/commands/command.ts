@@ -232,6 +232,7 @@ export abstract class Command implements ICommand {
         (e) => {
           this.logger.log(Loglevel.FATAL, 'Card image not found: ' + e);
           subject.error('Card image not found.');
+          subject.complete();
         }
       );
     return subject;

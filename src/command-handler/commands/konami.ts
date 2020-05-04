@@ -182,35 +182,22 @@ export class Konami extends Command {
       this.initAnswer();
       this.answer.setDescription(this.getMentionOfAuthor() + ', was that your card?');
       this.addCardImage(card)
-        .subscribe(
+        .subscribe( //@TODO improve
           () => {
             this.sendAnswer(() => {
-              if (!rightCard) {
-                setTimeout(() => {
-                  this.initAnswer();
-                  this.answer.setDescription(this.getMentionOfAuthor() + ', Ohh, sorry I made a mistake .-.');
-                  this.sendAnswer();
-                }, 3000);
-              }
+              this.sendMistakeAnswer(rightCard);
             });
 
             this.userSubGames.delete(this.curUserSubGame.userId);
           },
           () => {
             this.sendAnswer(() => {
-              if (!rightCard) {
-                setTimeout(() => {
-                  this.initAnswer();
-                  this.answer.setDescription(this.getMentionOfAuthor() + ', Ohh, sorry I made a mistake .-.');
-                  this.sendAnswer();
-                }, 3000);
-              }
+              this.sendMistakeAnswer(rightCard);
             });
 
             this.userSubGames.delete(this.curUserSubGame.userId);
           }
         );
-
     }, 6000);
   }
 
@@ -262,5 +249,20 @@ export class Konami extends Command {
     }
 
     return card;
+  }
+
+  /**
+   * Send that it was a mistake
+   *
+   * @param rightCard: boolean
+   */
+  private sendMistakeAnswer(rightCard: boolean): void {
+    if (!rightCard) {
+      setTimeout(() => {
+        this.initAnswer();
+        this.answer.setDescription(this.getMentionOfAuthor() + ', Ohh, sorry I made a mistake .-.');
+        this.sendAnswer();
+      }, 3000);
+    }
   }
 }
