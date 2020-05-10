@@ -9,7 +9,7 @@ export class PrintMaximized extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'printMaximized' ];
+  public static readonly names: string[] = [ 'printMaximized' ];
 
   /**
    * Command !printMaximized

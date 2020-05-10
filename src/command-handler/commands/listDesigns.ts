@@ -5,7 +5,7 @@ export class ListDesigns extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'listDesigns' ];
+  public static readonly names: string[] = [ 'listDesigns' ];
 
   /**
    * @inheritDoc

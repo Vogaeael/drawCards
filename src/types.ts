@@ -22,4 +22,5 @@ export const TYPES = {
   DesignHandler: Symbol("DesignHandler"),
   ReplaySubjectFactory: Symbol("ReplaySubjectFactory"),
   MapFactory: Symbol("MapFactory"),
+  KonamiTrickPerUser: Symbol("KonamiTrickPerUser"),
 };

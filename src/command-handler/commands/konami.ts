@@ -1,4 +1,4 @@
-import { Command, ICommand, MessageFactory } from './command';
+import { Command, CommandFactory, ICommand, MessageFactory } from './command';
 import { ILogger, Loglevel } from '../../logger/logger-interface';
 import { IDatabaseApi } from '../../database/database-api';
 import { ICard } from '../../deck/card';
@@ -12,7 +12,7 @@ import { ICommandList } from '../command-list';
 import { from } from 'rxjs';
 import { IDesignHandler } from '../../design/designHandler';
 
-interface CardTrick {
+export interface CardTrick {
   userId: Snowflake;
   cardShowMessage: Message;
   showedCard: ICard;
@@ -29,9 +29,14 @@ export class Konami extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = ["⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️🅱️🅰️"];
+  public static readonly names: string[] =
+    [
+      Konami.konamiCode,
+      Konami.pushCard,
+      Konami.pullCard
+    ];
   private subCommands: Map<string, SubCommand>;
-  private userSubGames: Map<Snowflake, CardTrick>;
+  private trickLevelPerUser: Map<Snowflake, CardTrick>;
   private curCommandName: string;
   private curParams: string;
   private curUserSubGame: CardTrick;
@@ -53,8 +58,7 @@ export class Konami extends Command {
       mapFactory,
       replaySubjectFactory);
     this.initSubCommands();
-    this.userSubGames = this.mapFactory<Snowflake, CardTrick>();
-    this.name = Array.from(this.subCommands.keys());
+    this.trickLevelPerUser = container.get<Map<Snowflake, CardTrick>>(TYPES.KonamiTrickPerUser);
   }
 
   /**
@@ -72,7 +76,7 @@ export class Konami extends Command {
 
       return
     }
-    this.curUserSubGame = this.userSubGames.get(this.msg.author.id);
+    this.curUserSubGame = this.trickLevelPerUser.get(this.msg.author.id);
     subCommand();
   }
 
@@ -80,7 +84,7 @@ export class Konami extends Command {
    * @inheritDoc
    */
   public help(): void {
-    const help: ICommand = this.cmdList.getCommand('help');
+    const help: ICommand = this.getCommand('help');
     if (help) {
       help.help();
     }
@@ -132,7 +136,7 @@ export class Konami extends Command {
         '\'');
     }
     this.curUserSubGame.lastCommand = Konami.konamiCode;
-    this.userSubGames.set(this.curUserSubGame.userId, this.curUserSubGame);
+    this.trickLevelPerUser.set(this.curUserSubGame.userId, this.curUserSubGame);
   }
 
   /**
@@ -188,14 +192,14 @@ export class Konami extends Command {
               this.sendMistakeAnswer(rightCard);
             });
 
-            this.userSubGames.delete(this.curUserSubGame.userId);
+            this.trickLevelPerUser.delete(this.curUserSubGame.userId);
           },
           () => {
             this.sendAnswer(() => {
               this.sendMistakeAnswer(rightCard);
             });
 
-            this.userSubGames.delete(this.curUserSubGame.userId);
+            this.trickLevelPerUser.delete(this.curUserSubGame.userId);
           }
         );
     }, 6000);

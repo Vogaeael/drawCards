@@ -9,11 +9,11 @@ import { ICommandList } from '../command-list';
 import { CardFile, IDesignHandler } from '../../design/designHandler';
 import { ICard } from '../../deck/card';
 import { from, ReplaySubject } from 'rxjs';
-import { MapFactory, ReplaySubjectFactory } from '../../inversify.config';
+import container, { MapFactory, ReplaySubjectFactory } from '../../inversify.config';
 
 export type MessageFactory = () => MessageEmbed;
 
-export type CommandFactory = (name: ICommandClass, cmdHandler: ICommandList) => ICommand;
+export type CommandFactory = (name: ICommandClass, cmdList: ICommandList) => ICommand;
 
 export interface ICommandClass {
   new(msgFactory: MessageFactory,
@@ -24,16 +24,18 @@ export interface ICommandClass {
       mapFactory: MapFactory,
       replaySubjectFactory: ReplaySubjectFactory
   ): ICommand;
+
+  names: string[];
 }
 
-export interface ICommand {
+export abstract class ICommand {
   /**
    * Run the command with the params
    *
    * @param commandName: string
    * @param params: string
    */
-  run(commandName: string, params: string): void,
+  public abstract run(commandName: string, params: string): void;
 
   /**
    * Initialize the command and set the values
@@ -41,17 +43,12 @@ export interface ICommand {
    * @param guild: IGuild
    * @param msg: Message
    */
-  init(guild: IGuild, msg: Message): void,
+  public abstract init(guild: IGuild, msg: Message): void;
 
   /**
    * Print the command help
    */
-  help(): void,
-
-  /**
-   * The name of the command
-   */
-  name: string[]
+  public abstract help(): void;
 }
 
 export abstract class Command implements ICommand {
@@ -68,10 +65,6 @@ export abstract class Command implements ICommand {
   protected msg: Message;
   protected answer: MessageEmbed;
   protected logger: ILogger;
-  /**
-   * @inheritDoc
-   */
-  public abstract name: string[];
 
   constructor(
     @inject(TYPES.MessageFactory) msgFactory: MessageFactory,
@@ -236,5 +229,22 @@ export abstract class Command implements ICommand {
         }
       );
     return subject;
+  }
+
+  /**
+   * Get Command object by class name
+   *
+   * @param cmdName: string
+   *
+   * @return ICommand | undefined
+   */
+  protected getCommand(cmdName: string): ICommand | undefined {
+    const cmdClass: ICommandClass = this.cmdList.getCommand(cmdName);
+    if (cmdClass) {
+      return container.get<CommandFactory>(TYPES.CommandFactory)(cmdClass, this.cmdList);
+    }
+    this.logger.log(Loglevel.FATAL, 'Command Class \'' + cmdClass + '\' not found');
+
+    return undefined;
   }
 }

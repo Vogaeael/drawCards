@@ -9,7 +9,7 @@ export class Help extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'help' ];
+  public static readonly names: string[] = [ 'help' ];
 
   /**
    * Command !help
@@ -19,7 +19,7 @@ export class Help extends Command {
    */
   public run(commandName: string, params: string): void {
     this.logCommand('help', commandName, params);
-    const command: ICommand = this.cmdList.getCommand(params);
+    const command: ICommand = this.getCommand(params);
     if (command) {
       command.init(this.curGuild, this.msg);
       command.help();

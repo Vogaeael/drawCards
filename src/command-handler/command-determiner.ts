@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { ICommand } from './commands/command';
+import { ICommandClass } from './commands/command';
 import { TYPES } from '../types';
 import { ILogger, Loglevel } from '../logger/logger-interface';
 import { IBot, MessageToHandle } from '../bot';
@@ -10,7 +10,7 @@ import { Message } from 'discord.js';
 import { ReplaySubjectFactory } from '../inversify.config';
 
 export interface CommandToHandle {
-  command: ICommand,
+  command: ICommandClass,
   commandName: string,
   param: string,
   message: Message,
@@ -37,7 +37,7 @@ export class CommandDeterminer implements ICommandDeterminer {
   private curMsg: string;
   private guildPrefix: string;
   private commandName: string;
-  private command: ICommand;
+  private command: ICommandClass;
   private params: string;
 
   constructor(

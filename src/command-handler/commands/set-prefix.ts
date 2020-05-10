@@ -8,7 +8,7 @@ export class SetPrefix extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'setPrefix' ];
+  public static readonly names: string[] = [ 'setPrefix' ];
 
   /**
    * Command !setPrefix

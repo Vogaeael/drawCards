@@ -9,7 +9,7 @@ export class UseStrippedDeck extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'useStrippedDeck' ];
+  public static readonly names: string[] = [ 'useStrippedDeck' ];
 
   /**
    * Command !useStrippedDeck

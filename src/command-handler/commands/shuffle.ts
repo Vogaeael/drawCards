@@ -9,7 +9,7 @@ export class Shuffle extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'shuffle' ];
+  public static readonly names: string[] = [ 'shuffle' ];
 
   private readonly MAX_SHUFFLE: number = 8;
 

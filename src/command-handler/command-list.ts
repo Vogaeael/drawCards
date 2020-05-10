@@ -1,4 +1,4 @@
-import { CommandFactory, ICommand, ICommandClass } from './commands/command';
+import { ICommandClass, CommandFactory } from './commands/command';
 import { ILogger, Loglevel } from '../logger/logger-interface';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
@@ -10,9 +10,9 @@ export interface ICommandList {
    *
    * @param name: string
    *
-   * @return ICommand | undefined
+   * @return ICommandClass | undefined
    */
-  getCommand(name: string): ICommand | undefined,
+  getCommand(name: string): ICommandClass | undefined,
 
   /**
    * Get the name of the commands
@@ -24,10 +24,10 @@ export interface ICommandList {
   /**
    * Add a list of commands
    *
-   * @param commands: ICommandClass[]
+   * @param commands: ICommandClassList
    */
-  addCommands(commands): void,
 
+  addCommands(commands: ICommandClass[]): void,
   /**
    * Add a command
    * @param className: ICommandClass
@@ -36,10 +36,10 @@ export interface ICommandList {
 }
 
 @injectable()
-export class CommandList implements ICommandList{
+export class CommandList implements ICommandList {
   private readonly logger: ILogger;
   private readonly cmdFactory: CommandFactory;
-  private commands: Map<string, ICommand>;
+  private commands: Map<string, ICommandClass>;
 
   constructor(
     @inject(TYPES.Logger) logger: ILogger,
@@ -48,14 +48,14 @@ export class CommandList implements ICommandList{
   ) {
     this.logger = logger;
     this.cmdFactory = cmdFactory;
-    this.commands = mapFactory<string, ICommand>();
+    this.commands = mapFactory<string, ICommandClass>();
     this.logger.log(Loglevel.DEBUG, 'Constructed command-list');
   }
 
   /**
    * @inheritDoc
    */
-  public getCommand(name: string): ICommand | undefined {
+  public getCommand(name: string): ICommandClass | undefined {
     return this.commands.get(name);
   }
 
@@ -80,16 +80,10 @@ export class CommandList implements ICommandList{
    */
   public addCommand(className: ICommandClass): void {
     try {
-      const command: ICommand | undefined = this.cmdFactory(className, this);
-      if (command) {
-        this.logger.log(Loglevel.DEBUG, 'add command: ' + command.name);
-        command.name.forEach((name: string) => {
-          this.commands.set(name, command);
-        });
-
-        return
-      }
-      this.logger.log(Loglevel.FATAL, 'couldn\'t init command: command is undefined');
+      this.logger.log(Loglevel.DEBUG, 'add command: ' + className.names);
+      className.names.forEach((name: string) => {
+        this.commands.set(name, className);
+      });
     } catch (e) {
       this.logger.log(Loglevel.FATAL, 'couldn\'t init command: ' + e);
     }

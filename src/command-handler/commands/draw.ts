@@ -14,7 +14,7 @@ export class Draw extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'draw' ];
+  public static readonly names: string[] = [ 'draw' ];
   private static readonly max_fields_in_message: number = 25;
   private fieldsToAdd: EmbedFieldData[];
   private countAnswers: number;

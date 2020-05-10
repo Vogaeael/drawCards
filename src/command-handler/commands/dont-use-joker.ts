@@ -9,7 +9,7 @@ export class DontUseJoker extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'dontUseJoker' ];
+  public static readonly names: string[] = [ 'dontUseJoker' ];
 
   /**
    * Command !dontUseJoker

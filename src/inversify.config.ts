@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { Container, interfaces } from "inversify";
 import { TYPES } from "./types";
 import { Bot, IBot } from "./bot";
-import { Client, MessageEmbed } from "discord.js";
+import { Client, MessageEmbed, Snowflake } from "discord.js";
 import { CommandDeterminer, ICommandDeterminer } from './command-handler/command-determiner';
 import { Guild, IGuild } from './guild/guild';
 import { GuildConfig, IGuildConfig } from './guild/guild-config';
@@ -17,6 +17,7 @@ import { CommandFactory, ICommandClass, MessageFactory } from './command-handler
 import { CommandList, ICommandList } from './command-handler/command-list';
 import { DesignHandler, IDesignHandler } from './design/designHandler';
 import { ReplaySubject } from 'rxjs';
+import { CardTrick } from './command-handler/commands/konami';
 
 export type MapFactory = <T, S>() => Map<T, S>;
 export type ReplaySubjectFactory = <T>() => ReplaySubject<T>;
@@ -110,5 +111,9 @@ container.bind<interfaces.Factory<Map<any, any>>>(TYPES.MapFactory)
   .toFactory(() =>
   <T, S>() => new Map<T, S>()
   );
+
+container.bind<Map<Snowflake, CardTrick>>(TYPES.KonamiTrickPerUser)
+  .toConstantValue(
+    container.get<<T, S>() => Map<T, S>>(TYPES.MapFactory)<Snowflake, CardTrick>());
 
 export default container;
