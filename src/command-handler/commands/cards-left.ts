@@ -9,7 +9,7 @@ export class CardsLeft extends Command {
   /**
    * @inheritDoc
    */
-  public static readonly names: string[] = [ 'cardsLeft' ];
+  public static readonly names: string[] = [ 'cardsLeft', 'left' ];
 
   /**
    * Command !cardsLeft
@@ -32,6 +32,6 @@ export class CardsLeft extends Command {
   public help(): void {
     this.sendShortHelp(
       'Help CardsLeft',
-      'Command to determine how many cards are left in the deck');
+      'Command to determine how many cards are left in the deck. Instead of `cardsLeft` you can use `left`');
   }
 }
