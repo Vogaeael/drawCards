@@ -42,6 +42,7 @@
     "start": "node src/index.js",
     "watch": "tsc -p tsconfig.json -w",
     "compile": "tsc -p tsconfig.json",
-    "test": "mocha -r ts-node/register \"tests/**/*.spec.ts\""
+    "test": "mocha -r ts-node/register \"tests/**/*.spec.ts\"",
+    "heroku-postbuild": "tsc -p tsconfig.json"
   }
 }
