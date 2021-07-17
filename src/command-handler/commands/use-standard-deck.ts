@@ -9,7 +9,7 @@ export class UseStandardDeck extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'useStandardDeck' ];
+  public name: string[] = [ 'useStandardDeck', 'usestandarddeck' ];
 
   /**
    * Command !useStandardDeck

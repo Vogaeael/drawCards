@@ -5,7 +5,7 @@ export class ListDesigns extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'listDesigns' ];
+  public name: string[] = [ 'listDesigns', 'listdesigns' ];
 
   /**
    * @inheritDoc

@@ -9,7 +9,7 @@ export class CardsLeft extends Command {
   /**
    * @inheritDoc
    */
-  public name: string[] = [ 'cardsLeft' ];
+  public name: string[] = [ 'cardsLeft', 'cardsLeft' ];
 
   /**
    * Command !cardsLeft

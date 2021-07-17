@@ -93,40 +93,41 @@ To draw one or multiple cards.
 
 ### How many cards are remaining in the deck
 To know how many cards are remaining in the deck:
-`!cardsLeft`
+`!cardsLeft` or `!cardsleft`
 
 ### Use standard deck
 If you want to change back to the standard deck (52 cards):
-`!useStandardDeck`
+`!useStandardDeck` or `!usestandarddeck`
 
 ### Use stripped deck
 If you want to change to as stripped deck (32 cards):
-`!useStrippedDeck`
+`!useStrippedDeck` or `!usestrippeddeck`
 
 ### Use joker
 If you want that jokers are also in the deck:
-`!useJoker`
+`!useJoker` or `!usejoker`
 
 ### Don't use joker
 If you want that jokers aren't in the deck:
-`!dontUseJoker`
+`!dontUseJoker` or `!dontusejoker`
 
 ### Print Minimized
 If you want your draw answers short and minimized:
-`!printMinimized`
+`!printMinimized` or `!printminimized`
 
 ### Print Maximized
 If you want your draw answers large and maximized:
-`!printMaximized`
+`!printMaximized` or `!printmaximized`
 
 ### List Designs
 If you want to know all possible designs:
-`!listDesigns`
+`!listDesigns` or `!listdesigns`
 
 ### Set Design
 If you want to change the design.
 ```shell script
 !setDesign jack-mc-gee  # change to the design `jack-mc-gee`
+!setdesign jack-mc-gee  # change to the design `jack-mc-gee`
 !setDesign eee          # does nothing, because the design `eee` is unknown
 !setDesign              # does set the design to default
 ```
@@ -135,6 +136,7 @@ If you want to change the design.
 If you want to change the prefix from `!` to something else.
 ```shell script
 !setPrefix bob  # change the prefix to bob => "bobdraw" would be the new "draw"
+!setprefix 4    # change the prefix to 4 => "4draw" would be the new "draw"
 !setPrefix      # without parameter it changes back to "!"
 ```
 
