@@ -43,6 +43,7 @@ export class Shuffle extends Command {
   public help(): void {
     this.sendShortHelp(
       'Help Shuffle',
-      'Command to shuffle a new deck. If the config was changed to a new deck, or the config if joker should be in the deck or not was changed, the new deck will have the changes.');
+      'Command to shuffle a new deck. You can add a number to shuffle more than one time, but the maximum is ' + this.MAX_SHUFFLE
+      + ' If the config was changed to a new deck, or the config if joker should be in the deck or not was changed, the new deck will have the changes.');
   }
 }
