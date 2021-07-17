@@ -15,7 +15,7 @@ import { CardsLeft } from './command-handler/commands/cards-left';
 import { Konami } from './command-handler/commands/konami';
 import { ICommandList } from './command-handler/command-list';
 import { SetDesign } from './command-handler/commands/set-design';
-import { ListDesigns } from './command-handler/commands/listDesigns';
+import { ListDesigns } from './command-handler/commands/list-designs';
 import { ICommandHandler } from './command-handler/command-handler';
 
 const commandList: ICommandList = container.get<ICommandList>(TYPES.CommandList);
