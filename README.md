@@ -74,8 +74,13 @@ npm start
 ## Commands
 
 ### Shuffle
-To shuffle the deck:
-`!shuffle`
+To shuffle the deck one or multiple times:
+```shell script
+!shuffle      # to shuffle one time
+!shuffle 1    # also to shuffle one time
+!shuffle 3    # to shuffle three times
+!shuffle 999  # to shuffle 8 times, because it is the maximum
+```
 
 ### Draw
 To draw one or multiple cards.
