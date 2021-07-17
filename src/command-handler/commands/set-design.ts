@@ -5,7 +5,7 @@ export class SetDesign extends Command {
   /**
    * @inheritDoc
    */
-  public readonly name: string[] = [ 'setDesign' ];
+  public readonly name: string[] = [ 'setDesign', 'setdesign' ];
 
   /**
    * @inheritDoc
