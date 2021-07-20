@@ -55,8 +55,7 @@ export class Help extends Command {
       .addField('!printMaximized', 'Print all answers not anymore so short as possible. For more information use `!help printMaximized`.')
       .addField('!listDesigns', 'List all possible designs. For more information use `!help listDesigns`.')
       .addField('!setDesign [?design]', 'Set the cards design. For more information use `!help setDesign`.')
-      .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another.' +
-        ' If no parameter is set, it changes back to `!`')
+      .addField('!setPrefix [?newPrefix]', 'Set the prefix from `!` to another. For more information use `!help setPrefix`.')
       .addField('!help [?command]', 'Get the help information.' +
         ' If you set the name of a command instead of `[?command]` you get the special help for this command.' +
         ' If you dont set something for `[?command]` the normal help will be answered.')
