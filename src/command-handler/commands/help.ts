@@ -51,7 +51,7 @@ export class Help extends Command {
       .addField('!useStrippedDeck', 'Use stripped (32 cards) deck. For more information use `!help useStrippedDeck`.')
       .addField('!useJoker', 'Add joker to the decks. For more information use `!help useJoker`.')
       .addField('!dontUseJoker', 'Don\'t add joker to the decks. For more information use `!help dontUseJoker`.')
-      .addField('!printMinimized', 'Print the answer from draw minimized.')
+      .addField('!printMinimized', 'Print all answers so short as possible. For more information use `!help printMinimized`.')
       .addField('!printMaximized', 'Print the answer from draw maximized.')
       .addField('!listDesigns', 'List all possible designs.')
       .addField('!setDesign [?design]', 'Set the cards design.' +
