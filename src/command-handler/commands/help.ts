@@ -53,7 +53,7 @@ export class Help extends Command {
       .addField('!dontUseJoker', 'Don\'t add joker to the decks. For more information use `!help dontUseJoker`.')
       .addField('!printMinimized', 'Print all answers so short as possible. For more information use `!help printMinimized`.')
       .addField('!printMaximized', 'Print all answers not anymore so short as possible. For more information use `!help printMaximized`.')
-      .addField('!listDesigns', 'List all possible designs.')
+      .addField('!listDesigns', 'List all possible designs. For more information use `!help listDesigns`.')
       .addField('!setDesign [?design]', 'Set the cards design.' +
         ' If you set the name of a design instead of `[?design]` set this design.' +
         ' If the name of the design is unknown it won\'t change. If nothing is set as `[?design]` it change back to default.')
