@@ -52,7 +52,7 @@ export class Help extends Command {
       .addField('!useJoker', 'Add joker to the decks. For more information use `!help useJoker`.')
       .addField('!dontUseJoker', 'Don\'t add joker to the decks. For more information use `!help dontUseJoker`.')
       .addField('!printMinimized', 'Print all answers so short as possible. For more information use `!help printMinimized`.')
-      .addField('!printMaximized', 'Print the answer from draw maximized.')
+      .addField('!printMaximized', 'Print all answers not anymore so short as possible. For more information use `!help printMaximized`.')
       .addField('!listDesigns', 'List all possible designs.')
       .addField('!setDesign [?design]', 'Set the cards design.' +
         ' If you set the name of a design instead of `[?design]` set this design.' +
