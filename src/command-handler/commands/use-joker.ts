@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !useJoker
@@ -28,8 +29,12 @@ export class UseJoker extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help UseJoker',
-      'Command to add joker to the next deck. You have to shuffle to make it effective.');
+    this.setAuthor('Help Use Joker', 'use-joker');
+    this.answer
+      .setTitle('Use Joker')
+      .setColor(AnswerColor.info)
+      .setDescription('Add joker to the decks with `useJoker`. You have to shuffle to make it effective.')
+      .addField('Other Commands', 'You could also use `usejoker`.');
+    this.sendAnswer();
   }
 }
