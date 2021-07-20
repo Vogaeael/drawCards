@@ -1,5 +1,6 @@
 import { Command } from './command';
 import { Loglevel } from '../../logger/logger-interface';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !cardsLeft
@@ -30,8 +31,12 @@ export class CardsLeft extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help CardsLeft',
-      'Command to determine how many cards are left in the deck');
+    this.setAuthor('Help Cards Left', 'how-many-cards-are-remaining-in-the-deck');
+    this.answer
+      .setTitle('Cards Left')
+      .setColor(AnswerColor.info)
+      .setDescription('To know how many cards are left in the deck use `cardsLeft`.')
+      .addField('Other Commands', 'You could also use `cardsleft` or `left`.');
+    this.sendAnswer();
   }
 }
