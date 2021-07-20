@@ -1,5 +1,6 @@
 import { Command } from './command';
 import { DeckTypes } from '../../deck/deck-types';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !useStandardDeck
@@ -29,8 +30,12 @@ export class UseStandardDeck extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help UseStandardDeck',
-      'Command to set config to use a standard (52 cards) deck. You have to shuffle to have the effect.');
+    this.setAuthor('Help Use Standard Deck', 'use-standard-deck');
+    this.answer
+      .setTitle('Use Standard Deck')
+      .setColor(AnswerColor.info)
+      .setDescription('To use standard (52 cards) deck use the command `useStandardDeck`. You have to shuffle to make it effective.')
+      .addField('Other Commands', 'You could also use `usestandarddeck`.');
+    this.sendAnswer();
   }
 }

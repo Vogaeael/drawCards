@@ -55,9 +55,9 @@ export interface ICommand {
 }
 
 export abstract class Command implements ICommand {
-  private static readonly black_check_mark = '✔';
-  private static readonly white_check_mark = '✅';
-  private static readonly box_check_mark = '☑';
+  private static readonly white_check_mark: string = '✅';
+  private readonly pathToImages: string = './media/images';
+  private readonly nameOfIcon: string = 'deck_icons.png';
   private readonly databaseApi: IDatabaseApi;
   private readonly msgFactory: MessageFactory;
   private readonly replaySubjectFactory: ReplaySubjectFactory;
@@ -236,5 +236,24 @@ export abstract class Command implements ICommand {
         }
       );
     return subject;
+  }
+
+  /**
+   * Set an Author with the github link as url. You can define a specific anchor.
+   *
+   * @param name: string
+   * @param anchor: string
+   */
+  protected setAuthor(name: string, anchor: string = null): void {
+    let url = 'https://github.com/Vogaeael/drawCards';
+    if (anchor) {
+      url += '#' + anchor;
+    }
+
+    this.answer.attachFiles([ this.pathToImages + '/' + this.nameOfIcon ])
+    this.answer.setAuthor(
+      name,
+      'attachment://' + this.nameOfIcon,
+      url)
   }
 }

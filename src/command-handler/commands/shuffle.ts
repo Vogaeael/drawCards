@@ -1,5 +1,6 @@
 import { Command } from './command';
 import { transformToNum } from '../../functions';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !shuffle
@@ -41,9 +42,22 @@ export class Shuffle extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help Shuffle',
-      'Command to shuffle a new deck. You can add a number to shuffle more than one time, but the maximum is ' + this.MAX_SHUFFLE
-      + ' If the config was changed to a new deck, or the config if joker should be in the deck or not was changed, the new deck will have the changes.');
+    this.setAuthor('Help Shuffle', 'shuffle');
+    this.answer
+      .setTitle('Shuffle')
+      .setColor(AnswerColor.info)
+      .setDescription('To shuffle the complete deck you can use `shuffle [?num]`.')
+      .addField('Changes in Deck', 'If the config was changed to a new deck, or the config of the usage of joker' +
+        ' was changed, the new deck will have the changes.')
+      .addField('Param [?num]', 'To define how often you want to shuffle you can add a number after the command.' +
+        ' If you don\'t add a number it will be shuffled only one time. The maximum of numbers to shuffle is ' + this.MAX_SHUFFLE)
+      .addField('Examples', 'Here you can see some examples:\n' +
+        '```\n' +
+        'shuffle      # the deck will be shuffled one time.\n' +
+        'shuffle 3    # the deck will be shuffled three times.\n' +
+        'shuffle 999  # because eight is the max number\n' +
+        '               it will be shuffled eight times.' +
+        '```');
+    this.sendAnswer();
   }
 }

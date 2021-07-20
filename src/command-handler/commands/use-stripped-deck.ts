@@ -1,5 +1,6 @@
 import { Command } from './command';
 import { DeckTypes } from '../../deck/deck-types';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !useStrippedDeck
@@ -29,8 +30,12 @@ export class UseStrippedDeck extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help UseStrippedDeck',
-      'Command to set config to use a stripped (32 cards) deck. You have to shuffle to have the effect.');
+    this.setAuthor('Help Use Stripped Deck', 'use-stripped-deck');
+    this.answer
+      .setTitle('Use Stripped Deck')
+      .setColor(AnswerColor.info)
+      .setDescription('To use stripped (32 cards) deck use the command `useStrippedDeck`. You have to shuffle to make it effective.')
+      .addField('Other Commands', 'You could also use `usestrippeddeck`.');
+    this.sendAnswer();
   }
 }

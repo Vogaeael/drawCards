@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !printMinimized
@@ -29,8 +30,12 @@ export class PrintMinimized extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help PrintMinimized',
-      'Command to minimize the answers. Multiple draw answers will be merged.');
+    this.setAuthor('Help Print Minimized', 'print-minimized');
+    this.answer
+      .setTitle('Print Minimized')
+      .setColor(AnswerColor.info)
+      .setDescription('Minimize all answers as short as possible with `printMinimized`. Multiple draw answers will be merged. Other answers will only be reactions.')
+      .addField('Other Commands', 'You could also use `printminimized`.');
+    this.sendAnswer();
   }
 }

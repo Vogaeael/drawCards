@@ -10,14 +10,7 @@ export class ListDesigns extends Command {
   /**
    * @inheritDoc
    */
-  public help(): void {
-    this.sendShortHelp('List Designs', 'List all possible designs.');
-  }
-
-  /**
-   * @inheritDoc
-   */
-  run(commandName: string, params: string): void {
+  public run(commandName: string, params: string): void {
     this.initAnswer();
     this.answer.setTitle('List Designs');
     let description: string = '';
@@ -26,6 +19,19 @@ export class ListDesigns extends Command {
     })
     this.answer.setDescription(description);
     this.answer.setColor(AnswerColor.info);
+    this.sendAnswer();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.setAuthor('Help List Designs', 'list-designs');
+    this.answer
+      .setTitle('List Designs')
+      .setColor(AnswerColor.info)
+      .setDescription('List all possible designs with `listDesigns`.')
+      .addField('Other Commands', 'You could also use `listdesigns`.');
     this.sendAnswer();
   }
 }

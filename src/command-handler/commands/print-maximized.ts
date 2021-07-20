@@ -1,4 +1,5 @@
 import { Command } from './command';
+import { AnswerColor } from '../answer-color';
 
 /**
  * Command !printMaximized
@@ -29,8 +30,12 @@ export class PrintMaximized extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help PrintMaximized',
-      'Command to set the config to maximise the answers.');
+    this.setAuthor('Help Print Maximized', 'print-maximized');
+    this.answer
+      .setTitle('Print Maximized')
+      .setColor(AnswerColor.info)
+      .setDescription('Maximize all answers with `printMaximized`. Every drawn card will be it\'s own message. Answers will not be reactions any more.')
+      .addField('Other Commands', 'You could also use `printmaximized`.');
+    this.sendAnswer();
   }
 }

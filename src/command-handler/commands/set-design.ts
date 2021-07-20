@@ -1,22 +1,12 @@
 import { Command } from './command';
 import { Loglevel } from '../../logger/logger-interface';
+import { AnswerColor } from '../answer-color';
 
 export class SetDesign extends Command {
   /**
    * @inheritDoc
    */
   public readonly name: string[] = [ 'setDesign', 'setdesign' ];
-
-  /**
-   * @inheritDoc
-   */
-  public help(): void {
-    this.sendShortHelp(
-      'Help setDesign',
-      'Command to set a card design. You can inform yourself which designs are possible with the command `listDesigns`.' +
-      ' If you not add a param, the default design will be set. If the param is not a name of one of the list, it won\'t change.'
-    )
-  }
 
   /**
    * @inheritDoc
@@ -32,6 +22,27 @@ export class SetDesign extends Command {
       this.setDesign(params);
     }
     // @TODO if one of the list, change it. if not we could eventually print the help, or the list.
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public help(): void {
+    this.setAuthor('Help Set Design', 'set-design');
+    this.answer
+      .setTitle('Set Design')
+      .setColor(AnswerColor.info)
+      .setDescription('Set a card design with `setDesign [?name]`. You can inform yourself which designs are possible with the command `listDesigns`.')
+      .addField('Param [?name]', 'To define which design you have to add the name. If you don\'t add a name, it will be set to default.')
+      .addField('Other Commands', 'You could also use `setdesign`.')
+      .addField('Examples', 'Here you can see some examples:\n' +
+        '```\n' +
+        'setDesign jack-mc-gee  # change to the design `jack-mc-gee`.\n' +
+        'setdesign jack-mc-gee  # also change to the design `jack-mc-gee`.\n' +
+        'setDesign eee          # does nothing because the design `eee` doesn\'t exist.\n' +
+        'setDesign              # does set the design to default.\n' +
+        '```');
+    this.sendAnswer();
   }
 
   /**
