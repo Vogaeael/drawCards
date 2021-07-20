@@ -45,8 +45,7 @@ export class Help extends Command {
       .setThumbnail('attachment://deck_icons.png')
       .setColor(AnswerColor.info)
       .addField('!shuffle [?num]', 'Shuffle the hole deck new. For more information use `!help shuffle`.')
-      .addField('!draw [?num]', 'Draw cards of the deck. Instead of `[?num]` insert a number like `3`.' +
-        ' If nothing is set or the value is not valid it uses 1. Instead of a number, you can also say `all`')
+      .addField('!draw [?num]', 'Draw cards of the deck. For more information use `!help draw`.')
       .addField('!cardsLeft', 'Message how many cards are left in the deck')
       .addField('!useStandardDeck', 'Use standard (52 cards) deck (active from next shuffle on).')
       .addField('!useStrippedDeck', 'Use stripped (32 cards) deck (active from next shuffle on).')

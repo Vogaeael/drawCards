@@ -64,9 +64,20 @@ export class Draw extends Command {
    * @inheritDoc
    */
   public help(): void {
-    this.sendShortHelp(
-      'Help Draw',
-      'Command to draw a card of the deck. You can add a number, or all after the command to draw the number of cards or all remaining in the deck.');
+    this.setAuthor('Help Draw', 'draw');
+    this.answer
+      .setTitle('Draw')
+      .setColor(AnswerColor.info)
+      .setDescription('To draw one or more cards use `draw [?num]`.')
+      .addField('Param [?num]', 'You can add a number, or `all` after the command to draw the number of cards or all remaining in the deck.')
+      .addField('Examples', 'Here you can see some examples:\n' +
+        '```\n' +
+        'draw       # will draw one card.\n' +
+        'draw 3     # will draw three cards.\n' +
+        'draw eee   # will draw one card because eee means nothing\n' +
+        'draw all   # will draw all remaining cards.\n' +
+        '```');
+    this.sendAnswer();
   }
 
   /**
