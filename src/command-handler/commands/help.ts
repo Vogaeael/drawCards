@@ -48,7 +48,7 @@ export class Help extends Command {
       .addField('!draw [?num]', 'Draw cards of the deck. For more information use `!help draw`.')
       .addField('!cardsLeft', 'Message how many cards are left in the deck. For more information use `!help cardsLeft`.')
       .addField('!useStandardDeck', 'Use standard (52 cards) deck. For more information use `!help useStandardDeck`.')
-      .addField('!useStrippedDeck', 'Use stripped (32 cards) deck (active from next shuffle on).')
+      .addField('!useStrippedDeck', 'Use stripped (32 cards) deck. For more information use `!help useStrippedDeck`.')
       .addField('!useJoker', 'Add joker to the decks (active from next shuffle on).')
       .addField('!dontUseJoker', 'Don\'t add joker to the decks (active from next shuffle on).')
       .addField('!printMinimized', 'Print the answer from draw minimized.')
